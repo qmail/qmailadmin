@@ -1625,7 +1625,7 @@ htmllibdir="/usr/local/share/qmailadmin/"
 # Check whether --enable-htmllibdir or --disable-htmllibdir was given.
 if test "${enable_htmllibdir+set}" = set; then
   enableval="$enable_htmllibdir"
-  htmllibdir="$withval"
+  htmllibdir="$enableval"
 else
   
         if test "$htmllibdir" = ""

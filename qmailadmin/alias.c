@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.5 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: alias.c,v 1.6 2004-01-30 06:45:08 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,17 +35,6 @@ int bkscandir(const char *dirname,
               struct dirent ***namelist,
             int (*select)(struct dirent *),
             int (*compar)(const void *, const void *));
-
-int show_aliases(void)
-{
-  if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage, "%s", get_html_text("142"));
-    vclose();
-    exit(0);
-  }
-  send_template("show_alias.html");
-  return 0;
-}
 
 int qa_sort(const void * a, const void * b)
 {
@@ -149,6 +138,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
           stop = 1;
         }
         while (!stop) {
+          strcpy(Buffer, "");
 
           alias_name_from_command = dotqmail_alias_command(TmpBuf2);
                 

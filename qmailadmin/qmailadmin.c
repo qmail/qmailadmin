@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.7 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: qmailadmin.c,v 1.8 2004-01-30 06:45:08 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -186,34 +186,6 @@ main(argc,argv)
     fprintf( stderr, "in main before process_commands\n" );
     process_commands();
     fprintf( stderr, "in main after process_commands\n" );
-
-  } else if (pi && strncmp(pi, "/open/", 6) == 0) {
-    fprintf( stderr, "\nMystery if case #2\n" );
-    memset(TmpBuf2, 0, sizeof(TmpBuf2));
-    for(j=0,i=6;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
-    rm = getenv("REQUEST_METHOD");
-    rm = (rm == NULL ? "" : strdup(rm));
-
-    if ( strncmp(rm , "POST", 4) == 0 ) {
-      get_cgi();
-    } else {
-      TmpCGI = getenv("QUERY_STRING");
-      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
-    }
-
-    GetValue(TmpCGI, Username, "user=", sizeof(Username));
-    GetValue(TmpCGI, Domain, "dom=", sizeof(Domain));
-    GetValue(TmpCGI, Time, "time=", sizeof(Time));
-    Mytime = atoi(Time);
-
-    vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
-    if ( geteuid() == 0 ) {
-      if ( setgid(Gid) != 0 ) perror("setgid");
-      if ( setuid(Uid) != 0 ) perror("setuid");
-    }
-    vclose();
-    exit(0);
-    
 
   } else {
    char *rm;

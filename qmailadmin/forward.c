@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.3 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: forward.c,v 1.4 2004-01-30 06:45:08 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,8 +35,9 @@ char* dotqmail_alias_command(char* command);
 
 int show_forwards(char *user, char *dom, time_t mytime, char *dir)
 {
+
   if (AdminType != DOMAIN_ADMIN) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    fprintf(stderr,"%s", get_html_text("142"));
     vclose();
     exit(0);
   }

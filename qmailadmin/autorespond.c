@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.4 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: autorespond.c,v 1.5 2004-01-30 06:45:08 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,11 +83,14 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
       }
     }
   }
+
   closedir(mydir);
   sort_dosort();
 
   for (i = 0; addr = sort_get_entry(i); ++i) {
-    qmail_button(uBufA, "delautorespond", addr, "Buffer.png" );
+    for(i=0;addr[i]!=0;++i) if ( addr[i] == ':' ) addr[i] = '.';
+
+    qmail_button(uBufA, "delautorespond", addr, "delete.png" );
     qmail_button(uBufB, "modautorespond", addr, "modify.png" );
     sprintf(uBufC, "%s@%s", addr, Domain);
     send_template_now("show_autorespond_line.html");

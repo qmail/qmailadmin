@@ -11,6 +11,26 @@ batches, in the same order they were created.
 
 #################################################################
 
+Changes from  040108 :
+
+Remove show_aliases from alias.c.  (obsolete)
+
+Clear the buffer in show_dotqmail_lines.
+
+Remove showaliases and showcouts from command.c.  (obsolete)
+
+Remove /open/ case from qmailadmin.c.  (obsolete)
+
+Remove ##r from template.c.
+
+Remove some debug from util.c.
+
+Make check for mailing lists more specific in count_stuff 
+function of util.c.
+
+
+#################################################################
+
 Changes from  040107 :
 
 Move all use of global TmpBuf* to function local Buffer*.

@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.5 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: util.c,v 1.6 2004-01-30 06:45:08 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,16 +57,12 @@ int count_stuff(void)
 
  struct vqpasswd *pw;
 
-  fprintf( stderr, "Count Stuff\n" );
-
   /*   Count the Pop Accounts   */
   pw = vauth_getall(Domain,1,0);
   while(pw!=NULL){
     ++CurPopAccounts;
     pw = vauth_getall(Domain,0,0);
   }
-
-  fprintf( stderr, "Count Stuff after count pop %d\n", CurPopAccounts );
 
   /*   Get limits data from vpopmail   */
   vget_limits(Domain, &Limits);
@@ -83,8 +79,6 @@ int count_stuff(void)
   DisableWebmail = Limits.disable_webmail;
   DisableRelay = Limits.disable_relay;
 
-  fprintf( stderr, "Count Stuff after set limits\n" );
-
   /*   scan the domain directory for .qmail files  */
   if ( (mydir = opendir(".")) == NULL ) { 
     /*  If we can't open the domain directory  */
@@ -97,23 +91,20 @@ int count_stuff(void)
   /*  Scan the directory for .qmail files  */
   while ((mydirent=readdir(mydir)) != NULL) {
 
-    fprintf(stderr,"Checking: %s\n", mydirent->d_name);  
-
     if ( strncmp(".qmail-", mydirent->d_name, 7) != 0 ) {
       /*  It is not a .qmail file   */
-      fprintf(stderr,"not .qmail file\n");   
       continue;
     }
 
     if (!lstat(mydirent->d_name, &mystat) && S_ISLNK(mystat.st_mode)) {
       /*  It is a symlink, probably a mailing list  */
 
-      if ( strncmp("-owner", mydirent->d_name, 7) != 0 ) {
+      if ( strstr(mydirent->d_name, "-owner") != 0 &&
+           strstr(mydirent->d_name, "-digest-owner") == 0 )  {
         /*  If we only count the -owner link, the count  */
         /*  should come out right.  */
         ++CurMailingLists;
       }
-      fprintf(stderr,"mail list file\n");   
       continue;
     } 
 
@@ -128,15 +119,12 @@ int count_stuff(void)
 
     /*  Decide what kind of account it is  */
     if (*Buffer == '#') {
-      fprintf(stderr,"Blackhole\n");   
       CurBlackholes++;
 
     } else if ( strstr( Buffer, "autorespond") != 0 ) {
-      fprintf(stderr,"Autoresponder\n");   
       CurAutoResponders++;
 
     } else if (*Buffer != '|' ) {
-      fprintf(stderr,"Forward\n");   
       CurForwards++;
 
     }
@@ -147,18 +135,14 @@ int count_stuff(void)
   closedir(mydir);
 
   /* Get the default catchall box name */
-  fprintf( stderr, "This is a test\n" );
   if ((fs=fopen(".qmail-default","r")) == NULL) {
     /* report error opening .qmail-default and exit */
     fprintf( stderr, "show_user_lines can't open default file\n" );
     sprintf( CurCatchall, "Can't open .qmail-default file" );
     
-
   } else {
     fgets( Buffer, sizeof(Buffer), fs);
     fclose(fs);
-
-    fprintf( stderr, ".qmail-default: %s\n", Buffer);
 
     if (strstr(Buffer, " bounce-no-mailbox\n") != NULL) {
       sprintf(CurCatchall,"%s", get_html_text("130"));
@@ -183,10 +167,6 @@ int count_stuff(void)
       for(j=0,++i;Buffer[i]!=0;++j,++i) CurCatchall[j] = Buffer[i];
       CurCatchall[j]=0;
     }
-
-    fprintf( stderr, "CurCatchall: %s\n", CurCatchall);
-
-    return 0;
   }
 
   fprintf( stderr, "Blackholes: %d Lists; %d Robots: %d Forwards: %d Users %d Catchall: %s\n", CurBlackholes, CurMailingLists, CurAutoResponders, CurForwards, CurPopAccounts, CurCatchall);

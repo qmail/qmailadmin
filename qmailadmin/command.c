@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.3 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: command.c,v 1.4 2004-01-30 06:45:08 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,10 +44,6 @@ process_commands()
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
     GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
     show_users(Username, Domain, Mytime, TmpBuf2);
-
-  } else if (strcmp(TmpBuf2, "showaliases") == 0) {
-    GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    show_aliases(Username, Domain, Mytime, TmpBuf2);
 
   } else if (strcmp(TmpBuf2, "showforwards") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
@@ -256,9 +252,6 @@ process_commands()
     sprintf(TmpBuf, "%s/%s/Maildir", RealDir, Username );
     del_id_files(TmpBuf);
     show_login();
-
-  } else if (strcmp(TmpBuf2, "showcounts") == 0 ) {
-    show_counts();
   }
 
   vclose();

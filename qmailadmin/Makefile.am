@@ -1,4 +1,3 @@
-# $Id: Makefile.am,v 1.2 2003-09-12 22:55:40 tomcollins Exp $
 
 @SET_MAKE@
 

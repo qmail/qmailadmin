@@ -9,6 +9,7 @@ patch or information related to the entry.
 	- Update all mentions of --with-htmllibdir to --enable-htmllibdir.
 	- undef some macros defined in vpopmail_config.h and later defined
 	  in QmailAdmin's config.h (PACKAGE_*). [883245]
+	- Fix bad quota when adding user with default (blank) quota field.
 
 1.2.0-rc3 - released 19-Jan-04
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.10 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: user.c,v 1.11 2004-01-26 18:16:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -481,15 +481,14 @@ addusernow()
 
 #ifdef MODIFY_QUOTA
     if (strcmp (Quota, "NOQUOTA") == 0) {
-      strcpy (pw_shell, "NOQUOTA");
+      vsetuserquota (Newu, Domain, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
         sprintf(StatusMessage, get_html_text("314"));
       } else {
-        strcpy (pw_shell, qconvert);
+        vsetuserquota (Newu, Domain, qconvert);
       }
     }
-    mypw->pw_shell = pw_shell;
 #endif
 
 #ifdef MODIFY_SPAM
@@ -502,24 +501,13 @@ addusernow()
     }
 #endif
 
-    /* update the user information */
-    if ( vauth_setpw( mypw, Domain ) != VA_SUCCESS ) {
+    /* report success */
+    sprintf(StatusMessage, "%s %s@%s (%s) %s",
+      get_html_text("002"), Newu, Domain, Gecos,
+      get_html_text("119"));
 
-      /* report error */
-      sprintf(StatusMessage, "%s %s@%s (%s) %s",
-        get_html_text("002"), Newu, Domain, Gecos,
-        get_html_text("120"));
-
-    } else {
-
-      /* report success */
-      sprintf(StatusMessage, "%s %s@%s (%s) %s",
-        get_html_text("002"), Newu, Domain, Gecos,
-        get_html_text("119"));
-      }
-
-    /* otherwise, report error */
   } else {
+    /* otherwise, report error */
     sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }

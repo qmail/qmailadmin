@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(config.h)
 AC_CANONICAL_HOST
 
 QA_PACKAGE="qmailadmin"
-QA_VERSION="1.0.27"
+QA_VERSION="1.0.28"
 
 AC_DEFINE_UNQUOTED(QA_PACKAGE,"$QA_PACKAGE")
 AC_DEFINE_UNQUOTED(QA_VERSION,"$QA_VERSION")
@@ -94,24 +94,6 @@ AC_ARG_ENABLE(cgibindir, [  --enable-cgibindir={dir}  HTTP server's cgi-bin dire
     ] )
 AC_SUBST(cgibindir)
 
-imagedir=""
-for f in /home/httpd/html /usr/local/apache/htdocs /usr/local/www/data /var/www/html $htmldir
-do
-    if test -d $f
-    then
-        imagedir=$f/images/qmailadmin
-    fi
-done
-AC_ARG_ENABLE(imagedir, [  --enable-imagedir={dir}   Where to put the image files [DocumentRoot/images/qmailadmin].],
-    imagedir="$enableval",
-    [
-        if test "$imagedir" = ""
-        then
-            AC_MSG_ERROR([Unable to find your html image directory, specify --enable-imagedir.])
-        fi
-    ] )
-AC_SUBST(imagedir)
-
 imageurl="/images/qmailadmin"
 AC_ARG_ENABLE(imageurl, [  --enable-imageurl={url}   URL to image files [/images/qmailadmin].],
     imageurl="$enableval",
@@ -124,6 +106,23 @@ AC_ARG_ENABLE(imageurl, [  --enable-imageurl={url}   URL to image files [/images
 AC_SUBST(imageurl)
 AC_DEFINE_UNQUOTED(IMAGEURL, "$imageurl")
 
+imagedir=""
+for f in /home/httpd/html /usr/local/apache/htdocs /usr/local/www/data /var/www/html $htmldir
+do
+    if test -d $f
+    then
+        imagedir=$f$imageurl
+    fi
+done
+AC_ARG_ENABLE(imagedir, [  --enable-imagedir={dir}   Where to put the image files [DocumentRoot/images/qmailadmin].],
+    imagedir="$enableval",
+    [
+        if test "$imagedir" = ""
+        then
+            AC_MSG_ERROR([Unable to find your html image directory, specify --enable-imagedir.])
+        fi
+    ] )
+AC_SUBST(imagedir)
 
 htmllibdir="/usr/local/share/qmailadmin/"
 

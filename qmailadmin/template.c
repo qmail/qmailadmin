@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.4 2003-12-24 04:44:52 tomcollins Exp $
+ * $Id: template.c,v 1.5 2003-12-24 05:22:05 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -607,6 +607,7 @@ int send_template_now(char *filename)
 
           /* display domain on login page (last used, value of dom in URL,
            * or guess from hostname in URL).
+           */
           case 'z':
             if( strlen(Domain) > 0 ) {
                printf("%s", Domain);

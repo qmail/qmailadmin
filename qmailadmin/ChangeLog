@@ -15,8 +15,9 @@ patch or information related to the entry.
 	- mailinglist.c: Fix Tom's fix for non-idx ezmlm installs. [1123809]
 
 	sunezapa
-	- Fix entry 303 in Danish translation ("Delete Mail" instead of
-	  "None"). [1152997]
+	- Fix entry 303 ("Delete Mail" instead of "None") and 205
+	  ("Standard (ingen videresendelse)" instead of "Standard")
+	  in Danish translation. [1152997]
 
 1.2.7 - released 23-Jan-05
 

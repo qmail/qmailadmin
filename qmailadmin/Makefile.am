@@ -1,7 +1,7 @@
 
 @SET_MAKE@
 
-EXTRA_DIST=BUGS CHANGELOG FAQ TRANSLATORS README.hooks html lang images contrib
+EXTRA_DIST=BUGS FAQ TRANSLATORS README.hooks html lang images contrib
 
 htmllibdir=@htmllibdir@
 htmldir=@htmldir@

@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.11 2005-01-05 04:54:52 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.12 2005-01-23 05:11:45 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,6 +78,7 @@ int send_template_now(char *filename)
  char *qnote = " MB";
  struct vqpasswd *vpw;
  char value[MAX_BUFF];
+ char value2[MAX_BUFF];
 
   if (strstr(filename, "/")!= NULL||strstr(filename,"..")!=NULL) {
     printf("warning: invalid file name %s\n", filename );
@@ -268,6 +269,12 @@ int send_template_now(char *filename)
             show_autorespond_line(Username,Domain,Mytime,RealDir);
             break;
 
+          /* show returnhttp (from TmpCGI) */
+          case 'H':
+            GetValue (TmpCGI, value, "returnhttp=", sizeof(value));
+            printh ("%H", value);
+            break;
+
           /* show the counts */
           case 'h':
             show_counts();
@@ -374,6 +381,12 @@ int send_template_now(char *filename)
             }
             break;
 
+          /* show returntext (from TmpCGI) */
+          case 'n':
+            GetValue (TmpCGI, value, "returntext=", sizeof(value));
+            printh ("%H", value);
+            break;          
+
           /* build a pulldown menu of all POP/IMAP users */
           case 'O':
             {
@@ -422,6 +435,15 @@ int send_template_now(char *filename)
                   printf(get_html_text("229"));
             }
             break; 
+
+          /* show returntext/returnhttp if set in CGI vars */
+          case 'R':
+            GetValue (TmpCGI, value, "returntext=", sizeof(value));
+            GetValue (TmpCGI, value2, "returnhttp=", sizeof(value2));
+            if (*value != '\0') {
+              printh ("<A HREF=\"%s\">%H</A>", value2, value);
+            }
+            break;
 
           /* show the autoresponder stuff */
           case 'r':
@@ -582,6 +604,11 @@ int send_template_now(char *filename)
                }
              }
              break;
+
+          /* Password */
+          case 'W':
+            printh ("%H", Password);
+            break;
 
           /* dictionary line, we three more chars for the line */
           case 'X':

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.6 2005-01-12 15:14:27 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.7 2005-01-23 05:11:45 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@
 #include "printh.h"
 #include "qmailadmin.h"
 #include "show.h"
+#include "template.h"
 #include "user.h"
 #include "util.h"
 
@@ -115,10 +116,10 @@ int main(argc,argv)
  const char *ip_addr=getenv("REMOTE_ADDR");
  const char *x_forward=getenv("HTTP_X_FORWARDED_FOR");
  char *pi;
- int i,j;
  char *rm;
  char returnhttp[MAX_BUFF];
  char returntext[MAX_BUFF];
+ struct vqpasswd *pw;
 
   init_globals();
 
@@ -127,21 +128,18 @@ int main(argc,argv)
   pi=getenv("PATH_INFO");
   if ( pi )  pi = strdup(pi);
 
+  if (pi) strcpy (TmpBuf2, pi+5);
+  rm = getenv("REQUEST_METHOD");
+  rm = (rm == NULL ? "" : strdup(rm));
+
+  if ( strncmp(rm , "POST", 4) == 0 ) {
+    get_cgi();
+  } else {
+    TmpCGI = getenv("QUERY_STRING");
+    TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
+  }
+
   if (pi && strncmp(pi, "/com/", 5) == 0) {
-    struct vqpasswd *pw;
-
-    memset(TmpBuf2, 0, sizeof(TmpBuf2));
-    for(j=0,i=5;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
-    rm = getenv("REQUEST_METHOD");
-    rm = (rm == NULL ? "" : strdup(rm));
-
-    if ( strncmp(rm , "POST", 4) == 0 ) {
-      get_cgi();
-    } else {
-      TmpCGI = getenv("QUERY_STRING");
-      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
-    }
-
     GetValue(TmpCGI, Username, "user=", sizeof(Username));
     GetValue(TmpCGI, Domain, "dom=", sizeof(Domain));
     GetValue(TmpCGI, Time, "time=", sizeof(Time));
@@ -170,53 +168,74 @@ int main(argc,argv)
 
     process_commands();
 
-  } else if (pi && strncmp(pi, "/open/", 6) == 0) {
-    memset(TmpBuf2, 0, sizeof(TmpBuf2));
-    for(j=0,i=6;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
-    rm = getenv("REQUEST_METHOD");
-    rm = (rm == NULL ? "" : strdup(rm));
+  } else if (pi && strncmp(pi, "/passwd/", 7) == 0) {
+    char User[MAX_BUFF];
+    char *dom;
 
-    if ( strncmp(rm , "POST", 4) == 0 ) {
-      get_cgi();
-    } else {
-      TmpCGI = getenv("QUERY_STRING");
-      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
+    GetValue(TmpCGI, Username, "address=", sizeof(Username));
+    GetValue(TmpCGI, Password, "oldpass=", sizeof(Password));
+    GetValue(TmpCGI, Password1, "newpass1=", sizeof(Password1));
+    GetValue(TmpCGI, Password2, "newpass2=", sizeof(Password2));
+
+    if (*Username && (*Password == '\0') && (*Password1 || *Password2)) {
+      /* username entered, but no password */
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("198"));
+    } else if (*Username && *Password) {
+      /* attempt to authenticate user */
+      vget_assign (Domain, RealDir, sizeof(RealDir), &Uid, &Gid);
+      if ( geteuid() == 0 ) {
+        if ( setgid(Gid) != 0 ) perror("setgid");
+        if ( setuid(Uid) != 0 ) perror("setuid");
+      }
+
+      strcpy (User, Username);
+      if ((dom = strchr (User, '@')) != NULL) {
+        strcpy (Domain, dom+1);
+        *dom = '\0';
+      }
+
+      if ( *Domain == '\0' ) {
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("198"));
+      } else {
+        chdir(RealDir);
+        load_limits();
+
+        pw = vauth_user( User, Domain, Password, "" );
+        if ( pw == NULL ) {
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("198"));
+        } else if (pw->pw_flags & NO_PASSWD_CHNG) {
+          strcpy (StatusMessage, "You don't have permission to change your password.");
+        } else if (strcmp (Password1, Password2) != 0) {
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("200"));
+        } else if (*Password1 == '\0') {
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("234"));
+        } else if (vpasswd (User, Domain, Password1, USE_POP) != VA_SUCCESS) {
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("140"));
+        } else {
+          /* success */
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("139"));
+          *Password = '\0';
+          send_template ("change_password_success.html");
+
+          return 0;
+        }
+      }
     }
 
-    GetValue(TmpCGI, Username, "user=", sizeof(Username));
-    GetValue(TmpCGI, Domain, "dom=", sizeof(Domain));
-    GetValue(TmpCGI, Time, "time=", sizeof(Time));
-    Mytime = atoi(Time);
+    send_template ("change_password.html");
+    return 0;
 
-    vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
-    if ( geteuid() == 0 ) {
-      if ( setgid(Gid) != 0 ) perror("setgid");
-      if ( setuid(Uid) != 0 ) perror("setuid");
-    }
-    vclose();
-    exit(0);
-    
-
-  } else {
-   char *rm;
-   struct vqpasswd *pw;
+  } else if (*rm) {
    FILE *fs;
-
-
-     rm = getenv("REQUEST_METHOD");
-     if ( rm ) rm = strdup(rm);
-
-     if ( rm && ( strncmp(rm,"POST",4)==0 || strncmp(rm,"GET",3)==0)) {
-       if ( strncmp(rm , "POST", 4) == 0 ) {
-         get_cgi();
-       } else {
-         TmpCGI = getenv("QUERY_STRING");
-         TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
-       }
+   char *dom;
 
        GetValue(TmpCGI, Username, "username=", sizeof(Username));
        GetValue(TmpCGI, Domain, "domain=", sizeof(Domain));
        GetValue(TmpCGI, Password, "password=", sizeof(Password));
+       if ((dom = strchr (Username, '@')) != NULL) {
+         strcpy (Domain, dom+1);
+         *dom = '\0';
+       }
 
        vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
        if ( geteuid() == 0 ) {
@@ -271,7 +290,6 @@ int main(argc,argv)
          vclose();
          exit(0);
        }
-     }
   }
   show_login();
   vclose();

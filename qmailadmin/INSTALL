@@ -7,6 +7,11 @@ you will need to rebuild and install QmailAdmin.  QmailAdmin
 statically links libvpopmail, so you need to recompile it
 whenever libvpopmail changes.
 
+If you are upgrading to 1.2.1 or later from 1.2.0 or earlier,
+and you have compiled vpopmail with the --enable-valias option,
+be sure to run dotqmail2valias from vpopmail 5.4.1 to convert
+old-style .qmail-alias files to valias table entries.
+
 qmailadmin must be configured and installed as root.  Why?
 vpopmail protects it's libraries from regular users.
 qmailadmin needs to access those libraries, hence it needs root.
@@ -211,5 +216,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.5.2.1 2004-01-30 14:57:32 tomcollins Exp $
+$Id: INSTALL,v 1.5.2.2 2004-02-10 20:48:02 tomcollins Exp $
 

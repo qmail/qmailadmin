@@ -2,6 +2,10 @@ Install guide
 
 QmailAdmin 1.2.0 and later requires Vpopmail 5.4.0 or later.
 
+If you are installing on x86_64 platform (64-bit Intel/AMD processor),
+you will need to run `libtoolize --force` in the QmailAdmin source
+directory before following any other instructions in this guide.
+
 Please note that any time you reconfigure and install vpopmail
 you will need to rebuild and install QmailAdmin.  QmailAdmin
 statically links libvpopmail, so you need to recompile it
@@ -227,5 +231,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.5.2.3 2004-08-24 05:51:03 tomcollins Exp $
+$Id: INSTALL,v 1.5.2.4 2005-01-07 06:58:19 tomcollins Exp $
 

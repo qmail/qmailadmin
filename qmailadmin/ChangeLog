@@ -17,6 +17,7 @@ patch or information related to the entry.
 	  in html/README.  [818883]
 	- user.c: Fix bug from 1.2.6 related to creating .qmail files when
 	  one didn't already exist.
+	- INSTALL: Add note about running `libtoolize --force` on x86_64.
 
 1.2.6 - released 24-Dec-04
 

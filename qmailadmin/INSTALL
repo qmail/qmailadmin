@@ -1,5 +1,10 @@
 Install guide 
 
+Please note that any time you reconfigure and install vpopmail
+you will need to rebuild and install QmailAdmin.  QmailAdmin
+statically links libvpopmail, so you need to recompile it
+whenever libvpopmail changes.
+
 qmailadmin must be configured and installed as root.  Why?
 vpopmail protects it's libraries from regular users.
 qmailadmin needs to access those libraries, hence it needs root.
@@ -195,4 +200,6 @@ users will need to me manually changed via vmoduser.
 If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
+
+$Id: INSTALL,v 1.2 2003-10-10 16:43:19 tomcollins Exp $
 

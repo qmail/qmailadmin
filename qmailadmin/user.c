@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.9 2004-12-23 18:39:48 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.10 2005-01-03 20:31:09 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -904,9 +904,6 @@ ActionUser, Domain ); */
       }
     }
   }
-  if (olddotqmail == NULL) {
-    olddotqmail = "";
-  }
   
   fs = fopen (dotqmailfn, "w");
   
@@ -914,18 +911,20 @@ ActionUser, Domain ); */
    * lines to the new .qmail file.
    */
   emptydotqmail = 1;
-  dotqmailline = strtok (olddotqmail, "\n");
-  while (dotqmailline) {
-    if ( (*dotqmailline == '|') &&
-        (strstr (dotqmailline, "/true delete") == NULL) &&
-        (strstr (dotqmailline, "/autorespond ") == NULL) &&
-        (strstr (dotqmailline, SPAM_COMMAND) == NULL) ) {
-      fprintf (fs, "%s\n", dotqmailline);
-      emptydotqmail = 0;
+  if (olddotqmail != NULL) {
+    dotqmailline = strtok (olddotqmail, "\n");
+    while (dotqmailline) {
+      if ( (*dotqmailline == '|') &&
+          (strstr (dotqmailline, "/true delete") == NULL) &&
+          (strstr (dotqmailline, "/autorespond ") == NULL) &&
+          (strstr (dotqmailline, SPAM_COMMAND) == NULL) ) {
+        fprintf (fs, "%s\n", dotqmailline);
+        emptydotqmail = 0;
+      }
+      dotqmailline = strtok (NULL, "\n");
     }
-    dotqmailline = strtok (NULL, "\n");
+    free (olddotqmail);
   }
-  if (olddotqmail != NULL) free (olddotqmail);
 
   /* Decide on what to write to the new .qmail file after any old program
    * delivery lines are written.

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.4 2003-11-20 23:38:19 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.5 2003-12-08 18:55:09 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -378,7 +378,7 @@ init_globals()
   /* open the color table */
   open_colortable();
 
-  umask(0077);
+  umask(VPOPMAIL_UMASK);
 
   fprintf(actout,"Content-Type: text/html\n");
 #ifdef NO_CACHE

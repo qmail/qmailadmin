@@ -1,4 +1,5 @@
 /* 
+ * $Id: mailinglist.c,v 1.3 2003-10-10 16:36:24 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify

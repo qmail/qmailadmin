@@ -10,7 +10,7 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-# $Id: Makefile.in,v 1.1.1.1 2003-09-10 21:38:41 tomcollins Exp $
+# $Id: Makefile.in,v 1.2 2003-10-17 23:37:05 tomcollins Exp $
 
 
 SHELL = @SHELL@
@@ -117,8 +117,8 @@ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CF
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING INSTALL Makefile.am \
-Makefile.in NEWS TODO acconfig.h aclocal.m4 config.guess config.h.in \
-config.sub configure configure.in install-sh missing mkinstalldirs
+Makefile.in NEWS TODO aclocal.m4 config.guess config.h.in config.sub \
+configure configure.in install-sh missing mkinstalldirs
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -161,7 +161,7 @@ $(srcdir)/config.h.in: $(srcdir)/stamp-h.in
 		rm -f $(srcdir)/stamp-h.in; \
 		$(MAKE) $(srcdir)/stamp-h.in; \
 	else :; fi
-$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
 
@@ -423,10 +423,11 @@ install-data-local:
 	rm -rf                   $(DESTDIR)@htmllibdir@/html
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/html 
 	cp -R $(srcdir)/html/*   $(DESTDIR)@htmllibdir@/html
+	chmod -R 755             $(DESTDIR)@htmllibdir@/html
 	rm -rf                   $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/lang 
 	cp -R $(srcdir)/lang/*   $(DESTDIR)@htmllibdir@/lang
-	chmod -R 755             $(DESTDIR)@htmllibdir@
+	chmod -R 755             $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@imagedir@
 	cp -R $(srcdir)/images/* $(DESTDIR)@imagedir@
 

@@ -19,30 +19,6 @@
 /* Define if your <sys/time.h> declares struct tm.  */
 #undef TM_IN_SYS_TIME
 
-#undef HELP
-#undef MODIFY_QUOTA
-#undef MAXUSERSPERPAGE
-#undef MAXALIASESPERPAGE
-#undef IPAUTH
-#undef HTMLLIBDIR
-#undef IMAGEURL
-#undef AUTORESPOND_PATH
-#undef CGIPATH
-#undef EZMLMDIR
-#undef ENABLE_MYSQL
-#undef NO_CACHE
-#undef USER_INDEX
-#undef EZMLMIDX
-#undef QA_PACKAGE
-#undef QMAILDIR
-#undef QA_VERSION
-#undef VPOPUSER
-#undef VPOPGROUP
-#undef MODIFY_SPAM
-#undef SPAM_COMMAND
-#undef DOMAIN_AUTOFILL
-#undef TRUE_PATH
-
 /* Define if you have the getcwd function.  */
 #undef HAVE_GETCWD
 
@@ -84,3 +60,73 @@
 
 /* Define if you have the socket library (-lsocket).  */
 #undef HAVE_LIBSOCKET
+
+/*  */
+#undef QA_PACKAGE
+
+/*  */
+#undef QA_VERSION
+
+/*  */
+#undef IMAGEURL
+
+/*  */
+#undef HTMLLIBDIR
+
+/*  */
+#undef QMAILDIR
+
+/*  */
+#undef TRUE_PATH
+
+/*  */
+#undef EZMLMDIR
+
+/*  */
+#undef CGIPATH
+
+/*  */
+#undef AUTORESPOND_PATH
+
+/*  */
+#undef VPOPUSER
+
+/*  */
+#undef VPOPGROUP
+
+/*  */
+#undef ENABLE_MYSQL
+
+/*  */
+#undef MAXUSERSPERPAGE
+
+/*  */
+#undef MAXALIASESPERPAGE
+
+/*  */
+#undef NO_CACHE
+
+/*  */
+#undef IPAUTH
+
+/*  */
+#undef USER_INDEX
+
+/*  */
+#undef MODIFY_QUOTA
+
+/*  */
+#undef DOMAIN_AUTOFILL
+
+/*  */
+#undef MODIFY_SPAM
+
+/*  */
+#undef SPAM_COMMAND
+
+/*  */
+#undef HELP
+
+/*  */
+#undef EZMLMIDX
+

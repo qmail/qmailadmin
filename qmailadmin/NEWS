@@ -14,6 +14,13 @@ batches, in the same order they were created.
 
 The final (hopefully) update :
 
+Change the version in configure
+
+
+#################################################################
+
+The final (hopefully) update :
+
 Copy the build system from 1.2.0 final.
 
 Identify all changes from PRE-1 to FINAL and make sure they are

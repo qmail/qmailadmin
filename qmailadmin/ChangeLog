@@ -18,6 +18,7 @@ patch or information related to the entry.
 	- user.c: Fix bug from 1.2.6 related to creating .qmail files when
 	  one didn't already exist.
 	- INSTALL: Add note about running `libtoolize --force` on x86_64.
+	- Update config.guess and config.sub scripts.
 
 1.2.6 - released 24-Dec-04
 

@@ -1,6 +1,6 @@
 /* 
- * $Id: command.c,v 1.2.2.3 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: command.c,v 1.2.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,39 +25,47 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+
+#include <vpopmail_config.h>
 #include <vpopmail.h>
 #include <vauth.h>
+
+#include "alias.h"
+#include "autorespond.h"
+#include "cgi.h"
+#include "command.h"
+#include "forward.h"
+#include "mailinglist.h"
+#include "printh.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
-#include <vpopmail_config.h>
+#include "show.h"
+#include "user.h"
+#include "util.h"
 
-
-
-process_commands()
+void process_commands()
 {
-  int pid;
-
   if (strcmp(TmpBuf2, "showmenu") == 0 ) {
     show_menu(Username, Domain, Mytime);
 
   } else if (strcmp(TmpBuf2, "showusers") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
     GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
-    show_users(Username, Domain, Mytime, TmpBuf2);
+    show_users(Username, Domain, Mytime);
 
   } else if (strcmp(TmpBuf2, "showaliases") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    show_aliases(Username, Domain, Mytime, TmpBuf2);
+    show_aliases();
 
   } else if (strcmp(TmpBuf2, "showforwards") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    show_forwards(Username, Domain, Mytime, TmpBuf2);
+    show_forwards(Username, Domain, Mytime);
 
   } else if (strcmp(TmpBuf2, "showmailinglists") == 0) {
-    show_mailing_lists(Username, Domain, Mytime, TmpBuf2);
+    show_mailing_lists(Username, Domain, Mytime);
 
   } else if (strcmp(TmpBuf2, "showautoresponders") == 0) {
-    show_autoresponders(Username, Domain, Mytime, TmpBuf2);
+    show_autoresponders(Username, Domain, Mytime);
 
   } else if (strcmp(TmpBuf2, "adduser") == 0 ) {
     adduser();
@@ -265,12 +273,10 @@ process_commands()
   exit(0);
 }
 
-setdefaultaccount()
+void setdefaultaccount()
 {
  struct vqpasswd *pw;
  FILE *fs;
- int i;
- int j;
 
   if ((pw = vauth_getpw( ActionUser, Domain )) == NULL) {
     snprinth (StatusMessage, sizeof(StatusMessage), "%s %H@%H",

@@ -1,6 +1,6 @@
 /* 
- * $Id: autorespond.c,v 1.3.2.2 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: autorespond.c,v 1.3.2.3 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,17 +28,22 @@
 #include <dirent.h>
 #include <vpopmail.h>
 #include <vauth.h>
+#include "autorespond.h"
 #include "config.h"
+#include "limits.h"
+#include "printh.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "show.h"
+#include "template.h"
+#include "util.h"
 
-show_autoresponders(user,dom,mytime,dir)
+void show_autoresponders(user,dom,mytime)
  char *user;
  char *dom;
  time_t mytime;
- char *dir;
 {
-  if ( MaxAutoResponders == 0 ) return(0);
+  if ( MaxAutoResponders == 0 ) return;
 
   count_autoresponders();
 
@@ -49,12 +55,12 @@ show_autoresponders(user,dom,mytime,dir)
   }
 }
 
-int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
+void show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
 {
  char *addr;
  char alias_name[MAX_FILE_NAME];
  char *alias_line;
- int i,j;
+ int i;
 
   sort_init();
 
@@ -68,7 +74,7 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
 
   sort_dosort();
 
-  for (i = 0; addr = sort_get_entry(i); ++i) {
+  for (i = 0; (addr = sort_get_entry(i)); ++i) {
     printf ("<tr>");
     
     printf ("<td align=\"center\">");
@@ -90,7 +96,7 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
   sort_cleanup();
 }
 
-addautorespond()
+void addautorespond()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -103,7 +109,7 @@ addautorespond()
   load_limits();
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
     printf ("%s %d\n", get_html_text("158"), MaxAutoResponders);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -112,11 +118,9 @@ addautorespond()
 
 }
 
-addautorespondnow()
+void addautorespondnow()
 {
  FILE *fs;
- int i;
- struct vqpasswd *vpw;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -128,7 +132,7 @@ addautorespondnow()
   load_limits();
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
     printf ("%s %d\n", get_html_text("158"), MaxAutoResponders);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -179,7 +183,7 @@ addautorespondnow()
     * Make the autoresponder message file
    */
   sprintf(TmpBuf, "%s/message", TmpBuf2);
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
+  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("150", TmpBuf);
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
   fprintf(fs, "Subject: %s\n\n", Alias);
   fprintf(fs, "%s", Message);
@@ -193,7 +197,7 @@ addautorespondnow()
   show_autoresponders(Username, Domain, Mytime);
 }
 
-delautorespond()
+void delautorespond()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -203,10 +207,9 @@ delautorespond()
   send_template( "del_autorespond_confirm.html" );
 }
 
-delautorespondnow()
+void delautorespondnow()
 {
  int i;
- int pid;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -240,7 +243,7 @@ delautorespondnow()
   }
 }
 
-modautorespond()
+void modautorespond()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -252,11 +255,9 @@ modautorespond()
 
 
 /* addautorespondnow and modautorespondnow should be merged into a single function */
-modautorespondnow()
+void modautorespondnow()
 {
  FILE *fs;
- int i;
- struct vqpasswd *vpw;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -306,7 +307,7 @@ modautorespondnow()
    * Make the autoresponder message file
    */
   sprintf(TmpBuf, "%s/message", TmpBuf2);
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
+  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("150", TmpBuf);
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
   fprintf(fs, "Subject: %s\n\n", Alias);
   fprintf(fs, "%s", Message);
@@ -320,7 +321,7 @@ modautorespondnow()
   show_autoresponders(Username, Domain, Mytime);
 }
 
-count_autoresponders()
+void count_autoresponders()
 {
  char alias_name[MAX_FILE_NAME];
  char *alias_line;

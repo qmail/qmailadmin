@@ -6,6 +6,13 @@ patch or information related to the entry.
 	Tom Collins
 	- Remove unnecessary name attributes in SUBMIT buttons. [869292]
 	- configure.in: Compile with all warnings on.
+	- Add header files: alias.h auth.h autorespond.h cgi.h command.h 
+	  dotqmail.h forward.h limits.h mailinglist.h show.h template.h 
+	  user.h util.h.
+	- Modify .c files to use header files, fix function prototypes,
+	  definitions and calls for consistent parameter passing and
+	  return values.
+	- Modify code to eliminate all compiler warnings.
 
 1.2.4 - released 15-Nov-04
 

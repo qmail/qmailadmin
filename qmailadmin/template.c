@@ -1,6 +1,6 @@
-/* 
- * $Id: template.c,v 1.7.2.4 2004-11-14 18:05:55 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+/*
+ * $Id: template.c,v 1.7.2.5 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +33,20 @@
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #include <vauth.h>
-#include "printh.h"
+
+#include "alias.h"
+#include "autorespond.h"
+#include "cgi.h"
 #include "config.h"
+#include "forward.h"
+#include "limits.h"
+#include "mailinglist.h"
+#include "printh.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "template.h"
+#include "user.h"
+#include "util.h"
 
 static char dchar[4];
 void check_user_forward_vacation(char newchar);
@@ -62,14 +72,13 @@ int send_template(char *actualfile)
 int send_template_now(char *filename)
 {
  FILE *fs;
- FILE *fs_qw;
  int i;
  int j;
  int inchar;
- int testint;
  char *tmpstr;
  struct stat mystat;
  char qconvert[11];
+ char *fmt;
  char *qnote = " MB";
  struct vqpasswd *vpw;
  char value[MAX_BUFF];
@@ -114,7 +123,12 @@ int send_template_now(char *filename)
         break;
 
       /* found a tag */
-      } else if (inchar == '#') {
+      } else if ((inchar == '#') || (inchar == '%')) {
+        if (inchar == '#')
+        	fmt = "%H";
+        else
+        	fmt = "%C";
+        
         inchar = fgetc(fs);
         if (inchar < 0) break;
 
@@ -146,9 +160,9 @@ int send_template_now(char *filename)
             }
             break;
 
-          /* show the lines inside a alias table */
+          /* show the lines inside a alias table (not used, see ##d) */
           case 'b':
-            show_dotqmail_lines(Username,Domain,Mytime,RealDir,"alias");
+            show_dotqmail_lines(Username,Domain,Mytime);
             break;
 
           /* send the CGIPATH parameter */
@@ -168,7 +182,7 @@ int send_template_now(char *filename)
 
           /* show the lines inside a forward table */
           case 'd':
-            show_dotqmail_lines(Username,Domain,Mytime,RealDir,"forward");
+            show_dotqmail_lines(Username,Domain,Mytime);
             break;
 
           /* this will be used to parse mod_mailinglist-idx.html */
@@ -191,7 +205,7 @@ int send_template_now(char *filename)
               alias_line = valias_select (ActionUser, Domain);
               /* should verify here that alias_line contains "/autorespond " */
 
-              if (alias_line = valias_select_next()) {
+              if ( (alias_line = valias_select_next()) ) {
                 strcpy (TmpBuf2, alias_line);
 
                 /* See if it's a Maildir path rather than address */
@@ -213,7 +227,7 @@ int send_template_now(char *filename)
               upperit(ActionUser);
               sprintf(TmpBuf, "%s/message", ActionUser);
 
-              if ((fs = fopen(TmpBuf, "r")) == NULL) ack("123", 123);
+              if ((fs = fopen(TmpBuf, "r")) == NULL) ack("150", TmpBuf);
 
               fgets( TmpBuf2, sizeof(TmpBuf2), fs);
               fgets( TmpBuf2, sizeof(TmpBuf2), fs);
@@ -242,7 +256,7 @@ int send_template_now(char *filename)
           /* show the forwards */
           case 'f':
             if (AdminType == DOMAIN_ADMIN) {
-              show_forwards(Username,Domain,Mytime,RealDir);
+              show_forwards(Username,Domain,Mytime);
             }
             break;
 
@@ -317,7 +331,7 @@ int send_template_now(char *filename)
           /* show the aliases stuff */
           case 'l':
             if (AdminType == DOMAIN_ADMIN) {
-              show_aliases(Username,Domain,Mytime,RealDir);
+              show_aliases();
             }
             break;
 
@@ -341,7 +355,7 @@ int send_template_now(char *filename)
           /* show the mailing lists */
           case 'm':
             if (AdminType == DOMAIN_ADMIN) {
-              show_mailing_lists(Username,Domain,Mytime,RealDir);
+              show_mailing_lists(Username,Domain,Mytime);
             }
             break;
 
@@ -416,7 +430,7 @@ int send_template_now(char *filename)
           /* show the autoresponder stuff */
           case 'r':
             if (AdminType == DOMAIN_ADMIN) {
-              show_autoresponders(Username,Domain,Mytime,RealDir);
+              show_autoresponders(Username,Domain,Mytime);
             }
             break;
 
@@ -432,7 +446,7 @@ int send_template_now(char *filename)
 
           /* send the time parameter */
           case 'T':
-            printf ("%d", Mytime);
+            printf ("%u", (unsigned int) Mytime);
             break;
 
           /* transmit block? */
@@ -447,7 +461,7 @@ int send_template_now(char *filename)
 
           /* show the users */
           case 'u':
-            show_users(Username,Domain,Mytime,RealDir);
+            show_users(Username,Domain,Mytime);
             break;
 
           /* show version number */
@@ -508,7 +522,8 @@ int send_template_now(char *filename)
                * then again, with recent changes, the non-admin shouldn't
                * even get to this page.
                */
-              long diskquota = 0, maxmsg = 0;
+              long diskquota = 0;
+              int maxmsg = 0;
 	      char path[256];
               vpw = vauth_getpw(Username, Domain);
 
@@ -967,7 +982,7 @@ char *get_session_val(char *session_var) {
    memset(dir, 0, sizeof(dir));
    retval = "";
    if ( (vpw = vauth_getpw(Username, Domain)) != NULL ) {
-      sprintf(dir, "%s/" MAILDIR "/%d.qw", vpw->pw_dir, Mytime);
+      sprintf(dir, "%s/" MAILDIR "/%u.qw", vpw->pw_dir, (unsigned int) Mytime);
       fs_qw = fopen(dir, "r");
       if ( fs_qw != NULL ) {
          memset(TmpBuf, 0, sizeof(TmpBuf));

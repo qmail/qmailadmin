@@ -1,5 +1,6 @@
 /* 
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: qmailadminx.h,v 1.2.2.2 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
 #include <vauth.h>
 #include <vlimits.h>
 
@@ -75,8 +79,4 @@ extern int Uid;
 extern int Gid;
 extern char RealDir[156];
 
-extern char *strstart();
-extern char *safe_getenv();
 extern char Lang[40];
-void del_id_files( char *);
-int open_lang( char *lang);

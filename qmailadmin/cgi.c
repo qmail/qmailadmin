@@ -1,6 +1,6 @@
 /* 
- * $Id: cgi.c,v 1.2.2.1 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: cgi.c,v 1.2.2.2 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,14 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <ctype.h>
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "cgi.h"
+#include "util.h"
 
-get_cgi()
+void get_cgi()
 {
  int count;
  int i,j;
@@ -88,8 +91,8 @@ int GetValue(source,dest,name,dest_max)
       } else if (source[j+1]=='0'&&source[j+2]=='A'){
         dest[k] = '\n';
       } else {
-        dest[k] = (CGIValues[source[j+1]]<<4) + 
-            CGIValues[source[j+2]];
+        dest[k] = (CGIValues[(int) source[j+1]]<<4) + 
+            CGIValues[(int) source[j+2]];
       }
       j += 2;
     } else   if ( source[j] == '+' ) {

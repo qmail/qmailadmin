@@ -1,6 +1,6 @@
 /* 
- * $Id: alias.c,v 1.4.2.10 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: alias.c,v 1.4.2.11 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,10 +35,17 @@
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #include <vauth.h>
+#include "alias.h"
 #include "config.h"
+#include "forward.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "dotqmail.h"
+#include "limits.h"
+#include "util.h"
 #include "printh.h"
+#include "show.h"
+#include "template.h"
 
 char* dotqmail_alias_command(char* command);
 int bkscandir(const char *dirname,
@@ -70,7 +78,7 @@ struct aliasentry {
 
 struct aliasentry *firstalias = NULL, *curalias = NULL;
 
-add_alias_entry (char *alias_name, char *alias_command)
+void add_alias_entry (char *alias_name, char *alias_command)
 {
   if (firstalias == NULL) {
     firstalias = malloc (sizeof(struct aliasentry));
@@ -92,7 +100,7 @@ struct aliasentry *get_alias_entry()
   return temp;
 }
 
-show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
+void show_dotqmail_lines(char *user, char *dom, time_t mytime)
 {
  int moreusers=0;
  DIR *mydir;
@@ -107,7 +115,9 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  int page;
  struct dirent **namelist;
  char this_alias[MAX_FILE_NAME];
+#ifdef VALIAS
  char *alias_line;
+#endif
  struct stat sbuf;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -171,7 +181,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
   if ( (mydir = opendir(".")) == NULL ) {
     printf ("<tr><td colspan=\"4\">");
     printf ("%s %d</td></tr>", get_html_text("143"), 1);
-    return(0);
+    return;
   }
 
   n = bkscandir(".", &namelist, 0, qa_sort);
@@ -184,7 +194,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       /* check for ezmlm lists (file is symbolic link) */
       memset (&sbuf, 0, sizeof(sbuf));
       if (lstat (mydirent->d_name, &sbuf) == 0) {
-        if (sbuf.st_mode & S_IFLNK == S_IFLNK) continue;
+        if ((sbuf.st_mode & S_IFLNK) == S_IFLNK) continue;
       }
 
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
@@ -335,7 +345,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  * with the edit mode
  *
  */
-int show_dotqmail_file(char *user) 
+void show_dotqmail_file(char *user) 
 {
  char alias_user[MAX_BUFF];
  char *alias_domain;
@@ -391,7 +401,7 @@ int show_dotqmail_file(char *user)
     printf ("<form method=\"post\" name=\"moddotqmail\" action=\"%s/com/moddotqmailnow\">\n", CGIPATH);
     printh ("<input type=\"hidden\" name=\"user\" value=\"%H\">\n", Username);
     printh ("<input type=\"hidden\" name=\"dom\" value=\"%H\">\n", Domain);
-    printf ("<input type=\"hidden\" name=\"time\" value=\"%i\">\n", Mytime);
+    printf ("<input type=\"hidden\" name=\"time\" value=\"%u\">\n", (unsigned int) Mytime);
     printh ("<input type=\"hidden\" name=\"modu\" value=\"%H\">\n", user);
     printh ("<input type=\"hidden\" name=\"linedata\" value=\"%H\">\n", alias_line);
     printf ("<input type=\"hidden\" name=\"action\" value=\"delentry\">\n");
@@ -413,7 +423,6 @@ int show_dotqmail_file(char *user)
 
 int onevalidonly(char *user) {
  char *alias_line;
- char *alias_name_from_command;
  int lines;
 
   lines=0;
@@ -427,7 +436,7 @@ int onevalidonly(char *user) {
   return (lines < 2);
 }
 
-moddotqmail()
+void moddotqmail()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -437,10 +446,8 @@ moddotqmail()
   send_template("mod_dotqmail.html");
 }
 
-moddotqmailnow() 
+void moddotqmailnow() 
 {
- struct vqpasswd *pw;
-
   if ( strcmp(ActionUser,"default")==0) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
@@ -484,14 +491,14 @@ moddotqmailnow()
   }
 }
 
-adddotqmail()
+void adddotqmail()
 {
   count_forwards();
   load_limits();
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", 
       get_html_text("157"), MaxForwards);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -499,10 +506,8 @@ adddotqmail()
 }
 
 
-adddotqmailnow()
+void adddotqmailnow()
 {
- struct vqpasswd *pw;
-
   if (AdminType!=DOMAIN_ADMIN && 
       !(AdminType==USER_ADMIN && strcmp(ActionUser, Username)==0)) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -528,7 +533,7 @@ adddotqmailnow()
   } else {
 
     snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("152"));
-    show_forwards(Username,Domain,Mytime,RealDir);
+    show_forwards(Username,Domain,Mytime);
   }
 }
 
@@ -588,7 +593,7 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
   return(0);
 }
 
-deldotqmail()
+void deldotqmail()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -600,7 +605,7 @@ deldotqmail()
 
 }
 
-deldotqmailnow()
+void deldotqmailnow()
 {
 
   if (AdminType!=DOMAIN_ADMIN && 
@@ -633,7 +638,7 @@ deldotqmailnow()
   if(CurForwards == 0 && CurBlackholes == 0) {
     show_menu(Username, Domain, Mytime);
   } else {
-    show_forwards(Username,Domain,Mytime,RealDir);
+    show_forwards(Username,Domain,Mytime);
   }
 }
 

@@ -1,6 +1,6 @@
 /* 
- * $Id: forward.c,v 1.2.2.3 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: forward.c,v 1.2.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +27,16 @@
 #include <dirent.h>
 #include <vpopmail.h>
 #include <vauth.h>
+#include "alias.h"
 #include "config.h"
+#include "forward.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "template.h"
+#include "show.h"
+#include "util.h"
 
-char* dotqmail_alias_command(char* command);
-
-int show_forwards(char *user, char *dom, time_t mytime, char *dir)
+int show_forwards(char *user, char *dom, time_t mytime)
 {
   if (AdminType != DOMAIN_ADMIN) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -55,12 +58,12 @@ int show_forwards(char *user, char *dom, time_t mytime, char *dir)
   return 0;
 }
 
-int count_forwards()
+void count_forwards()
 {
  char *alias_line;
- char *alias_name_from_command;
  char alias_name[MAX_FILE_NAME];
  char this_alias[MAX_FILE_NAME];
+ char *p1, *p2;
  int isforward;
 
   CurForwards = 0;
@@ -71,8 +74,6 @@ int count_forwards()
     strcpy (this_alias, alias_name);
     if (*alias_line == '#') { CurBlackholes++; }
     else {
-      char *p1, *p2;
-      int isforward;
       isforward = 1;
       while (isforward && (alias_line != NULL) 
         && (strcmp (this_alias, alias_name) == 0)) {
@@ -91,6 +92,6 @@ int count_forwards()
     }
   }
 
-  return 0;
+  return;
 }
 

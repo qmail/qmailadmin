@@ -1,6 +1,6 @@
 /* 
- * $Id: auth.c,v 1.3.2.3 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: auth.c,v 1.3.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,14 @@
 #include "qmailadminx.h"
 #include <vpopmail.h>
 #include <vauth.h>
+#include "cgi.h"
+#include "show.h"
+#include "util.h"
 
-extern char *crypt();
+//extern char *crypt();
 
-auth_system(ip_addr, pw)
- char *ip_addr;
+void auth_system(ip_addr, pw)
+ const char *ip_addr;
  struct vqpasswd *pw;
 {
  FILE *fs;
@@ -87,8 +90,8 @@ auth_system(ip_addr, pw)
   }
 }
 
-auth_user_domain(ip_addr,pw)
- char *ip_addr;
+void auth_user_domain(ip_addr,pw)
+ const char *ip_addr;
  struct vqpasswd *pw;
 {
  FILE *fs;
@@ -143,7 +146,7 @@ auth_user_domain(ip_addr,pw)
 
 }
 
-set_admin_type()
+void set_admin_type()
 {
  struct vqpasswd *vpw=NULL;
 

@@ -1,6 +1,6 @@
 /* 
- * $Id: util.c,v 1.4.2.2 2004-11-14 18:05:55 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: util.c,v 1.4.2.3 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,20 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <ctype.h>
+
+#include <vpopmail.h>
+
+#include "alias.h"
+#include "autorespond.h"
 #include "config.h"
+#include "forward.h"
+#include "mailinglist.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "printh.h"
+#include "user.h"
+#include "util.h"
 
 extern FILE *lang_fs;
 extern FILE *color_table;
@@ -72,6 +83,7 @@ int sort_add_entry (char *entry, char end)
   }
   *sort_ptr++ = 0;  /* NULL terminator */
   memleft -= len;
+  return 0;
 }
 char *sort_get_entry(int index)
 {
@@ -109,7 +121,7 @@ void qmail_button(char *modu, char *command, char *user, char *dom, time_t mytim
   printf ("</td>\n");
 }
 
-check_local_user( user )
+int check_local_user( user )
  char *user;
 {
  struct stat buf;
@@ -133,7 +145,7 @@ check_local_user( user )
   return(0);
 }
 
-show_counts()
+void show_counts()
 {
   count_users();
   count_forwards();
@@ -146,7 +158,7 @@ show_counts()
   printf ("%s = %d<BR>\n", get_html_text("080"), CurMailingLists);
 }
 
-check_email_addr( addr )
+int check_email_addr( addr )
  char *addr;
 {
  char *taddr = addr;
@@ -179,7 +191,7 @@ check_email_addr( addr )
   return(0);
 }
 
-fixup_local_name( addr )
+int fixup_local_name( addr )
  char *addr;
 {
  char *taddr = addr;
@@ -205,17 +217,17 @@ fixup_local_name( addr )
   return(0);
 }
 
-ack(msg, c)
+void ack(msg, extra)
  char *msg;
- int c;
+ char *extra;
 {
-  printf ("%s\n", msg);
-  printf ("</BODY></HTML>\n", msg);
+  printf ("%s %s\n", get_html_text(msg), extra);
+  printf ("</BODY></HTML>\n");
   vclose();
   exit(0);
 }
 
-upperit( instr )
+void upperit( instr )
  char *instr;
 {
   while(*instr!=0) {
@@ -354,11 +366,10 @@ char *get_quota_used(char *dir) {
    return value: 0 for success, 1 for failure
 */
 int quota_to_bytes(char returnval[], char *quota) {
-    char *tmpstr;
     double tmp;
 
     if (quota == NULL) { return 1; }
-    if (tmp = atof(quota)) {
+    if ((tmp = atof(quota))) {
         tmp *= 1048576;
         sprintf(returnval, "%.0lf", tmp);
         return 0;
@@ -372,7 +383,6 @@ int quota_to_bytes(char returnval[], char *quota) {
    return value: 0 for success, 1 for failure
 */
 int quota_to_megabytes(char *returnval, char *quota) {
-    char *tmpstr;
     double tmp;
     int i;
 
@@ -382,7 +392,7 @@ int quota_to_megabytes(char *returnval, char *quota) {
         tmp = atol(quota);  /* already in megabytes */
     } else if ((quota[i-1] == 'K') || (quota[i-1] == 'k')) {
 	tmp = atol(quota) * 1024;  /* convert kilobytes to megabytes */
-    } else if (tmp = atol(quota)) {
+    } else if ((tmp = atol(quota))) {
         tmp /= 1048576.0;
     } else {
 	strcpy (returnval, "");

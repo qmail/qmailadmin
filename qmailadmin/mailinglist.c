@@ -1,6 +1,6 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.1 2004-11-14 18:05:54 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: mailinglist.c,v 1.5.2.2 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,25 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <errno.h>
+
+#include <vpopmail.h>
+
+#include "cgi.h"
 #include "config.h"
+#include "limits.h"
+#include "mailinglist.h"
+#include "printh.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
-#include <errno.h>
+#include "show.h"
+#include "template.h"
+#include "util.h"
 
 char dotqmail_name[MAX_FILE_NAME];
 char replyto_addr[256];
@@ -44,7 +56,7 @@ int checkopt[256];    /* used to display mailing list options */
 void set_options();
 void default_options();
 
-int show_mailing_lists(char *user, char *dom, time_t mytime)
+void show_mailing_lists(char *user, char *dom, time_t mytime)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -56,25 +68,25 @@ int show_mailing_lists(char *user, char *dom, time_t mytime)
   count_mailinglists();
    if ( CurMailingLists == 0 ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("231"));
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
 
    if ( MaxMailingLists == 0 ) {
-    return(0);
+    return;
   }
   send_template( "show_mailinglist.html" );
 }
 
-int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
+void show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
 {
   DIR *mydir;
   struct dirent *mydirent;
   FILE *fs;
   char *addr;
   char testfn[MAX_FILE_NAME];
-  int i,j;
+  int i;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -83,12 +95,12 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
   }
 
    if ( MaxMailingLists == 0 ) {
-    return(0);
+    return;
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
     printf ("<tr><td>%s %d</tr><td>", get_html_text("143"), 1);
-    return(0);
+    return;
   }
 
   /* First display the title row */
@@ -134,7 +146,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
   closedir(mydir);
   sort_dosort();
 
-  for (i = 0; addr = sort_get_entry(i); ++i) {
+  for (i = 0; (addr = sort_get_entry(i)); ++i) {
     sprintf (testfn, ".qmail-%s-digest-owner", addr);
     /* convert ':' in addr to '.' */
     str_replace (addr, ':', '.');
@@ -184,13 +196,13 @@ int is_mailing_list(FILE *fs)
 }
 
 /* mailing list lines on the add user page */
-int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
+void show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
 {
  DIR *mydir;
  struct dirent *mydirent;
  FILE *fs;
  char *addr;
- int i,j;
+ int i;
  int listcount;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -200,12 +212,12 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   }
 
   if (*EZMLMDIR == 'n' || MaxMailingLists == 0 ) {
-    return(0);
+    return;
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
     printf ("%s %d<BR>\n", get_html_text("143"), 1);
-    return(0);
+    return;
   }
 
   listcount = 0;
@@ -231,7 +243,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   /* if there aren't any lists, don't display anything */
   if (listcount == 0) {
     sort_cleanup();
-    return 0;
+    return;
   }
 
   printf ("<hr><table width=100%% cellpadding=1 cellspacing=0 border=0");
@@ -255,8 +267,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   sort_cleanup();
 }
 
-
-int addmailinglist(void)
+void addmailinglist()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -269,7 +280,7 @@ int addmailinglist(void)
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
     printf ("%s %d\n", get_html_text("184"), 
       MaxMailingLists);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -285,7 +296,7 @@ int addmailinglist(void)
 
 }
 
-int delmailinglist(void)
+void delmailinglist()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -296,9 +307,8 @@ int delmailinglist(void)
   send_template( "del_mailinglist_confirm.html" );
 }
 
-int delmailinglistnow(void)
+void delmailinglistnow()
 {
- int pid;
  DIR *mydir;
  struct dirent *mydirent;
 
@@ -311,7 +321,7 @@ int delmailinglistnow(void)
   if ( (mydir = opendir(".")) == NULL ) {
     printf ("%s %d<BR>\n", get_html_text("143"), 1);
     printf ("</table>");
-    return 0;
+    return;
   }
  
   /* make dotqmail name */
@@ -327,13 +337,13 @@ int delmailinglistnow(void)
     /* delete the main .qmail-"list" file */
     if ( strcmp(TmpBuf2, mydirent->d_name) == 0 ) {
       if ( unlink(mydirent->d_name) != 0 ) {
-        ack(get_html_text("185"), TmpBuf2);
+        ack("185", TmpBuf2);
       }
 
     /* delete secondary .qmail-"list"-* files */
     } else if ( strncmp(TmpBuf3, mydirent->d_name, strlen(TmpBuf3)) == 0 ) {
       if ( unlink(mydirent->d_name) != 0 ) {
-        ack(get_html_text("185"), TmpBuf2);
+        ack("185", TmpBuf2);
       }
     }
   }
@@ -346,7 +356,7 @@ int delmailinglistnow(void)
     count_mailinglists();
   snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("186"), ActionUser);
     if ( CurMailingLists == 0 ) {
-        show_menu();
+        show_menu(Username, Domain, Mytime);
     } else {
     show_mailing_lists(Username, Domain, Mytime);
   }
@@ -387,7 +397,7 @@ void ezmlm_setreplyto (char *filename, char *newtext)
   rename (tempfn, realfn);
 }
 
-ezmlm_make (int newlist)
+void ezmlm_make (int newlist)
 {
   FILE * file;
   int pid;
@@ -582,20 +592,20 @@ ezmlm_make (int newlist)
 
   /* update inlocal file */
   sprintf(TmpBuf, "%s/%s/inlocal", RealDir, ActionUser);
-  if (file=fopen(TmpBuf, "w")) {
+  if ((file=fopen(TmpBuf, "w")) != NULL) {
     fprintf(file, "%s-%s", Domain, ActionUser);
     fclose(file);
   }
 }
 
-int addmailinglistnow(void)
+void addmailinglistnow()
 {
   count_mailinglists();
   load_limits();
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
     printf ("%s %d\n", get_html_text("184"),
       MaxMailingLists);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -614,12 +624,12 @@ int addmailinglistnow(void)
   show_mailing_lists(Username, Domain, Mytime);
 }
 
-int show_list_group_now(int mod)
+void show_list_group_now(int mod)
 {
   /* mod = 0 for subscribers, 1 for moderators, 2 for digest users */
   
  FILE *fs;
- int i,handles[2],pid,a,x,y,z = 0,z1=1,subuser_count = 0; 
+ int handles[2],pid,z = 0,subuser_count = 0; 
  char buf[256];
  char *addr;
 
@@ -690,13 +700,13 @@ int show_list_group_now(int mod)
     } else {
         strcpy(TmpBuf, "dellistusernow");
     }
-    for(z = 0; addr = sort_get_entry(z); ++z) {
+    for(z = 0; (addr = sort_get_entry(z)); ++z) {
       printf (" <TR align=center>");
       printh ("  <TD align=right><A href=\"%s/com/%s?modu=%C&newu=%C&dom=%C&user=%C&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
         CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       printh ("  <TD align=left>%H</TD>\n", addr);
       ++z;
-      if(addr = sort_get_entry(z)) {
+      if( (addr = sort_get_entry(z)) ) {
         printh ("  <TD align=right><A href=\"%s/com/%s?modu=%C&newu=%C&dom=%C&user=%C&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
           CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       printh ("  <TD align=left>%H</TD>\n", addr);
@@ -717,13 +727,7 @@ int show_list_group_now(int mod)
   }
 }
 
-/*
-int show_list_users_now(void) { return show_list_group_now(0); }
-int show_list_moderators_now(void) { return show_list_group_now(1); }
-int show_list_digest_users_now(void) { return show_list_group_now(2); }
-*/
-
-int show_list_group(char *template)
+void show_list_group(char *template)
 {
   if (AdminType != DOMAIN_ADMIN) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -732,19 +736,13 @@ int show_list_group(char *template)
   }
   
   if (MaxMailingLists == 0) {
-    return 0;
+    return;
   }
   
   send_template(template);
 }
 
-/*
-int show_list_users(void) { return show_list_group("show_subscribers.html"); }
-int show_list_digest_users(void) { return show_list_group("show_digest_subscribers.html"); }
-int show_list_moderators(void) { return show_list_group("show_moderators.html"); }
-*/
-
-addlistgroup (char *template)
+void addlistgroup (char *template)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -754,15 +752,14 @@ addlistgroup (char *template)
   send_template(template);
 }
 
-addlistuser() { addlistgroup( "add_listuser.html" ); }
-addlistmod() { addlistgroup( "add_listmod.html" ); }
-addlistdig() { addlistgroup( "add_listdig.html" ); }
+void addlistuser() { addlistgroup( "add_listuser.html" ); }
+void addlistmod() { addlistgroup( "add_listmod.html" ); }
+void addlistdig() { addlistgroup( "add_listdig.html" ); }
 
-addlistgroupnow (int mod)
+void addlistgroupnow (int mod)
 {
   // mod = 0 for subscribers, 1 for moderators, 2 for digest subscribers
 
- int i, result;
  int pid;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -817,13 +814,7 @@ addlistgroupnow (int mod)
   exit(0);
 }
 
-/*
-addlistusernow() { addlistgroupnow(0); }
-addlistmodnow() { addlistgroupnow(1); }
-addlistdignow() { addlistgroupnow(2); }
-*/
-
-dellistgroup(char *template)
+void dellistgroup(char *template)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -834,13 +825,8 @@ dellistgroup(char *template)
   send_template(template);
 }
 
-dellistuser() { dellistgroup ( "del_listuser.html" ); }
-dellistmod() { dellistgroup ( "del_listmod.html" ); }
-dellistdig() { dellistgroup ( "del_listdig.html" ); }
-
-dellistgroupnow(int mod)
+void dellistgroupnow(int mod)
 {
- int i;
  int pid;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -880,13 +866,7 @@ dellistgroupnow(int mod)
   exit(0);
 }
 
-/*
-dellistusernow() { dellistgroupnow(0); }
-dellistmodnow() { dellistgroupnow(1); }
-dellistdignow() { dellistgroupnow(2); }
-*/
-
-count_mailinglists()
+void count_mailinglists()
 {
  DIR *mydir;
  struct dirent *mydirent;
@@ -895,7 +875,7 @@ count_mailinglists()
   if ( (mydir = opendir(".")) == NULL ) {
     printf ("%s %d<BR>\n", get_html_text("143"), 1);
     printf ("</table>");
-    return(0);
+    return;
   }
  
 
@@ -918,7 +898,7 @@ count_mailinglists()
 
 }
 
-modmailinglist()
+void modmailinglist()
 {
   /* name of list to modify is stored in ActionUser */
  int i;
@@ -978,7 +958,7 @@ modmailinglist()
 
 }
 
-modmailinglistnow()
+void modmailinglistnow()
 {
   ezmlm_make(0);
   
@@ -987,7 +967,7 @@ modmailinglistnow()
   show_mailing_lists(Username, Domain, Mytime);
 }
 
-build_list_value(char *param, char *color, char *opt1, char *desc1, char *opt2, char *desc2, int checked)
+void build_list_value(char *param, char *color, char *opt1, char *desc1, char *opt2, char *desc2, int checked)
 {
   printf ("<tr bgcolor=%s>\n", get_color_text(color));
   printf ("  <td>\n");
@@ -999,7 +979,7 @@ build_list_value(char *param, char *color, char *opt1, char *desc1, char *opt2, 
   printf ("</tr>\n");
 }
 
-build_option_str (char *type, char *param, char *options, char *description)
+void build_option_str (char *type, char *param, char *options, char *description)
 {
   int selected;
   char *optptr;
@@ -1007,7 +987,7 @@ build_option_str (char *type, char *param, char *options, char *description)
   selected = 1;
   for (optptr = options; *optptr; optptr++)
   {
-    selected = selected && checkopt[*optptr];
+    selected = selected && checkopt[(int) *optptr];
   }
   /* selected is now true if all options for this radio button are true */
 
@@ -1063,7 +1043,7 @@ void set_options() {
   }
 
   // default to false for lowercase letters
-  for (c = 'a'; c <= 'z'; checkopt[c++] = 0);
+  for (c = 'a'; c <= 'z'; checkopt[(int) c++] = 0);
 
   // figure out some options in the -default file
   sprintf(TmpBuf, ".qmail-%s-default", dotqmail_name);
@@ -1149,7 +1129,7 @@ void set_options() {
   /* update the uppercase option letters (just the opposite of the lowercase) */
   for (c = 'A'; c <= 'Z'; c++)
   {
-    checkopt[c] = !checkopt[(c - 'A' + 'a')];
+    checkopt[(int) c] = !checkopt[(int) (c - 'A' + 'a')];
   }
 }
 
@@ -1195,15 +1175,15 @@ void default_options() {
   /* update the uppercase option letters (just the opposite of the lowercase) */
   for (c = 'A'; c <= 'Z'; c++)
   {
-    checkopt[c] = !checkopt[(c - 'A' + 'a')];
+    checkopt[(int) c] = !checkopt[(int) (c - 'A' + 'a')];
   }
 }
 
-show_current_list_values() {
+void show_current_list_values() {
  FILE *fs;
  int sqlfileok = 0;
  int usesql = 0;
- int i,j;
+ int i=0,j;
  char checked1[MAX_BUFF] = "";
  char listname[128];
  int checked;

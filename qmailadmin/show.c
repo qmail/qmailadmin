@@ -1,6 +1,6 @@
 /* 
- * $Id: show.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: show.c,v 1.2.2.1 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <dirent.h>
-#include "config.h"
-#include "qmailadmin.h"
-#include "qmailadminx.h"
+#include "template.h"
+#include "show.h"
 
-show_menu(user, dom, mytime)
+void show_menu(user, dom, mytime)
  char *user;
  char *dom;
  time_t mytime;
@@ -37,7 +28,7 @@ show_menu(user, dom, mytime)
   send_template( "main_menu.html" );
 }
 
-show_login()
+void show_login()
 {
   send_template( "show_login.html" );
 }

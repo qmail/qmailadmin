@@ -1,6 +1,6 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.3 2004-11-14 18:05:55 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: qmailadmin.c,v 1.6.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,21 @@
 #undef PACKAGE_STRING
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
-#include "config.h"
-#include "qmailadmin.h"
+
 #include <vpopmail.h>
 #include <vauth.h>
 #include <vlimits.h>
+
+#include "auth.h"
+#include "cgi.h"
+#include "command.h"
+#include "config.h"
+#include "limits.h"
+#include "printh.h"
+#include "qmailadmin.h"
+#include "show.h"
+#include "user.h"
+#include "util.h"
 
 char Username[MAX_BUFF];
 char Domain[MAX_BUFF];
@@ -95,23 +105,15 @@ gid_t Gid;
 char RealDir[156];
 char Lang[40];
 
-void del_id_files( char *);
-
-main(argc,argv)
+int main(argc,argv)
  int argc;
  char *argv[];
 {
- const char *u;
- const char *p;
  const char *ip_addr=getenv("REMOTE_ADDR");
  const char *x_forward=getenv("HTTP_X_FORWARDED_FOR");
  char *pi;
  int i,j;
  char *rm;
- time_t time1; 
- time_t time2;
- FILE *fs;
- int pid;
  char returnhttp[MAX_BUFF];
  char returntext[MAX_BUFF];
 
@@ -236,7 +238,7 @@ main(argc,argv)
          del_id_files( TmpBuf);
 
          Mytime = time(NULL);
-         snprintf (TmpBuf, sizeof(TmpBuf), "%s/" MAILDIR "/%d.qw", pw->pw_dir, Mytime);
+         snprintf (TmpBuf, sizeof(TmpBuf), "%s/" MAILDIR "/%u.qw", pw->pw_dir, (unsigned int) Mytime);
          fs = fopen(TmpBuf, "w");
          if ( fs == NULL ) {
            printf ("%s %s<br>\n", get_html_text("144"), TmpBuf);
@@ -270,12 +272,12 @@ main(argc,argv)
   }
   show_login();
   vclose();
+  
+  return 0;
 }
 
-init_globals()
+void init_globals()
 {
-  int i,j;
-  struct vqpasswd *pw;
   char *accept_lang;
   char *langptr, *qptr;
   int lang_err;
@@ -400,7 +402,6 @@ void del_id_files( char *dirname )
 {
  DIR *mydir;
  struct dirent *mydirent;
- struct stat statbuf;
 
   mydir = opendir(dirname);
   if ( mydir == NULL ) return;

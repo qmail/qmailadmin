@@ -1,6 +1,6 @@
 /* 
- * $Id: limits.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: limits.c,v 1.2.2.1 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,23 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <dirent.h>
-#include <errno.h>
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "limits.h"
 
-#define LIMIT_TOKENS " :\t\r\n"
-
-
-load_limits()
+void load_limits()
 {
   vget_limits(Domain, &Limits);
   MaxPopAccounts = Limits.maxpopaccounts;

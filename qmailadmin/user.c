@@ -1,6 +1,6 @@
 /* 
- * $Id: user.c,v 1.11.2.4 2004-11-14 18:05:55 tomcollins Exp $
- * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
+ * $Id: user.c,v 1.11.2.5 2004-11-20 01:10:41 tomcollins Exp $
+ * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
@@ -32,9 +34,17 @@
 #undef PACKAGE_STRING 
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
+#include "alias.h"
+#include "cgi.h"
 #include "config.h"
+#include "limits.h"
+#include "printh.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
+#include "show.h"
+#include "template.h"
+#include "user.h"
+#include "util.h"
 #include "vpopmail.h"
 #include "vauth.h"
 
@@ -54,9 +64,9 @@ implemented */
 #define HOOK_LISTDELUSER "dellistuser"
 #endif
 
-int show_users(char *Username, char *Domain, time_t Mytime)
+void show_users(char *Username, char *Domain, time_t Mytime)
 {
-  if (MaxPopAccounts == 0) return 0;
+  if (MaxPopAccounts == 0) return;
   send_template("show_users.html");
 }
 
@@ -159,7 +169,8 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
               (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)))) {
         if (AdminType==DOMAIN_ADMIN || 
             (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)) {
-          long diskquota = 0, maxmsg = 0;
+          long diskquota = 0;
+          int maxmsg = 0;
 
           /* display account name and user name */
           printf ("<tr bgcolor=%s>", get_color_text("000"));
@@ -257,7 +268,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
       printf ("<form method=\"get\" action=\"%s/com/showusers\">", CGIPATH);
       printh ("<input type=\"hidden\" name=\"user\" value=\"%H\">", user);
       printh ("<input type=\"hidden\" name=\"dom\" value=\"%H\">", dom);
-      printf ("<input type=\"hidden\" name=\"time\" value=\"%d\">", mytime);
+      printf ("<input type=\"hidden\" name=\"time\" value=\"%u\">", (unsigned int) mytime);
       printh ("<input type=\"text\" name=\"searchuser\" value=\"%H\">&nbsp;", SearchUser);
       printf ("<input type=\"submit\" value=\"%s\">", get_html_text("204"));
       printf ("</form>");
@@ -303,7 +314,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   return 0;
 }
 
-adduser()
+void adduser()
 {
   count_users();
   load_limits();
@@ -317,7 +328,7 @@ adduser()
   if ( MaxPopAccounts != -1 && CurPopAccounts >= MaxPopAccounts ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("199"),
       MaxPopAccounts);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -326,7 +337,7 @@ adduser()
 
 }
 
-moduser()
+void moduser()
 {
   if (!( AdminType==DOMAIN_ADMIN ||
         (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
@@ -337,26 +348,25 @@ moduser()
   send_template( "mod_user.html" );
 } 
 
-addusernow()
+void addusernow()
 {
- char pw[50];
  int cnt=0, num;
  char *c_num;
  char **mailingListNames;
  char *tmp;
  char *email;
  char **arguments;
- char tmpstr[MAX_BUFF];
+#ifdef MODIFY_QUOTA
  char qconvert[11];
+#endif
  int pid;
- int i;
- int tmpint;
  int error;
  struct vqpasswd *mypw;
- char pw_shell[256];
+#ifdef MODIFY_SPAM
  char spamvalue[50];
  static char NewBuf[156];
  FILE *fs;
+#endif
 
   c_num = malloc(MAX_BUFF);
   email = malloc(128);
@@ -375,7 +385,7 @@ addusernow()
   if ( MaxPopAccounts != -1 && CurPopAccounts >= MaxPopAccounts ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("199"),
       MaxPopAccounts);
-    show_menu();
+    show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
   }
@@ -571,18 +581,15 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
   return (0);
 }
 
-deluser()
+void deluser()
 {
   send_template( "del_user_confirm.html" );
 }
 
-delusergo()
+void delusergo()
 {
  static char forward[200] = "";
  static char forwardto[200] = "";
- FILE *fs;
- int i;
- struct vqpasswd *pw;
      
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -611,7 +618,7 @@ delusergo()
   show_users(Username, Domain, Mytime);
 }
 
-count_users()
+void count_users()
 {
  struct vqpasswd *pw;
 
@@ -623,7 +630,7 @@ count_users()
   }
 }
 
-setremotecatchall() 
+void setremotecatchall() 
 {
   send_template("setremotecatchall.html");
 }
@@ -643,7 +650,7 @@ void set_qmaildefault(char *opt)
   exit(0);
 }
 
-setremotecatchallnow() 
+void setremotecatchallnow() 
 {
   GetValue(TmpCGI,Newu, "newu=", sizeof(Newu));
 
@@ -665,7 +672,7 @@ void deleteall()
   set_qmaildefault ("delete");
 }
 
-int get_catchall(void)
+int get_catchall()
 {
  int i,j;
  FILE *fs;
@@ -704,18 +711,17 @@ int get_catchall(void)
   return 0;
 }
 
-modusergo()
+void modusergo()
 {
- char crypted[20]; 
  char *tmpstr;
- int i;
  int ret_code;
- int password_updated = 0;
  struct vqpasswd *vpw=NULL;
  static char box[500];
  static char NewBuf[156];
+#ifdef MODIFY_QUOTA
  char *quotaptr;
  char qconvert[11];
+#endif
  int count;
  FILE *fs;
  int spam_check = 0;
@@ -941,7 +947,7 @@ ActionUser, Domain ); */
     snprintf(NewBuf,sizeof(NewBuf),"%s/vacation/message", vpw->pw_dir);
     GetValue(TmpCGI,Message, "vmessage=",sizeof(Message));
 
-    if ( (fs = fopen(NewBuf, "w")) == NULL ) ack("123", 123);
+    if ( (fs = fopen(NewBuf, "w")) == NULL ) ack("150", NewBuf);
     fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
     fprintf(fs, "Subject: %s\n\n", box);
     fprintf(fs, "%s", Message);

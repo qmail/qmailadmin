@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: user.c,v 1.3 2003-10-12 00:42:43 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -419,10 +419,7 @@ addusernow()
   }
 #endif
 
-  strcpy(email, "");
-  strcat(email,Newu);
-  strcat(email,"@");
-  strcat(email,Domain);
+  snprintf (email, 128, "%s@%s", Newu, Domain);
     
   GetValue(TmpCGI,Gecos, "gecos=", sizeof(Gecos));
   if ( strlen( Gecos ) == 0 ) {
@@ -585,8 +582,7 @@ int call_hooks( int hook_type )
        if (!(cmd = malloc(len + 1))) {
          return (0);
        } else {
-         sprintf(cmd, "%s", tmpstr);
-         strcat(cmd, "");
+         snprintf(cmd, len + 1, "%s", tmpstr);
        }
 
        break;

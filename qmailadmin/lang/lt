@@ -1,0 +1,283 @@
+000 utf-8
+001 Pagrindinis Meniu
+002 Pašto Vartotojai
+003 Pridėti Pašto Robotą:
+004 Pašto Roboto Vardas:
+005 Siųsti kopiją adresu:
+006 Tema: 
+007 Pridėti Persiuntimo Adresą:
+008 Persiunčia Pašto Adresas: 
+009 Esamas Vartotojas:
+010 (Vartotojo, kurio adresu persiunčiamas paštas, vardas<br>ARBA<br>pilnas elektroninio pašto adresas)
+011 Pridėti Sąrašo Moderatorių
+012 Sukurti susirašinėjimo sąrašo moderatorių
+013 El.pašto Adresas:
+014 Pridėti Prenumeratoriuų prie susirašinėjimo sąrašo 
+015 Sukurti Susirašinėjimo Sąrašą
+016 Susirašinėjimo Sąrašo Pavadinimas:
+017 Sąrašo savininko pašto adresas: 
+018 Su archyvu
+039 Atsako už administracines užklausas bei leidžia archyvo gavimą.
+053 Įjungti MySQL palaikymą
+054 Serveris
+055 Jungtis
+056 Vartotojas
+057 Slaptažodis
+058 Duomenų bazė
+059 Lentelė
+060 Pridėti
+061 Pašto Vartotojai
+062 Bendra Sąskaita:
+063 Pastaba
+064 Keisti<br>Vartotoją
+065 Ištrinti<br>Vartotoją
+066 Bendra<br>Sąskaita
+067 Sukurti Pašto Vartotoją
+068 Pašto Nukreipimai
+069 Nukreipimas
+070 Pašto Vartotojai
+071 Keisti
+072 Trinti
+073 Sukurti Naują Nukreipimą
+074 Pašto Persiuntimai
+075 Persiuntimas
+076 Sukurti Naują Persiuntimą 
+077 Pašto Robotai
+078 Pašto Robotas
+079 Naujas Pašto Robotas
+080 Susirašinėjimo Sąrašai
+081 Sąrašas
+082 Įvyko klaida atidarant .qmail-default
+083 Pridėti<br>Prenumeratorių
+084 Pašalinti<br>Prenumeratorių
+085 Rodyti<br>Prenumeratorius
+086 Pridėti<br>Moderatorių
+087 Pašalinti<br>Moderatorių
+088 Rodyti<br>Moderatorius
+089 Naujas susirašinėjimo sąrašas
+090 Pridėti Pašto vartotoją
+091 Slaptažodis (pakartoti):
+092 Tikrasis vardas
+093 Sąrašo pavadinimas
+094 Subscribe user 
+095 Subscribe the new user to the following mailing lists
+096 Ištrinti Nukreipimą
+097 Patvirtinti trynimą
+098 Ištrinti Pašto Robotą
+099 MySQL Nustatymai
+100 Ištrinti Persiuntimą
+101 Ištrinti susirašinėjimo sąrašą
+102 Ištrinti vartotoją
+103 Persiųsti paštą adresu
+104 Taip, persiųsti paštą į:
+105 Keisti Pašto Robotą
+106 Vardas
+107 Turinys
+108 Pridėti persiuntimą
+109 Keisti Vartotoją
+110 Naujas Slaptažodis
+111 Keisti Vartotoją
+112 Vartotojo Sąskaita
+113 Domenas 
+114 Prisijungimo vardas
+115 Vartotojo nukreipimai
+116 Esami nukreipimai
+117 Pridėti/Pakeisti nukreipimo adresą
+118 Pašalinti nukreipimą
+119 sėkmingai pridėtas
+120 nepavyko pridėti
+121 Nukreipimai
+122 Persiuntimai
+123 Rodyti nukreipimą
+124 Trumpos nuorodos
+125 Naujas Pašto Vartotojas
+126 Naujas Nukreipimas
+127 Naujas Persiuntimas
+128 Naujas Pašto Robotas
+129 Naujas Susirašinėjimo Sąrašas
+130 Bendra Sąskaita: Atmetama
+131 Vartotojų sąrašas tuščias, grįžkite į ankstesnį puslapį
+132 Įprasta
+133 Indeksas:
+134 Atmesti bendrinį paštą 
+135 Ankstesnis Puslapis
+136 Atnaujinti Puslapį
+137 Kitas Puslapis 
+138 Įveskite slaptažodį
+139 Pašto vartotojo slaptažodis sėkmingai pakeistas
+140 Nepavyko pakeisti slaptažodžio.
+141 vartotojas sėkmingai ištrintas
+142 Nėra Autorizavimo
+143 katalogo teisių klaida
+144 bylos teisių klaida
+145 Klaidingas Vartotojas Vidinė Klaida
+146 Negalima Sukurti nukreipimo
+147 Nukreipti
+148 Klaidingas Pašto Adresas
+149 Negalima Ištrinti Paskutinio Įrašo
+150 Bylos klaida
+151 Eilutė Sėkmingai Ištrinta
+152 Persiuntimas sukurtas sėkmingai
+153 Tokio vartotojo nėra
+154 Nukreipimas sukurtas sėkmingai
+155 Klaidingas Veiksmas
+156 Pasiekta leistinų nukreipimų riba
+157 Pasiekta leistinų persiuntimų riba
+158 Pasiekta leistinų pašto robotų riba
+159 Klaidingas DotQmail Tipas: adddotqmail()
+160 Klaidingas nukreipimas
+161 Nepavyko sukurti persiuntimo. Pašto vartotojas turi egzistuoti.
+162 Klaidingas Pašto vartotojo vardas
+163 Klaidingas persiuntimo vardas
+164 Klaidingas Nukreipimo Tipas : adddotqmailnow()
+165 Įvyko klaida bandant sukurti Pašto vartotojo nukreipimą
+166 Pašto Vartotojo Nukreipimas sukurtas sėkmingai
+167 Įvyko klaida trinant Pašto vartotojo nukreipimą/persiuntimą.
+168 Pašto Vartotojo Nukreipimas/Persiuntimas ištrintas sėkmingai. 
+169 Įvyko klaida trinant Pašto vartotojo nukreipimą/persiuntimą
+170 Pašto Vartotojo Nukreipimas/persiuntimas ištrintas sėkmingai
+171 Klaida: nepavyko atidaryti katalogo 
+172 Tuo pačiu metu gali būti prisijungęs tik vienas pašto administratorius. Šiuo metu kažkas jau yra prisijungęs. Naudokite tik vieną administracinį prisijungimą.
+173 pasibaigė prisijungimo laikas, registruokitės iš naujo
+174 Klaidingas Pašto Roboto pavadinimas 
+175 Toks pavadinimas jau yra
+176 Nurodykite Pašto Roboto pavadinimą
+177 Klaidingas Sąvininko Pašto Adresas
+178 Įveskite laiško temą
+179 Įveskite siunčiamą informaciją
+180 Pašto robotas sukurtas sėkmingai
+181 nepavyko ištrinti Pašto Roboto
+182 Pašto Robotas ištrintas sėkmingai
+183 Pašto Robotas pakeistas sėkmingai 
+184 Pasiekta leistinų siuntinėjimo sąrašų riba
+185 Nepavyko ištrinti bylos
+186 Susirašinėjimo sąrašas ištrintas sėkmingai
+187 Susirašinėjimo sąrašas pridėtas sėkmingai
+188 Klaidingas pašto sąrašo pavadinimas
+189 Susirašinėjimo sąraše esantys adresai
+190 Sąrašo pabaiga
+191 Susirašinėjimo sąrašo moderatorių adresai
+192 Grįžti į pagrindinį meniu
+193 įtrauktas į susirašinėjimo sąrašą
+194 Pašto adresas priskirtas prie susirašinėjimo sąrašo moderatorių
+195 Pašalinti prenumeratorių iš susirašinėjimo sąrašo
+196 Pašalinti moderatorių iš susirašinėjimo sąrašo
+197 moderatorius pašalintas iš susirašinėjimo sąrašo
+198 Klaidinas Prisijungimas
+199 Pasiekta leistinų pašto vartotojų riba
+200 Nesutampa slaptažodžiai, bandykite dar kartą
+201 Pritrūko atminties
+202 Buvo nurodyti parametrai:
+203 pašalintas iš susirašinėjimo sąrašo 
+204 Eiti prie vartotojo
+205 Standartinis
+206 Nustatyti išorinį bendro pašto vartotoją
+207 Nustatyti Įšorinį Bendrą Paštą
+208 Išorinis Bendras Paštas:
+209 Persiųsti
+210 Išsaugoti Kopiją
+211 Persiųsti Adresu:
+212 Atostogų Pranešimas
+213 Atostogų Pranešimo Tema:
+214 Atostogų Pranešimo Žinutė:
+215 Turite nurodyti persiuntimo adresą
+216 Turite nurodyti temą
+217 Atnaujinti Meniu
+218 Išsiregistruoti
+219 Sąrašo Moderatoriai
+220 Moderatoriaus Adresas
+221 Sąrašo Prenumeratoriai
+222 Prenumeratoriaus Adresas
+223 Nepavyko rasti vartotojo
+224 (spragtelėkite norėdami pakeisti)
+225 Keisti Susirašinėjimo Sąrašą
+226 Susirašinėjimo sąrašas pakeistas sėkmingai
+227 Santrauka
+228 Viso Moderatorių:
+229 neribojama
+230 Viso Prenumeratorių:
+231 Nerasta jokių Susirašinėjimo Sąrašų
+232 Nerasta jokių Nukreipimų/Persiuntimų
+233 Nerasta jokių Pašto Robotų
+234 Įveskite slaptažodį
+235 Įjungti bendro pašto trynimą 
+236 Bendras Paštas: Trinama
+237 Sukurti<br>Santraukos Prenumeratorių
+238 Ištrinti<br>Santraukos Prenumeratorių
+239 Rodyti<br>Santraukos Prenumeratorius
+240 Pašto adresas pridėtas prie susirašinėjimo sąrašo santraukos prenumeratorių
+241 Pridėti susirašinėjimo sąrašo Santraukos Prenumeratorių 
+242 pašalintas iš santraukos susirašinėjimo sąrašo 
+243 Pašalinti santraukos prenumeratorių iš susirašinėjimo sąrašo
+244 Viso Santraukos Prenumeratorių:
+245 Pašalinti<br>Santraukos Prenumeratorių
+246 Santraukos Prenumeratoriaus Adresas
+247 Santraukos Prenumeratorių sąrašas
+248 Rodyti susirašinėjimo sąrašo prenumeratorių adresus
+249 Kvota (MB)
+250 Panaudota
+251 (naudokite NOQUOTA, kad atšaukti apribojimus)
+252 (išvalykite lauką, kad atšaukti apribojimus)
+253 Riba:
+254 Panaudota:
+255 Viso Vartotojų
+256 Kiekvieno siunčiamo laiško temos priešdėlis:
+257 Vartotojo Vadovas
+258 Administratoriaus Vadovas
+259 Pagalbos Sistema
+260 Keliai
+261 sarašovardas
+262 Laiškų Siuntimas
+263 Laiškus siųsti gali visi.
+264 Gali siųsti tik prenumeratoriai, kiti laiškai bus atmesti.
+265 Gali siųsti tik prenumeratoriai, kitiems laiškams būtinas moderatorių patvirtinimas.
+266 Gali siųsti tik moderatoriai, kiti laiškai bus atmesti.
+267 Gali siųsti tik moderatoriai, kitiems laiškams būtinas moderatorių patvirtinimas.
+268 Sąrašo Nustatymai
+269 Prie kiekvieno siunčiamo laiško pridėdama <B>[%s]</B>.
+270 Pridėti informaciją kiekvieno laiško pabaigoje.
+271 Sukurti sutrauktą sąrašo variantą.
+272 Vadinamas %s-digest.
+273 Tarnybiniai užklausimai siunčiami %s-request adresu.
+274 Neskaitant %s-subscribe, %s-unsubscribe ir kitų, vartotojai gali siųsti komandas %s-request adresu.
+275 Nutolęs Administravimas
+276 Leisti moderatoriams nutolusį sąrašo administravimą.
+277 Paversti sąrašą privačiu.
+278 Tik administratoriai gali valdyti prenumeratą, matyti prenumeratorių sąrašą ir pan.
+279 Nutolę administratoriai gali:
+280 Matyti prenumeratorių sąrašą bei vykdyti paiešką jame.
+281 Keisti bylas teksto katalogo.
+282 pvz. laiško priedą, pagalbos bylas ir pan.
+283 Prenumeratos Užklausimai
+284 Sąrašo prenumeratos užklausos:
+285 Reikalauti patvirtinimo atsakant į prenumeratos užsakymą.
+286 Reikalauti moderatoriaus patvirtinimo.
+287 Sarašo prenumeratos atšaukimai:
+288 Dėmesio: jei Jūs neprašote adresato patvirtinimo, galima neteisėtai įtraukti ar pašalinti vartotojus iš prenumeratorių be Jų žinios.
+289 Sąrašo Archyvai
+290 Archyvuoti sąrašo laiškus.
+291 Indeksuoti archyvą tinkliniam priėjimui per ezmlm-cgi.
+292 Sąrašo archyvas yra prieinamas
+293 visiems
+294 tik prenumeratoriams
+295 tik moderatoriams
+296 Pašto dėžės žymės
+297 įjungta
+298 išjungta
+299 Žymė0
+300 Žymė1
+301 Žymė2
+302 Žymė3
+303 Ištrinta
+304 Spamo Aptikimas?
+305 Adresatas
+306 persiunčia adresu
+307 Klaidinga kvota
+308 Kvota nenustatyta
+309 Nustatyta %s baitų kvota
+310 Atsakymai turi būti siunčiami
+311 originaliam siuntėjui
+312 visam sąrašui
+313 adresu
+314 Nurodyta klaidinga kvota
+315 Vartotojas ištrintas. Negalima nustatyti persiuntimo į '%s'.

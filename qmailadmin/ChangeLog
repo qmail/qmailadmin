@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.7 - unreleased
 
+	Tomas Kuliavas
+	- Added Lithuanian translation.
+
 	John Peacock
 	- template.c: Fix typo that broke autoresponder subject display.
 

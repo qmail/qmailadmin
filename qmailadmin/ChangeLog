@@ -9,6 +9,9 @@ patch or information related to the entry.
 	Charlie Garrison
 	- Fix invalid HTML in mod_autorespond.html.
 
+	Maurice Snellen
+	- Fix lang/nl entry 152 (was opposite of English original).
+
 	Tom Collins
 	- Before considering an alias/forward to be a 'blackhole', make
 	  sure it's only a single line.

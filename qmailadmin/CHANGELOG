@@ -1,13 +1,26 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.0.28 - unreleased
+
+	Oden Eriksson		- Updated Swedish translation.
+	Tohru Kobayashi		- Updated Japanese translation.
+	Martin Dalum		- Updated Danish translation.
+	Nicolas Croiset		- Updated French translation.
+	Martin Mosny		- Updated Slovak translation.
+	Maurice Snellen		- Updated Dutch translation.
+	Jeremiah Tieman (JT)	- Updated Spanish translation.
+	Vyacheslav Shishakov	- Updated Russian translation.
+	Fabio Erri		- Updated Italian translation.
+	Julian Neytchev		- New Bulgarian translation.
+	Dorneles Tremea		- Updated Brazilian Portuguese translation.
+
+	Tom Collins
+	- Properly handle mailing list prefixes (strip square brackets).
+
 1.0.27 - released 9-Sep-03
 
-	Dorneles Treméa
-	- Updated Brazilian Portuguese translation.
-
-	Oden Eriksson
-	- Updated Swedish translation.
+	Oden Eriksson		- Updated Swedish translation.
 
 	Tom Collins
 	- Added tracker item numbers to CHANGELOG for all closed trackers.

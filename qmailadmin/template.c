@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.5 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.6 2004-11-20 06:24:51 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,6 @@ int send_template_now(char *filename)
  char *tmpstr;
  struct stat mystat;
  char qconvert[11];
- char *fmt;
  char *qnote = " MB";
  struct vqpasswd *vpw;
  char value[MAX_BUFF];
@@ -123,12 +122,8 @@ int send_template_now(char *filename)
         break;
 
       /* found a tag */
-      } else if ((inchar == '#') || (inchar == '%')) {
-        if (inchar == '#')
-        	fmt = "%H";
-        else
-        	fmt = "%C";
-        
+      } else if (inchar == '#') {
+
         inchar = fgetc(fs);
         if (inchar < 0) break;
 

@@ -55,7 +55,7 @@ on a volume that isn't mounted with the 'nosuid' option in /etc/fstab.
 
 *Use this if your don't want the HTML templates to be 
  in /usr/local/share/qmailadmin
-	--enable-htmllibdir={dir}  qmailadmin HTML library directory.
+	--with-htmllibdir={dir}    qmailadmin HTML library directory.
 
 *Use this if your qmail directory is not in /var/qmail  
 	--enable-qmaildir={dir}   directory where qmail is installed.
@@ -181,7 +181,7 @@ users will need to me manually changed via vmoduser.
 7. If you want to modify the "look" of qmail admin:
    
    Edit the html template files in /usr/local/share/qmailadmin/
-   or if you changed the location with the --enable-htmllibdir={dir}
+   or if you changed the location with the --with-htmllibdir={dir}
    then edit the files in that directory. The HTML elements for some
    not-very-often used features are included in comments in the
    template files. Remove the comment tags to see the relevant bits.
@@ -209,5 +209,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.5 2004-01-24 15:55:16 tomcollins Exp $
+$Id: INSTALL,v 1.4 2004-01-08 05:13:08 tomcollins Exp $
 

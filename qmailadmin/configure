@@ -4566,7 +4566,7 @@ echo "$as_me: error: Unable to find your html image directory, specify --enable-
 fi;
 
 
-htmllibdir="/usr/local/share/qmailadmin"
+htmllibdir="/usr/local/share/qmailadmin/"
 
 # Check whether --enable-htmllibdir or --disable-htmllibdir was given.
 if test "${enable_htmllibdir+set}" = set; then
@@ -4576,8 +4576,8 @@ else
 
         if test "$htmllibdir" = ""
         then
-            { { echo "$as_me:$LINENO: error: Unable to find your htmllibdir directory, specify --enable-htmllibdir." >&5
-echo "$as_me: error: Unable to find your htmllibdir directory, specify --enable-htmllibdir." >&2;}
+            { { echo "$as_me:$LINENO: error: Unable to find your htmllibdir directory, specify --with-htmllibdir." >&5
+echo "$as_me: error: Unable to find your htmllibdir directory, specify --with-htmllibdir." >&2;}
    { (exit 1); exit 1; }; }
         fi
 

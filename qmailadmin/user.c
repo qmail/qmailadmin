@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11 2004-01-26 18:16:40 tomcollins Exp $
+ * $Id: user.c,v 1.9 2004-01-14 15:57:42 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,16 +26,11 @@
 #include <pwd.h>
 #include <dirent.h>
 #include <errno.h>
-#include <vpopmail_config.h>
-/* undef some macros that get redefined in config.h below */
-#undef PACKAGE_NAME  
-#undef PACKAGE_STRING 
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 #include "vpopmail.h"
+#include "vpopmail_config.h"
 #include "vauth.h"
 
 
@@ -481,14 +476,15 @@ addusernow()
 
 #ifdef MODIFY_QUOTA
     if (strcmp (Quota, "NOQUOTA") == 0) {
-      vsetuserquota (Newu, Domain, "NOQUOTA");
+      strcpy (pw_shell, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
         sprintf(StatusMessage, get_html_text("314"));
       } else {
-        vsetuserquota (Newu, Domain, qconvert);
+        strcpy (pw_shell, qconvert);
       }
     }
+    mypw->pw_shell = pw_shell;
 #endif
 
 #ifdef MODIFY_SPAM
@@ -501,13 +497,24 @@ addusernow()
     }
 #endif
 
-    /* report success */
-    sprintf(StatusMessage, "%s %s@%s (%s) %s",
-      get_html_text("002"), Newu, Domain, Gecos,
-      get_html_text("119"));
+    /* update the user information */
+    if ( vauth_setpw( mypw, Domain ) != VA_SUCCESS ) {
 
-  } else {
+      /* report error */
+      sprintf(StatusMessage, "%s %s@%s (%s) %s",
+        get_html_text("002"), Newu, Domain, Gecos,
+        get_html_text("120"));
+
+    } else {
+
+      /* report success */
+      sprintf(StatusMessage, "%s %s@%s (%s) %s",
+        get_html_text("002"), Newu, Domain, Gecos,
+        get_html_text("119"));
+      }
+
     /* otherwise, report error */
+  } else {
     sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.7 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,9 +54,8 @@ char LineData[MAX_BUFF];
 char Action[MAX_BUFF];
 char Message[MAX_BIG_BUFF];
 char StatusMessage[MAX_BIG_BUFF];
-int num_of_mailinglist;
 int CGIValues[256];
-char Pagenumber[MAX_BUFF];
+char Pagenumber[MAX_BUFF]="";
 char SearchUser[MAX_BUFF];
 time_t Mytime;
 char *TmpCGI = NULL;
@@ -67,10 +66,9 @@ char TmpBuf3[MAX_BUFF];
 char TempBuf[MAX_BUFF];
 int Compressed;
 FILE *actout;
-FILE *lang_fs;
-FILE *color_table;
 
 struct vlimits Limits;
+int num_of_mailinglist;
 int AdminType;
 int MaxPopAccounts;
 int MaxAliases;
@@ -85,14 +83,35 @@ int DisablePasswordChanging;
 int DisableWebmail;
 int DisableRelay;
 
-int CurPopAccounts;
-int CurForwards;
-int CurAutoResponders;
-int CurMailingLists;
+int CurPopAccounts=0;
+int CurForwards=0;
+int CurAutoResponders=0;
+int CurMailingLists=0;
+int CurBlackholes=0;
+char CurCatchall[MAX_BUFF];
+
 uid_t Uid;
 gid_t Gid;
 char RealDir[156];
+
 char Lang[40];
+
+char uBufA[MAX_BUFF];
+char uBufB[MAX_BUFF];
+char uBufC[MAX_BUFF];
+char uBufD[MAX_BUFF];
+char uBufE[MAX_BUFF];
+char uBufF[MAX_BUFF];
+char uBufG[MAX_BUFF];
+char uBufH[MAX_BUFF];
+char uBufI[MAX_BUFF];
+char uBufJ[MAX_BUFF];
+char uBufK[MAX_BUFF];
+char uBufL[MAX_BUFF];
+
+/*   not in qmailadminx.h   */
+FILE *lang_fs;
+FILE *color_table;
 
 void del_id_files( char *);
 
@@ -122,6 +141,8 @@ main(argc,argv)
   if ( pi )  pi = strdup(pi);
 
   if (pi && strncmp(pi, "/com/", 5) == 0) {
+    /*  /com/ found in URL so there is something to do   */
+    fprintf( stderr, "\nMystery if case #1\n" );
     struct vqpasswd *pw;
 
     memset(TmpBuf2, 0, sizeof(TmpBuf2));
@@ -150,11 +171,11 @@ main(argc,argv)
     }
 
     if ( chdir(RealDir) < 0 ) {
-      fprintf(stderr, "<h2>%s %s</h2>\n", get_html_text("171"), RealDir );
+      fprintf(stderr, "MAIN %s %s\n", get_html_text("171"), RealDir );
     }
-    load_limits();
-
     set_admin_type();
+    fprintf( stderr, "in main before count_stuff\n" );
+    count_stuff();
 
     if ( AdminType == USER_ADMIN || AdminType == DOMAIN_ADMIN ) {
       auth_user_domain(ip_addr, pw);
@@ -162,9 +183,12 @@ main(argc,argv)
       auth_system(ip_addr, pw);
     }
 
+    fprintf( stderr, "in main before process_commands\n" );
     process_commands();
+    fprintf( stderr, "in main after process_commands\n" );
 
   } else if (pi && strncmp(pi, "/open/", 6) == 0) {
+    fprintf( stderr, "\nMystery if case #2\n" );
     memset(TmpBuf2, 0, sizeof(TmpBuf2));
     for(j=0,i=6;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
     rm = getenv("REQUEST_METHOD");
@@ -196,7 +220,9 @@ main(argc,argv)
    struct vqpasswd *pw;
    FILE *fs;
 
+    fprintf( stderr, "\nMystery if case #3\n" );
 
+     /*  Just logged in   */
      rm = getenv("REQUEST_METHOD");
      if ( rm ) rm = strdup(rm);
 
@@ -238,7 +264,8 @@ main(argc,argv)
          sprintf(TmpBuf, "%s/Maildir/%d.qw", pw->pw_dir, Mytime);
          fs = fopen(TmpBuf, "w");
          if ( fs == NULL ) {
-           fprintf(actout,"%s %s<br>\n", get_html_text("144"), TmpBuf);
+           fprintf(actout,"MAIN %s %s\n", get_html_text("144"), TmpBuf);
+           fprintf(stderr,"MAIN %s %s\n", get_html_text("144"), TmpBuf);
            vclose();
            exit(0);
          }

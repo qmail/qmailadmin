@@ -1,24 +1,16 @@
-Information regarding HTML templates and macro substitutions.
-
-Contributed 12/2003 by Rick Widmer.
-
-Template substitution values for QmailAdmin Version 1.2.0
----------------------------------------------------------
+Template substitution values for QmailAdmin Version 1.2.0-rc1
 
 When QmailAdmin encounters ## while parsing a template file, it looks
 at the following character and replaces ## and the character with the 
 information listed below.
 
-The templates which use each value are listed below each item.
+The templates which use each value are listed below each item. But
+it has not been updated since I changed template.c.  Try a later 
+version.
 
-Tag values H, n, Q, R, r, W, w are not defined in the source code.
-
-Tag values b, f, h, l, m, N, O are defined in template.c, but never
-used in a current template.  N isn't used anywhere either, but 
-it might be handy to use.  If the rest are obsolete it may be best 
-to remove them.
-
-Tag value H is not defined in template.c but is used in header.html.
+Tag values b, f, H, h, l, m, n, O, Q, R, r, W, w are not defined 
+in the source code.  N isn't used anywhere either, but it might 
+be handy to use. 
 
 
 To see which templates use a particular tag:
@@ -54,14 +46,6 @@ a particular tag, leave '-v' out of the second grep.
         it shows (MaxPopAccounts) else it shows string 229  [unlimited].
 
 	show_users
-
-
--------------------------------------------------------------------------
-
-##b	Show the lines inside a alias table.  Calls function
-	show_dowqmail_lines.
-
-	not used in any current template files.
 
 
 -------------------------------------------------------------------------
@@ -121,13 +105,6 @@ a particular tag, leave '-v' out of the second grep.
 
 -------------------------------------------------------------------------
 
-##f	Show the forwards.  Calls show_forwards.  
-
-	not used in any template files.
-
-
--------------------------------------------------------------------------
-
 ##G	Show the mailing list Digetst Subscribers.  This calls function 
 	show_list_group_now(2).
 
@@ -147,14 +124,6 @@ a particular tag, leave '-v' out of the second grep.
 ##H	not used
 
 	header.html
-
-
--------------------------------------------------------------------------
-
-##h	Show the counts, not sure which ones...  Calls function
-	show_counts.
-
-	not used in any current templates.
 
 
 -------------------------------------------------------------------------
@@ -246,25 +215,10 @@ the one data is buffered for.)
 
 -------------------------------------------------------------------------
 
-##l	Show the aliases stuff.  This calls function show_aliases.
-
-	not used in any current templates.
-
-
--------------------------------------------------------------------------
-
 ##M	Show the mailing list subscribers.  The function 
 	show_list_group_now is called.
 
 	show_subscribers
-
-
--------------------------------------------------------------------------
-
-##m	Show the mailing lists.  The function show_mailing_lists is
-	called.
-
-	not used in any current templates.
 
 
 -------------------------------------------------------------------------
@@ -274,13 +228,6 @@ the one data is buffered for.)
 	or sometimes displays text string 144.  [file permission error]
 
 	not used in any current templates.
-
--------------------------------------------------------------------------
-
-##n	not used.
-
-	not used in any current templates.
-
 
 -------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: command.c,v 1.3 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -122,7 +122,7 @@ process_commands()
     show_list_group("show_digest_subscribers.html");
 
   } else if (strcmp(TmpBuf2, "moduser") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "moduser=", sizeof(ActionUser));
+    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
     moduser();
 
   } else if (strcmp(TmpBuf2, "modusernow") == 0 ) {
@@ -240,7 +240,7 @@ process_commands()
     show_list_group("show_subscribers.html");
 
   } else if (strcmp(TmpBuf2, "setdefault") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
+    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
     setdefaultaccount();
 
@@ -279,6 +279,7 @@ setdefaultaccount()
       sprintf(StatusMessage,"%s %s@%s", get_html_text("223"), ActionUser, Domain);
     } else {
       fprintf(fs, "| %s/bin/vdelivermail '' %s\n", VPOPMAILDIR, pw->pw_dir);
+      sprintf(CurCatchall, ActionUser);
     }
     fclose(fs);
   }

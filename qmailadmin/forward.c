@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: forward.c,v 1.3 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,6 @@ int show_forwards(char *user, char *dom, time_t mytime, char *dir)
     exit(0);
   }
 
-  count_forwards();
-
   if(CurForwards == 0) {
     sprintf(StatusMessage,"%s", get_html_text("232"));
     show_menu(Username, Domain, Mytime);
@@ -51,47 +49,6 @@ int show_forwards(char *user, char *dom, time_t mytime, char *dir)
   } else {
     send_template("show_forwards.html");
   }
-
-  return 0;
-}
-
-int count_forwards(void)
-{
- DIR *mydir;
- struct dirent *mydirent;
- struct stat mystat;
- FILE *fs;
- char *alias_name_from_command;
-
-  /* FIXME: Do some caching here. */
-  CurForwards = 0;
-
-  if ((mydir = opendir(".")) == NULL) {
-    fprintf(actout, "<tr><td>%s %d</tr></td>\n", get_html_text("143"), 1);
-    return 0;
-  }
-
-  while ((mydirent=readdir(mydir)) != NULL) {
-    /*
-     *  don't read files that are really ezmlm-idx listowners,
-     *  i.e. .qmail-user-owner
-     *
-     */
-    if (strncmp (".qmail-", mydirent->d_name, 7) == 0) {
-      /* ignore symbolic links (ezmlm files) */
-      if (!lstat(mydirent->d_name, &mystat) && S_ISLNK(mystat.st_mode)) continue;
-
-      if ((fs=fopen(mydirent->d_name,"r")) == NULL) {
-        fprintf(actout, "%s %s<br>\n", get_html_text("144"), mydirent->d_name);
-        continue;
-      }
-      memset(TmpBuf2, 0, sizeof(TmpBuf2));
-      fgets(TmpBuf2, sizeof(TmpBuf2), fs);
-      if (*TmpBuf2 != '|' && *TmpBuf2 != '#') CurForwards++;
-      fclose(fs);
-    }
-  }
-  closedir(mydir);
 
   return 0;
 }

@@ -50,5 +50,5 @@ void sort_cleanup();
 void sort_dosort();
 void str_replace (char *, char, char);
 
-void qmail_button(char *modu, char *command, char *user, char *dom, time_t mytime, char *png);
+char qmail_button(char *rv, char *modu, char *command, char *png);
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11 2004-01-26 18:16:40 tomcollins Exp $
+ * $Id: user.c,v 1.12 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,10 +26,10 @@
 #include <pwd.h>
 #include <dirent.h>
 #include <errno.h>
-#include <vpopmail_config.h>
+#include "vpopmail_config.h"
 /* undef some macros that get redefined in config.h below */
-#undef PACKAGE_NAME  
-#undef PACKAGE_STRING 
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #include "config.h"
@@ -67,26 +67,17 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
  FILE *fs;
  struct vqpasswd *pw;
  int totalpages;
- int bounced;
  int colspan = 7;
  int allowdelete;
  char qconvert[11];
 
+  fprintf( stderr, "show_user_lines MaxPopAccounts: %d\n", MaxPopAccounts );
+
   if (MaxPopAccounts == 0) return 0;
 
-  /* Get the default catchall box name */
-  if ((fs=fopen(".qmail-default","r")) == NULL) {
-    /* report error opening .qmail-default and exit */
-    fprintf(actout,"<tr><td colspan=\"%i\">%s .qmail-default</tr></td>", 
-      colspan, get_html_text("144"));
-    vclose();
-    exit(0);
-  }
-
-  fgets(TmpBuf, sizeof(TmpBuf), fs);
-  fclose(fs);
-
   if (*SearchUser) {
+    fprintf( stderr, "Search: %s\n", SearchUser );
+
     pw = vauth_getall(dom,1,1);
     for (k=0; pw!=NULL; k++) {
       if ((!SearchUser[1] && *pw->pw_name >= *SearchUser) ||
@@ -108,29 +99,9 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   if (k == 0) totalpages = 1;
   else totalpages = ((k/MAXUSERSPERPAGE)+1);
 
+  fprintf( stderr, "Total pages: %d\n", totalpages );
   /* End determine number of pages */
   if (atoi(Pagenumber)==0) *Pagenumber='1';
-
-  if ( strstr(TmpBuf, " bounce-no-mailbox\n") != NULL ) {
-    bounced = 1;
-  } else if ( strstr(TmpBuf, "@") != NULL ) {
-    bounced = 0;
-    /* check for local user to forward to */
-    if (strstr(TmpBuf, dom) != NULL) {
-      i = strlen(TmpBuf); --i; TmpBuf[i] = 0; /* take off newline */
-      for(;TmpBuf[i]!=' ';--i);
-      for(j=0,++i;TmpBuf[i]!=0 && TmpBuf[i]!='@';++j,++i) 
-         TmpBuf3[j] = TmpBuf[i];
-      TmpBuf3[j]=0;
-    }
-  } else {
-    /* Maildir type catchall */
-    bounced = 0;
-    i = strlen(TmpBuf); --i; TmpBuf[i] = 0; /* take off newline */
-    for(;TmpBuf[i]!='/';--i);
-    for(j=0,++i;TmpBuf[i]!=0;++j,++i) TmpBuf3[j] = TmpBuf[i];
-    TmpBuf3[j]=0;
-  }
 
   startnumber = MAXUSERSPERPAGE * (atoi(Pagenumber) - 1);
 
@@ -149,173 +120,95 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   }
 
   if (pw == NULL) {
-    fprintf(actout, "<tr><td colspan=\"%i\" bgcolor=%s>%s</td></tr>\n", 
-      colspan, get_color_text("000"), get_html_text("131"));
-      moreusers = 0;
-    } else {
-      char path[256];
-      while ((pw != NULL) && ((k < MAXUSERSPERPAGE + startnumber) ||  
-              (AdminType!=DOMAIN_ADMIN || AdminType!=DOMAIN_ADMIN || 
-              (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)))) {
-        if (AdminType==DOMAIN_ADMIN || 
-            (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)) {
-          long diskquota = 0, maxmsg = 0;
+    /*  No more users to view  */
+    sprintf(uBufA, "%i", colspan);
+    sprintf(uBufB, "%s", get_html_text("131"));
+    send_template_now("show_error_line.html");
+    moreusers = 0;
 
-          /* display account name and user name */
-          fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-          fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_name);
-          fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_gecos);
+  } else {
+    /*  Display users  */
+    char path[256];
+    while ((pw != NULL) && ((k < MAXUSERSPERPAGE + startnumber) ||  
+            (AdminType!=DOMAIN_ADMIN || AdminType!=DOMAIN_ADMIN || 
+            (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)))) {
 
-          /* display user's quota */
-	  snprintf(path, sizeof(path), "%s/Maildir", pw->pw_dir);
-          readuserquota(path, &diskquota, &maxmsg);
-          fprintf(actout, "<td align=\"right\">%-2.2lf&nbsp;/&nbsp;</td>", ((double)diskquota)/1048576.0);  /* Convert to MB */
-          if (strncmp(pw->pw_shell, "NOQUOTA", 2) != 0) {
-              if(quota_to_megabytes(qconvert, pw->pw_shell)) {
-                  fprintf(actout, "<td align=\"left\">(BAD)</td>");
-              }
-              else { fprintf(actout, "<td align=\"left\">%s</td>", qconvert); }
-          }
-          else { fprintf(actout, "<td align=\"left\">%s</td>", get_html_text("229")); }
+      if (AdminType==DOMAIN_ADMIN || 
+          (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)) {
+        long diskquota = 0, maxmsg = 0;
 
-          /* display button to modify user */
-          fprintf(actout, "<td align=\"center\">");
-          fprintf(actout, "<a href=\"%s/com/moduser?user=%s&dom=%s&time=%d&moduser=%s\">",
-            CGIPATH,user,dom,mytime,pw->pw_name);
-          fprintf(actout, "<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
-          fprintf(actout, "</td>");
-            
-          /* if the user has admin privileges and pw->pw_name is not 
-           * the user or postmaster, allow deleting 
-           */
-          if (AdminType==DOMAIN_ADMIN && 
-               strcmp(pw->pw_name, Username) != 0 &&
-               strcmp(pw->pw_name, "postmaster") != 0) {
-            allowdelete = 1;
+        /* display account name and user name */
+        sprintf(uBufA, "%s", pw->pw_name);
+        sprintf(uBufB, "%s", pw->pw_gecos);
 
-          /* else, don't allow deleting */
-          } else {
-            allowdelete = 0;
+        /* display user's quota */
+        snprintf(path, sizeof(path), "%s/Maildir", pw->pw_dir);
+        readuserquota(path, &diskquota, &maxmsg);
+        /* Convert to MB */
+        sprintf(uBufD, "%-2.2lf", ((double)diskquota)/1048576.0);  
+        if (strncmp(pw->pw_shell, "NOQUOTA", 2) != 0) {
+            if(quota_to_megabytes(qconvert, pw->pw_shell)) {
+              sprintf(uBufC, "%s&nbsp;/&nbsp;(BAD)", uBufD);
+
+            } else { 
+              sprintf(uBufC, "%s&nbsp/&nbsp;%s", uBufD, qconvert); 
+            }
+
+          } else { 
+            sprintf(uBufC, "%s&nbsp;/&nbsp;%s", uBufD, get_html_text("229"));
           }
 
-          /* display trashcan for delete, or nothing if delete not allowed */
-          fprintf(actout, "<td align=\"center\">");
-          if (allowdelete) {
-            fprintf(actout, "<a href=\"%s/com/deluser?user=%s&dom=%s&time=%d&deluser=%s\">",
-              CGIPATH,user,dom,mytime,pw->pw_name);
-            fprintf(actout, "<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
-          } else {
-            /* fprintf(actout, "<img src=\"%s/disabled.png\" border=\"0\">", IMAGEURL); */
-          }
-          fprintf(actout, "</td>");
+        /* display button to modify user */
+        qmail_button(uBufD, "moduser", pw->pw_name, "modify.png" );
+          
+        /* if the user has admin privileges and pw->pw_name is not 
+         * the user or postmaster, allow deleting 
+         */
+        if ((1 == 1 || AdminType==DOMAIN_ADMIN ) && 
+             strcmp(pw->pw_name, Username) != 0 &&
+             strcmp(pw->pw_name, "postmaster") != 0) {
+          allowdelete = 1;
 
-          /* display button in the 'set catchall' column */
-          fprintf(actout, "<td align=\"center\">");
-          if (bounced==0 && strncmp(pw->pw_name,TmpBuf3,sizeof(TmpBuf3)) == 0) {
-            fprintf(actout, "<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
-              IMAGEURL);
-          } else if (AdminType==DOMAIN_ADMIN) {
-            fprintf(actout, "<a href=\"%s/com/setdefault?user=%s&dom=%s&time=%d&deluser=%s&page=%s\">",
-              CGIPATH,user,dom,mytime,pw->pw_name,Pagenumber);
-            fprintf(actout, "<img src=\"%s/radio-off.png\" border=\"0\"></a>",
-              IMAGEURL);
-          } else {
-            fprintf(actout, "<img src=\"%s/disabled.png\" border=\"0\">",
-              IMAGEURL);
-          }
-          fprintf(actout, "</td>");
+        /* else, don't allow deleting */
+        } else {
+          allowdelete = 0;
+        }
 
-          fprintf(actout, "</tr>\n");
+        /* display trashcan for delete, or nothing if delete not allowed */
+        if (allowdelete) {
+          qmail_button(uBufE, "deluser", pw->pw_name, "trash.png" );
+        } else {
+          strcpy(uBufE, "&nbsp;");
+        }
+
+        /* display button in the 'set catchall' column */
+        if (strncmp(pw->pw_name,CurCatchall,sizeof(CurCatchall)) == 0) {
+          /*  Catchall name matches account name being displayed  */
+          qmail_icon(uBufF, "radio-on.png");
+
+        } else if (1==1 || AdminType==DOMAIN_ADMIN) {
+          /*  User is admin, so can edit / delete anyone  */
+          qmail_button(uBufF, "setdefault", pw->pw_name, "radio-off.png" );
+
+        } else {
+          /*  User can't delete  */
+          qmail_icon(uBufF, "disabled.png");
+
+        }
+
+        send_template_now("show_users_line.html" );
         }        
+
         pw = vauth_getall(dom,0,0);
         ++k;
       }
     }
 
-    if (AdminType == DOMAIN_ADMIN) {
-#ifdef USER_INDEX
-      fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-      fprintf(actout, "<td colspan=\"%i\" align=\"center\">", colspan);
-      fprintf(actout, "<hr>");
-      fprintf(actout, "<b>%s</b>", get_html_text("133"));
-      fprintf(actout, "<br>");
-      for (k = 97; k < 123; k++) {
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&searchuser=%c\">%c</a>\n",
-          CGIPATH,user,dom,mytime,k,k);
-      }
-      fprintf(actout, "<br>");
-      for (k = 0; k < 10; k++) {
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&searchuser=%d\">%d</a>\n",
-          CGIPATH,user,dom,mytime,k,k);
-      }
-      fprintf(actout, "</td>");
-      fprintf(actout, "</tr>\n");
-
-      fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-      fprintf(actout, "<td colspan=%i>", colspan);
-      fprintf(actout, "<table border=0 cellpadding=3 cellspacing=0 width=\"100%%\"><tr><td align=\"center\"><br>");
-      fprintf(actout, "<form method=\"get\" action=\"%s/com/showusers\">", 
-        CGIPATH);
-      fprintf(actout, "<input type=\"hidden\" name=\"user\" value=\"%s\">", 
-        user);
-      fprintf(actout, "<input type=\"hidden\" name=\"dom\" value=\"%s\">", 
-        dom);
-      fprintf(actout, "<input type=\"hidden\" name=\"time\" value=\"%d\">", 
-        mytime);
-      fprintf(actout, "<input type=\"text\" name=\"searchuser\" value=\"%s\">&nbsp;", SearchUser);
-      fprintf(actout, "<input type=\"submit\" value=\"%s\">", 
-        get_html_text("204"));
-      fprintf(actout, "</form>");
-      fprintf(actout, "</td></tr></table>");
-      fprintf(actout, "<hr>");
-      fprintf(actout, "</td></tr>\n");
-#endif
-
-      fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-      fprintf(actout, "<td colspan=\"%i\" align=\"right\">", colspan);
-#ifdef USER_INDEX
-      fprintf(actout, "<font size=\"2\"><b>");
-      fprintf(actout, "[&nbsp;");
-      /* only display "previous page" if pagenumber > 1 */
-      if (atoi(Pagenumber) > 1) {
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
-          CGIPATH,user,dom,mytime,
-          atoi(Pagenumber)-1 ? atoi(Pagenumber)-1 : atoi(Pagenumber), 
-          get_html_text("135"));
-        fprintf(actout, "&nbsp;|&nbsp");
-      }
-/*
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&page=%s\">%s</a>",
-            CGIPATH,user,dom,mytime,Pagenumber,get_html_text("136"));
-*/
-
-      if (moreusers && atoi(Pagenumber) < totalpages) {
-        fprintf(actout,"<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
-          CGIPATH,user,dom,mytime,atoi(Pagenumber)+1,
-          get_html_text("137"));
-        fprintf(actout, "&nbsp;|&nbsp");
-      }
-/*        fprintf(actout, "&nbsp;|&nbsp");*/
-#endif
-      fprintf(actout, "<a href=\"%s/com/deleteall?user=%s&dom=%s&time=%d\">%s</a>", 
-        CGIPATH,user,dom,mytime,get_html_text("235"));
-      fprintf(actout, "&nbsp;|&nbsp");
-      fprintf(actout, "<a href=\"%s/com/bounceall?user=%s&dom=%s&time=%d\">%s</a>", 
-        CGIPATH,user,dom,mytime,get_html_text("134"));
-      fprintf(actout, "&nbsp;|&nbsp");
-      fprintf(actout, "<a href=\"%s/com/setremotecatchall?user=%s&dom=%s&time=%d\">%s</a>", 
-        CGIPATH,user,dom,mytime,get_html_text("206"));
-      fprintf(actout, "&nbsp]");
-      fprintf(actout, "</b></font>");
-      fprintf(actout, "</td></tr>\n");
+    return 0;
   }
-  return 0;
-}
 
-adduser()
-{
-  count_users();
-  load_limits();
+  adduser()
+  {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -337,12 +230,14 @@ adduser()
 
 moduser()
 {
+
   if (!( AdminType==DOMAIN_ADMIN ||
         (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
     sprintf(StatusMessage,"%s", get_html_text("142"));
     vclose();
     exit(0);
   }
+
   send_template( "mod_user.html" );
 } 
 
@@ -371,9 +266,6 @@ addusernow()
   email = malloc(128);
   tmp = malloc(MAX_BUFF);
   arguments = (char **)malloc(MAX_BUFF);
-
-  count_users();
-  load_limits();
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -474,22 +366,43 @@ addusernow()
 #endif
     (mypw = vauth_getpw( Newu, Domain )) != NULL ) {
 
-    /* vadduser() in vpopmail 5.3.29 and later sets the default
-     * quota, so we only need to change it if the user enters
-     * something in the Quota field.
-     */
+    /* from the load_limits() function, set user flags */
+    /* These aren't default limits, they're domain limits.
+       They should not be applied to new accounts.
+    if( DisablePOP > 0 )     mypw->pw_gid |= NO_POP; 
+    if( DisableIMAP > 0 )    mypw->pw_gid |= NO_IMAP; 
+    if( DisableDialup > 0 )  mypw->pw_gid |= NO_DIALUP; 
+    if( DisablePasswordChanging > 0 ) mypw->pw_gid |= NO_PASSWD_CHNG; 
+    if( DisableWebmail > 0 ) mypw->pw_gid |= NO_WEBMAIL; 
+    if( DisableRelay > 0 )  mypw->pw_gid |= NO_RELAY; 
+    */
 
+    /* Once we're sure people are using vpopmail 5.3.29 or later,
+     * we can switch back to old code (that only sets quota if
+     * there's something in the field).
+     */
+    if (Limits.defaultquota > 0) {
+      if (Limits.defaultmaxmsgcount > 0)
+        snprintf(pw_shell, sizeof(pw_shell), "%dS,%dC", Limits.defaultquota, Limits.defaultmaxmsgcount);
+      else
+        snprintf(pw_shell, sizeof(pw_shell), "%dS", Limits.defaultquota);
+    } else {
+      strcpy(pw_shell, "NOQUOTA");
+    }
+
+    // Code added by jhopper
 #ifdef MODIFY_QUOTA
     if (strcmp (Quota, "NOQUOTA") == 0) {
-      vsetuserquota (Newu, Domain, "NOQUOTA");
+      strcpy (pw_shell, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
         sprintf(StatusMessage, get_html_text("314"));
       } else {
-        vsetuserquota (Newu, Domain, qconvert);
+        strcpy (pw_shell, qconvert);
       }
     }
 #endif
+    mypw->pw_shell = pw_shell;
 
 #ifdef MODIFY_SPAM
     GetValue(TmpCGI, spamvalue, "spamcheck=", sizeof(spamvalue));
@@ -501,13 +414,24 @@ addusernow()
     }
 #endif
 
-    /* report success */
-    sprintf(StatusMessage, "%s %s@%s (%s) %s",
-      get_html_text("002"), Newu, Domain, Gecos,
-      get_html_text("119"));
+    /* update the user information */
+    if ( vauth_setpw( mypw, Domain ) != VA_SUCCESS ) {
 
-  } else {
+      /* report error */
+      sprintf(StatusMessage, "%s %s@%s (%s) %s",
+        get_html_text("002"), Newu, Domain, Gecos,
+        get_html_text("120"));
+
+    } else {
+
+      /* report success */
+      sprintf(StatusMessage, "%s %s@%s (%s) %s",
+        get_html_text("002"), Newu, Domain, Gecos,
+        get_html_text("119"));
+      }
+
     /* otherwise, report error */
+  } else {
     sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }
@@ -620,18 +544,6 @@ delusergo()
   show_users(Username, Domain, Mytime);
 }
 
-count_users()
-{
- struct vqpasswd *pw;
-
-  CurPopAccounts = 0;
-  pw = vauth_getall(Domain,1,0);
-  while(pw!=NULL){
-    ++CurPopAccounts;
-    pw = vauth_getall(Domain,0,0);
-  }
-}
-
 setremotecatchall() 
 {
   send_template("setremotecatchall.html");
@@ -654,10 +566,13 @@ set_remote_catchall_now()
  FILE *fs;
 
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), ".qmail-default");
+    fprintf(stderr,"QmailAdmin: SRCN %s %s\n", 
+            get_html_text("144"), ".qmail-default");
+
   } else {
     fprintf(fs,"| %s/bin/vdelivermail '' %s\n",VPOPMAILDIR,Newu);
     fclose(fs);
+    strcpy(CurCatchall,Newu);
   }
   show_users(Username, Domain, Mytime);
   exit(0);
@@ -668,11 +583,13 @@ void bounceall()
  FILE *fs;
 
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), ".qmail-default");
+    fprintf(stderr,"QmailAdmin: BA %s %s\n", 
+            get_html_text("144"), ".qmail-default");
   } else {
     fprintf(fs,"| %s/bin/vdelivermail '' bounce-no-mailbox\n",VPOPMAILDIR);
     fclose(fs);
   }
+  strcpy(CurCatchall, get_html_text("130"));
   show_users(Username, Domain, Mytime);
   vclose();
   exit(0);
@@ -683,53 +600,16 @@ void deleteall()
  FILE *fs;
 
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), ".qmail-default");
+    fprintf(stderr,"QmailAdmin: DA %s %s\n", 
+            get_html_text("144"), ".qmail-default");
   } else {
     fprintf(fs,"| %s/bin/vdelivermail '' delete\n",VPOPMAILDIR);
     fclose(fs);
   }
+  strcpy(CurCatchall, get_html_text("303"));
   show_users(Username, Domain, Mytime);
   vclose();
   exit(0);
-}
-
-int get_catchall(void)
-{
- int i,j;
- FILE *fs;
-
-  /* Get the default catchall box name */
-  if ((fs=fopen(".qmail-default","r")) == NULL) {
-    fprintf(actout,"<tr><td colspan=\"5\">%s %s</td><tr>\n", 
-      get_html_text("144"), ".qmail-default");
-    vclose();
-    exit(0);
-  }
-  fgets( TmpBuf, sizeof(TmpBuf), fs);
-  fclose(fs);
-
-  if (strstr(TmpBuf, " bounce-no-mailbox\n") != NULL) {
-    fprintf(actout,"<b>%s</b>", get_html_text("130"));
-
-  } else if (strstr(TmpBuf, " delete\n") != NULL) {
-    fprintf(actout,"<b>%s</b>", get_html_text("236"));
-
-  } else if ( strstr(TmpBuf, "@") != NULL ) {
-    i=strlen(TmpBuf);
-    for(;TmpBuf[i]!=' ';--i);
-    fprintf(actout,"<b>%s %s</b>", get_html_text("062"), &TmpBuf[i]);
-
-  } else {
-    i = strlen(TmpBuf) - 1;
-    for(;TmpBuf[i]!='/';--i);
-    for(++i,j=0;TmpBuf[i]!=0;++j,++i) TmpBuf2[j] = TmpBuf[i];
-    TmpBuf2[j--] = '\0';
-
-    /* take off newline */
-    i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;/* take off newline */
-    fprintf(actout,"<b>%s %s</b>", get_html_text("062"), TmpBuf2);
-  }
-  return 0;
 }
 
 modusergo()
@@ -813,7 +693,7 @@ ActionUser, Domain ); */
   }
 
   /* check for the V_USERx flags and set accordingly */
-  /* James Raftery <james@now.ie>, 12 Dec. 2002 */
+  /* James Raftery {james@now.ie}, 12 Dec. 2002 */
   GetValue(TmpCGI,box, "zeroflag=", sizeof(box));
   if ( strcmp(box,"on") == 0 ) {
     vpw = vauth_getpw(ActionUser, Domain); 
@@ -989,7 +869,7 @@ ActionUser, Domain ); */
     fclose(fs);
 
   /* they want to blackhole */
-  /* James Raftery <james@now.ie>, 21 May 2003 */
+  /* James Raftery {james@now.ie}, 21 May 2003 */
   } else if (strcmp(box,"blackhole") == 0 ) {
 
     /* open the .qmail file */

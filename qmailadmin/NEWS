@@ -1,1 +1,57 @@
 See CHANGELOG
+
+NOTE:  QmailAdmin 1.3.0 may not run properly...  I still have 
+more changes to add!
+
+The following information relates to a large block of changes
+that Rick Widmer added right before the final release of 1.2.0.
+I built up a large number of changes and will commit them in 
+batches, in the same order they were created.
+
+
+#################################################################
+
+Changes from  040107 :
+
+Move all use of global TmpBuf* to function local Buffer*.
+
+Move as much HTML as possible out of c into templates.
+
+Don't pass so much stuff to QmailButton.  Much of this will 
+be moved to the session file.  For now use global variables.
+
+Replace  vclose();  exit(0);  with return() so the program can
+ALWAYS call header and footer.
+
+Replace all calls to count_*() and load_limits() with a single
+call to count_stuff().
+
+Increase efficiency of reading Autoresponder Message File by making
+the file static, and adding a flag that tells if it is properly 
+set to read the actual text.  (This will usually happen.)
+
+Change various field names that are passed from fields that end up 
+in the moduser variable.  All become modu.  Old values include: 
+moduser, deluser, maybe others.
+
+Re-order a number of variable declarations in qmailadmin.c so they 
+match the order and spacing in qmailadminx.h.
+
+Send errors the sys admin might be interested in to error_log. 
+(stderr)
+
+Move 'F' code from template.c to autorespond.c
+
+Delete obsolete template tags: b, f, h, l, m, n, O 
+
+Add new tags: u - stuff for single line templates 
+              W - common variables to add to a URL
+
+Drastic changes to check_mailbox_flags so it only reads the
+.qmail file once.
+
+Provide tags for ##t with the opposite meaning.  For example
+##th is skipped if HELP is not defined.  I have added ##tH that
+is skipped if HELP is defined.  h and H have opposite meanings.
+
+Move much of the function of V into a template file - version.html

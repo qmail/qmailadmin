@@ -95,7 +95,7 @@
 127 New Forward
 128 New Mail Robot
 129 New Mailing List
-130 CatchAll: Bounced
+130 <b>Bounced</b>
 131 No users left to view, please return to the previous page
 132 Default
 133 Index:
@@ -201,7 +201,7 @@
 233 No Mail Robots to Display
 234 Please enter a password
 235 Set catchall email deleted 
-236 CatchAll: Deleted
+236 <b>Deleted</b>
 237 Add<br>Digest Subscriber
 238 Delete<br>Digest Subscriber
 239 Show<br>Digest Subscribers

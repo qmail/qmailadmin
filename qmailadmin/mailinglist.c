@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5 2003-12-04 15:22:33 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.6 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,6 @@ int show_mailing_lists(char *user, char *dom, time_t mytime)
   }
 
   /* see if there's anything to display */
-  count_mailinglists();
    if ( CurMailingLists == 0 ) {
     sprintf(StatusMessage,"%s", get_html_text("231"));
     show_menu();
@@ -81,36 +80,16 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
     vclose();
     exit(0);
   }
-
    if ( MaxMailingLists == 0 ) {
     return(0);
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout,"<tr><td>%s %d</tr><td>", get_html_text("143"), 1);
-    return(0);
+    fprintf(stderr,"QmailAdmin: %s %s", 
+            get_html_text("143"), "domain directory");
+    return(143);
   }
 
-  /* First display the title row */
-  fprintf(actout, "<tr bgcolor=\"#cccccc\">");
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("072"));
-#ifdef EZMLMIDX
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("071"));  
-#endif
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("081"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("083"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("084"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("085"));
-#ifdef EZMLMIDX
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("086"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("087"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("088"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("237"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("238"));
-  fprintf(actout, "<th align=center><font size=2>%s</font></th>", get_html_text("239"));
-#endif
-  fprintf(actout, "</tr>\n");
- 
   sort_init();
 
   /* Now, display each list */
@@ -118,10 +97,12 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
 #ifdef EZMLMIDX
-        fprintf(actout, "<tr><td colspan=12>%s %s</td></tr>\n", get_html_text("144"), mydirent->d_name);
+        strcpy(uBufA, "12");
 #else
-        fprintf(actout, "<tr><td colspan=5>%s %s</td></tr>\n", get_html_text("144"), mydirent->d_name);
+        strcpy(uBufA, "5");
 #endif
+        sprintf(uBufB, "SMLL %s %s\n", get_html_text("144"), mydirent->d_name);
+        send_template_now("show_error_line.html");
         continue;
       }
       fgets(TmpBuf2, sizeof(TmpBuf2), fs);
@@ -139,35 +120,34 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
     /* convert ':' in addr to '.' */
     str_replace (addr, ':', '.');
 
-    fprintf(actout,"<tr>");
-    qmail_button(addr, "delmailinglist", user, dom, mytime, "trash.png");
+    qmail_button(uBufA, "delmailinglist", addr, "trash.png");
 
 #ifdef EZMLMIDX
-    qmail_button(addr, "modmailinglist", user, dom, mytime, "modify.png");
+    qmail_button(uBufB, "modmailinglist", addr, "modify.png");
 #endif
-    fprintf(actout,"<td align=left>%s</td>\n", addr); 
+    sprintf(uBufC,"%s\n", addr); 
 
-    qmail_button(addr, "addlistuser", user, dom, mytime, "delete.png");
-    qmail_button(addr, "dellistuser", user, dom, mytime, "delete.png");
-    qmail_button(addr, "showlistusers", user, dom, mytime, "delete.png");
+    qmail_button(uBufD, "addlistuser", addr, "delete.png");
+    qmail_button(uBufE, "dellistuser", addr, "delete.png");
+    qmail_button(uBufF, "showlistusers", addr, "delete.png");
 
 #ifdef EZMLMIDX
-    qmail_button(addr, "addlistmod", user, dom, mytime, "delete.png");
-    qmail_button(addr, "dellistmod", user, dom, mytime, "delete.png");
-    qmail_button(addr, "showlistmod", user, dom, mytime, "delete.png");
+    qmail_button(uBufG, "addlistmod", addr, "delete.png");
+    qmail_button(uBufH, "dellistmod", addr, "delete.png");
+    qmail_button(uBufI, "showlistmod", addr, "delete.png");
 
     /* Is it a digest list? */
     if ( (fs=fopen(testfn,"r"))==NULL) {
       /* not a digest list */
       fprintf (actout, "<TD COLSPAN=3> </TD>");
     } else {
-      qmail_button(addr, "addlistdig", user, dom, mytime, "delete.png");
-      qmail_button(addr, "dellistdig", user, dom, mytime, "delete.png");
-      qmail_button(addr, "showlistdig", user, dom, mytime, "delete.png");
+      qmail_button(uBufJ, "addlistdig", addr, "delete.png");
+      qmail_button(uBufK, "dellistdig", addr, "delete.png");
+      qmail_button(uBufL, "showlistdig", addr, "delete.png");
       fclose(fs);
     }
 #endif
-    fprintf(actout, "</tr>\n");
+  send_template_now("show_mailinglist_line.html");
   }
   sort_cleanup();
 }
@@ -204,8 +184,8 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout,"%s %d<BR>\n", get_html_text("143"), 1);
-    return(0);
+    fprintf(stderr,"%s %s\n", get_html_text("143"), "domain directory");
+    return(143);
   }
 
   listcount = 0;
@@ -214,8 +194,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   while( (mydirent=readdir(mydir)) != NULL ) {
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout,"%s %s<br>\n",
-          get_html_text("144"), mydirent->d_name);
+        fprintf(stderr,"SMLL3 %s %s\n", get_html_text("144"), mydirent->d_name);
         continue;
       }
       fgets( TmpBuf2, sizeof(TmpBuf2), fs);
@@ -234,38 +213,31 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
     return 0;
   }
 
-  fprintf(actout,"<hr><table width=100%% cellpadding=1 cellspacing=0 border=0");
-  fprintf(actout," align=center bgcolor=\"#000000\"><tr><td>");
-  fprintf(actout,"<table width=100%% cellpadding=0 cellspacing=0 border=0 bgcolor=\"#e6e6e6\">");
-  fprintf(actout,"<tr><th bgcolor=\"#000000\" colspan=2>");
-  fprintf(actout,"<font color=\"#ffffff\">%s</font></th>\n", 
-    get_html_text("095"));
-
   sort_dosort();
 
   fprintf(actout, "<INPUT NAME=number_of_mailinglist TYPE=hidden VALUE=%d>\n", listcount);
-  for (i = 0; i < listcount; ++i)
-  {
+  for (i = 0; i < listcount; ++i) {
     addr = sort_get_entry(i);
     str_replace (addr, ':', '.');
-    fprintf(actout,"<TR><TD ALIGN=RIGHT><INPUT NAME=\"subscribe%d\" TYPE=checkbox VALUE=%s></TD>", i, addr);
-    fprintf(actout,"<TD align=LEFT>%s@%s</TD></TR>", addr, Domain);
+    sprintf(uBufA,"%d", i);
+    sprintf(uBufB,"%s", addr);
+    sprintf(uBufC,"%s@%s", addr, Domain);
+    send_template_now("show_mailinglist_line2.html");
   }
-  fprintf(actout,"</table></td></tr></table>\n");
+
   sort_cleanup();
 }
 
 
 int addmailinglist(void)
 {
+
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
     vclose();
     exit(0);
   }
 
-  count_mailinglists();
-  load_limits();
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
     fprintf(actout, "%s %d\n", get_html_text("184"), 
       MaxMailingLists);
@@ -343,7 +315,6 @@ int delmailinglistnow(void)
   sprintf(TmpBuf2, "%s/%s", RealDir, ActionUser);
   vdelfiles(TmpBuf2);
 
-    count_mailinglists();
   sprintf(StatusMessage, "%s %s\n", get_html_text("186"), ActionUser);
     if ( CurMailingLists == 0 ) {
         show_menu();
@@ -357,6 +328,7 @@ int delmailinglistnow(void)
  * designed to be called by ezmlm_make() (after calling ezmlm-make)
  * Replaces the "Reply-To" line in <filename> with <newtext>.
  */
+
 void ezmlm_setreplyto (char *filename, char *newtext)
 {
   FILE *headerfile, *temp;
@@ -590,8 +562,6 @@ ezmlm_make (int newlist)
 
 int addmailinglistnow(void)
 {
-  count_mailinglists();
-  load_limits();
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
     fprintf(actout, "%s %d\n", get_html_text("184"),
       MaxMailingLists);
@@ -751,6 +721,7 @@ addlistgroup (char *template)
     vclose();
     exit(0);
   }
+
   send_template(template);
 }
 
@@ -885,38 +856,6 @@ dellistusernow() { dellistgroupnow(0); }
 dellistmodnow() { dellistgroupnow(1); }
 dellistdignow() { dellistgroupnow(2); }
 */
-
-count_mailinglists()
-{
- DIR *mydir;
- struct dirent *mydirent;
- FILE *fs;
-
-  if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout,"%s %d<BR>\n", get_html_text("143"), 1);
-    fprintf(actout,"</table>");
-    return(0);
-  }
- 
-
-  CurMailingLists = 0;
-  while( (mydirent=readdir(mydir)) != NULL ) {
-    if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
-      if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout, get_html_text("144"), 
-          mydirent->d_name);
-        continue;
-      }
-      fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-      if ( strstr( TmpBuf2, "ezmlm-reject") != 0 ) {
-        ++CurMailingLists;
-      }
-      fclose(fs);
-    }
-  }
-  closedir(mydir);
-
-}
 
 modmailinglist()
 {

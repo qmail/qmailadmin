@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4 2004-01-07 15:36:26 tomcollins Exp $
+ * $Id: util.c,v 1.5 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,162 @@ unsigned char **sort_list;
 unsigned char *sort_block[200]; /* memory blocks for sort data */
 int memleft, memindex, sort_entry;
 char *sort_ptr;
+
+
+int count_stuff(void)
+{
+
+
+ DIR *mydir;
+ struct dirent *mydirent;
+ struct stat mystat;
+ FILE *fs;
+ char *alias_name_from_command;
+ char mailinglist_name[MAX_FILE_NAME];
+ char Buffer[MAX_BUFF];
+ int i,j;
+
+ struct vqpasswd *pw;
+
+  fprintf( stderr, "Count Stuff\n" );
+
+  /*   Count the Pop Accounts   */
+  pw = vauth_getall(Domain,1,0);
+  while(pw!=NULL){
+    ++CurPopAccounts;
+    pw = vauth_getall(Domain,0,0);
+  }
+
+  fprintf( stderr, "Count Stuff after count pop %d\n", CurPopAccounts );
+
+  /*   Get limits data from vpopmail   */
+  vget_limits(Domain, &Limits);
+  MaxPopAccounts = Limits.maxpopaccounts;
+  MaxAliases = Limits.maxaliases;
+  MaxForwards = Limits.maxforwards;
+  MaxAutoResponders = Limits.maxautoresponders;
+  MaxMailingLists = Limits.maxmailinglists;
+
+  DisablePOP = Limits.disable_pop;
+  DisableIMAP = Limits.disable_imap;
+  DisableDialup = Limits.disable_dialup;
+  DisablePasswordChanging = Limits.disable_passwordchanging;
+  DisableWebmail = Limits.disable_webmail;
+  DisableRelay = Limits.disable_relay;
+
+  fprintf( stderr, "Count Stuff after set limits\n" );
+
+  /*   scan the domain directory for .qmail files  */
+  if ( (mydir = opendir(".")) == NULL ) { 
+    /*  If we can't open the domain directory  */
+    /*  This is a BIG problem.  Should show error, */
+    /*  paint the footer file and die.  */
+    fprintf( stderr, "QmailAdmin: Can't open domian directory\n" );
+    return(143);
+  }
+
+  /*  Scan the directory for .qmail files  */
+  while ((mydirent=readdir(mydir)) != NULL) {
+
+    fprintf(stderr,"Checking: %s\n", mydirent->d_name);  
+
+    if ( strncmp(".qmail-", mydirent->d_name, 7) != 0 ) {
+      /*  It is not a .qmail file   */
+      fprintf(stderr,"not .qmail file\n");   
+      continue;
+    }
+
+    if (!lstat(mydirent->d_name, &mystat) && S_ISLNK(mystat.st_mode)) {
+      /*  It is a symlink, probably a mailing list  */
+
+      if ( strncmp("-owner", mydirent->d_name, 7) != 0 ) {
+        /*  If we only count the -owner link, the count  */
+        /*  should come out right.  */
+        ++CurMailingLists;
+      }
+      fprintf(stderr,"mail list file\n");   
+      continue;
+    } 
+
+    if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
+      /*  Unable to open a .qmail file  */
+      continue;
+    } 
+
+    /*  Read the first line of the .qmail file  */
+    memset(Buffer, 0, sizeof(Buffer));
+    fgets(Buffer, sizeof(Buffer), fs);
+
+    /*  Decide what kind of account it is  */
+    if (*Buffer == '#') {
+      fprintf(stderr,"Blackhole\n");   
+      CurBlackholes++;
+
+    } else if ( strstr( Buffer, "autorespond") != 0 ) {
+      fprintf(stderr,"Autoresponder\n");   
+      CurAutoResponders++;
+
+    } else if (*Buffer != '|' ) {
+      fprintf(stderr,"Forward\n");   
+      CurForwards++;
+
+    }
+
+    fclose(fs);
+  }
+
+  closedir(mydir);
+
+  /* Get the default catchall box name */
+  fprintf( stderr, "This is a test\n" );
+  if ((fs=fopen(".qmail-default","r")) == NULL) {
+    /* report error opening .qmail-default and exit */
+    fprintf( stderr, "show_user_lines can't open default file\n" );
+    sprintf( CurCatchall, "Can't open .qmail-default file" );
+    
+
+  } else {
+    fgets( Buffer, sizeof(Buffer), fs);
+    fclose(fs);
+
+    fprintf( stderr, ".qmail-default: %s\n", Buffer);
+
+    if (strstr(Buffer, " bounce-no-mailbox\n") != NULL) {
+      sprintf(CurCatchall,"%s", get_html_text("130"));
+
+    } else if (strstr(Buffer, " delete\n") != NULL) {
+      sprintf(CurCatchall,"%s", get_html_text("236"));
+
+    } else if ( strstr(Buffer, "@") != NULL ) {
+      /* check for local user to forward to */
+      if (strstr(Buffer, Domain) != NULL) {
+        i = strlen(Buffer); --i; Buffer[i] = 0; /* take off newline */
+        for(;Buffer[i]!=' ';--i);
+        for(j=0,++i;Buffer[i]!=0 && Buffer[i]!='@';++j,++i) 
+           CurCatchall[j] = Buffer[i];
+        CurCatchall[j]=0;
+      }
+
+    } else {
+      /* Maildir type catchall */
+      i = strlen(Buffer); --i; Buffer[i] = 0; /* take off newline */
+      for(;Buffer[i]!='/';--i);
+      for(j=0,++i;Buffer[i]!=0;++j,++i) CurCatchall[j] = Buffer[i];
+      CurCatchall[j]=0;
+    }
+
+    fprintf( stderr, "CurCatchall: %s\n", CurCatchall);
+
+    return 0;
+  }
+
+  fprintf( stderr, "Blackholes: %d Lists; %d Robots: %d Forwards: %d Users %d Catchall: %s\n", CurBlackholes, CurMailingLists, CurAutoResponders, CurForwards, CurPopAccounts, CurCatchall);
+           
+  return 0;
+}
+
+
+/***********************************************************/
 
 int sort_init ()
 {
@@ -100,13 +256,27 @@ void str_replace (char *s, char orig, char repl)
   }
 }
 
-void qmail_button(char *modu, char *command, char *user, char *dom, time_t mytime, char *png)    
+char qmail_icon(char *rv, char *png)    
 {
-  fprintf(actout, "<td align=center>");
-  fprintf(actout, "<a href=\"%s/com/%s?user=%s&dom=%s&time=%d&modu=%s\">",
-    CGIPATH, command, user, dom, mytime, modu);
-  fprintf(actout, "<img src=\"%s/%s\" border=0></a>", IMAGEURL, png);
-  fprintf(actout, "</td>\n");
+
+  sprintf(rv, "<img src=\"%s/%s\" border=0>", IMAGEURL, png);
+
+}
+
+char qmail_button(char *rv, char *command, char *modu, char *png)    
+{
+ char Buffer[MAX_BUFF];
+ char Image[MAX_BUFF];
+
+  sprintf(Buffer, "<a href=\"%s/com/%s?user=%s&dom=%s&time=%d&modu=%s\">",
+    CGIPATH, command, Username, Domain, Mytime, modu);
+/*
+  sprintf(rv, "<a href=\"%s/com/%s?user=%s&dom=%s&time=%d&modu=%s\"><img src=\"%s/%s\" border=0></a>", 
+    CGIPATH, command, Username, Domain, Mytime, modu, IMAGEURL, png);
+*/
+  qmail_icon(Image, png);
+  sprintf(rv, "%s%s</a>", Buffer, Image );
+
 }
 
 check_local_user( user )
@@ -130,15 +300,12 @@ check_local_user( user )
 
 show_counts()
 {
-  count_users();
-  count_forwards();
-  count_autoresponders();
-  count_mailinglists();
+  fprintf(stderr, "show_counts\n" );
 
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("061"), CurPopAccounts);
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("074"), CurForwards);
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("077"), CurAutoResponders);
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("080"), CurMailingLists);
+  sprintf(uBufA, "%d", CurPopAccounts);
+  sprintf(uBufB, "%d", CurForwards);
+  sprintf(uBufC, "%d", CurAutoResponders);
+  sprintf(uBufD, "%d", CurMailingLists);
 }
 
 check_email_addr( addr )
@@ -203,15 +370,17 @@ fixup_local_name( addr )
   return(0);
 }
 
+/*    Delete this because we are always going to send the footer.   */
 ack(msg, c)
  char *msg;
  int c;
 {
   fprintf(actout,"%s\n", msg);
-  fprintf(actout,"</BODY></HTML>\n", msg);
+  fprintf(actout,"[/BODY][/HTML]\n", msg);
   vclose();
   exit(0);
 }
+
 
 upperit( instr )
  char *instr;
@@ -281,12 +450,9 @@ int open_lang(char *lang)
   return(0);
 }
 
-/* It's a good thing qmailadmin is a cgi script, because this
-   function leaks memory.  That's OK though, Tom has plans
-   for rewriting the html_text stuff soon. */
 char *get_html_text( char *index )
 {
- char *tmpbuf;
+ static char *tmpbuf;
  char *tmpstr;
 
   tmpbuf = malloc(400);
@@ -306,7 +472,7 @@ char *get_html_text( char *index )
 
 int open_colortable()
 {
- char tmpbuf[200];
+ static char tmpbuf[200];
  char *tmpstr;
 
   tmpstr = getenv(QMAILADMIN_TEMPLATEDIR);
@@ -336,7 +502,8 @@ char *get_color_text( char *index )
 }
 /* bk - use maildir++ quotas now
 char *get_quota_used(char *dir) {
-    static char tmpbuff[40];
+    char *tmpstr;
+    static char tmpbuff[MAX_BUFF];
     double size;
 
     size = get_du(dir);
@@ -344,7 +511,8 @@ char *get_quota_used(char *dir) {
         size = size / 1048576; 
     }
     sprintf(tmpbuff, "%.2lf", size);
-    return tmpbuff;
+    tmpstr = tmpbuff;
+    return tmpstr;
 }
 */
 /* quota_to_bytes: used to convert user entered quota (given in MB)

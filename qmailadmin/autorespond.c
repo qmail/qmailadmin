@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.3 2004-01-13 06:28:34 tomcollins Exp $
+ * $Id: autorespond.c,v 1.4 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,9 @@
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 
+static int FileReady=0;
+static FILE *MessageFile=NULL;
+
 show_autoresponders(user,dom,mytime,dir)
  char *user;
  char *dom;
@@ -38,8 +41,6 @@ show_autoresponders(user,dom,mytime,dir)
  char *dir;
 {
   if ( MaxAutoResponders == 0 ) return(0);
-
-  count_autoresponders();
 
   if(CurAutoResponders == 0) {
     sprintf(StatusMessage,"%s", get_html_text("233"));
@@ -58,9 +59,8 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
  int i,j;
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout, "<tr><td colspan=\"3\">%s %d</td></tr>\n", 
-      get_html_text("143"), 1);
-    return 0;
+    fprintf(stderr, "%s\n", get_html_text("143"));
+    return 143;
   }
 
   sort_init();
@@ -69,8 +69,9 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
     /* does name start with ".qmail-" ? */
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout, "<tr><td colspan=\"3\">%s %s</td></tr>\n", 
-         get_html_text("144"), mydirent->d_name);
+        strcpy(uBufA, "3");
+        sprintf(uBufB, "SAL %s %s\n", get_html_text("144"), mydirent->d_name);
+        send_template_now("show_error_line.html");
         continue;
       }
 
@@ -86,24 +87,10 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
   sort_dosort();
 
   for (i = 0; addr = sort_get_entry(i); ++i) {
-    str_replace (addr, ':', '.');
-    fprintf(actout, "<tr>");
-    
-    fprintf(actout, "<td align=\"center\">");
-    fprintf(actout, "<a href=\"%s/com/delautorespond?user=%s&dom=%s&time=%d&modu=%s\">",
-      CGIPATH,user,dom,mytime,addr);
-    fprintf(actout, "<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
-    fprintf(actout, "</td>");
-
-    fprintf(actout, "<td align=\"center\">");
-    fprintf(actout, "<a href=\"%s/com/modautorespond?user=%s&dom=%s&time=%d&modu=%s\">",
-      CGIPATH,user,dom,mytime,addr);
-    fprintf(actout, "<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
-    fprintf(actout, "</td>");
-
-    fprintf(actout, "<td align=\"left\">%s@%s</td>", addr, Domain);
-    
-    fprintf(actout, "</tr>\n");
+    qmail_button(uBufA, "delautorespond", addr, "Buffer.png" );
+    qmail_button(uBufB, "modautorespond", addr, "modify.png" );
+    sprintf(uBufC, "%s@%s", addr, Domain);
+    send_template_now("show_autorespond_line.html");
   }
   sort_cleanup();
 }
@@ -117,8 +104,6 @@ addautorespond()
     exit(0);
   }
 
-  count_autoresponders();
-  load_limits();
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
     fprintf(actout, "%s %d\n", get_html_text("158"), MaxAutoResponders);
     show_menu();
@@ -142,8 +127,6 @@ addautorespondnow()
     exit(0);
   }
 
-  count_autoresponders();
-  load_limits();
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
     fprintf(actout, "%s %d\n", get_html_text("158"), MaxAutoResponders);
     show_menu();
@@ -278,8 +261,6 @@ delautorespondnow()
   vdelfiles(TmpBuf);
   sprintf(StatusMessage, "%s %s\n", get_html_text("182"), ActionUser);
 
-  count_autoresponders();
-
   if(CurAutoResponders == 0) {
     show_menu(Username, Domain, Mytime);
   } else {
@@ -289,12 +270,96 @@ delautorespondnow()
 
 modautorespond()
 {
+ char fqfn[MAX_BUFF];
+ char Buffer[MAX_BUFF];
+ char Subj[MAX_BUFF];
+ FILE *fs;
+ int i,j;
+
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
     vclose();
     exit(0);
   }
+
+  /*  Build the .qmail file name  */
+  sprintf(fqfn, ".qmail-%s", ActionUser);
+
+  /*  Change '.' to ':' to follow .qmail file name rules  */
+  for (i=6; fqfn[i] != 0; ++i) {
+    if (fqfn[i] == '.') fqfn[i] = ':';
+  }
+
+  /*  Open the .qmail file  */
+  if ((fs=fopen(fqfn, "r")) == NULL) {
+    /*  open failed  */
+    ack("123", 123);
+  }
+
+  /*  Discard the first line  */
+  fgets(Buffer, sizeof(Buffer), fs);
+
+  /*  Read the second line - forward */
+  if (fgets(Buffer, sizeof(Buffer), fs)) {
+
+    /* See if it's a Maildir path or full address */
+    i = strlen(Buffer) - 2;
+    if (Buffer[i] == '/') {
+      /*  Maildir path  */
+      --i;
+      for(; Buffer[i] != '/'; --i);
+      --i;
+      for(;Buffer[i]!='/';--i);
+      for(++i, j=0; Buffer[i] != '/'; ++j,++i) {
+        uBufA[j] = Buffer[i];
+      }
+      uBufA[j] = '\0';
+
+    } else {
+      /* Full Address - take off newline */
+      i = strlen(Buffer); --i; Buffer[i] = 0;
+      strcpy(uBufA, Buffer);
+    }
+  } 
+
+  /*  close .qmail file  */
+  fclose(fs);
+
+  /*  Now look at the message file  */
+
+  /*  Build the message file name  */
+  strcpy(Buffer, ActionUser);
+  upperit(Buffer);
+  sprintf(fqfn, "%s/message", Buffer);
+
+  /*  Open the message file  */
+  if ((MessageFile = fopen(fqfn, "r")) == NULL) { 
+    ack("123", 123);
+  }
+
+  /*  Discard the From line  */
+  fgets(Buffer, sizeof(Buffer), MessageFile);
+
+  /*  Read the Subject  */
+  fgets(uBufA, sizeof(uBufB), MessageFile);
+
+  /*  Discard blank line  */
+  fgets(Buffer, sizeof(Buffer), MessageFile);
+  FileReady=1;
+
   send_template( "mod_autorespond.html" );
+
+  fclose( MessageFile );
+}
+
+
+int display_robot_message() 
+{
+ char Buffer[MAX_BUFF];
+
+  while (fgets(Buffer, sizeof(TmpBuf2), MessageFile)) {
+    fprintf(actout, "%s", Buffer);
+  }
 }
 
 
@@ -382,38 +447,4 @@ modautorespondnow()
    */
   sprintf(StatusMessage, "%s %s@%s\n", get_html_text("183"),ActionUser,Domain);
   show_autoresponders(Username, Domain, Mytime);
-}
-
-count_autoresponders()
-{
- DIR *mydir;
- struct dirent *mydirent;
- FILE *fs;
- char mailinglist_name[MAX_FILE_NAME];
- int i,j;
-
-  if ( (mydir = opendir(".")) == NULL ) { 
-    fprintf(actout,"%s %d<BR>\n", get_html_text("143"), 1);
-    fprintf(actout,"</table>");
-    return(0);
-  }
-
-  CurAutoResponders = 0;
-  while( (mydirent=readdir(mydir)) != NULL ) {
-    /* does name start with ".qmail-" ? */
-    if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
-      if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout,"%s %s<br>\n", get_html_text("144"),
-          mydirent->d_name);
-        continue;
-      }
-      fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-      if ( strstr( TmpBuf2, "autorespond") != 0 ) {
-        ++CurAutoResponders;
-      }
-      fclose(fs);
-    }
-  }
-  closedir(mydir);
-
 }

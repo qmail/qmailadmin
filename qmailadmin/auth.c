@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3 2004-01-14 15:59:50 tomcollins Exp $
+ * $Id: auth.c,v 1.4 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify

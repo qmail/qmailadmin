@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4 2004-01-14 21:23:25 tomcollins Exp $
+ * $Id: alias.c,v 1.5 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  DIR *mydir;
  struct dirent *mydirent;
  FILE *fs;
+ char Buffer[MAX_BUFF];
  char alias_user[MAX_BUFF];
  char alias_name[MAX_FILE_NAME];
  char *alias_domain;
@@ -82,9 +83,9 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
   k=0;
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout,"<tr><td colspan=\"4\">");
-    fprintf(actout,"%s %d", get_html_text("143"), 1);
-    fprintf(actout,"</td></tr>");
+    strcpy(uBufA, "4");
+    sprintf(uBufB, "%s %d", get_html_text("143"), 1);
+    send_template_now("show_error_line.html");
     return(0);
   }
 
@@ -111,9 +112,9 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       }
 
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout,"<tr><td colspan=4>");
-        fprintf(actout,"%s %s", get_html_text("144"), mydirent->d_name);
-        fprintf(actout,"</td></tr>\n");
+        strcpy(uBufA, "4");
+        sprintf(uBufB, "SDQL %s %s", get_html_text("144"), mydirent->d_name);
+        send_template_now("show_error_line.html");
         continue;
       }
       for(i=7,j=0;j<MAX_FILE_NAME-1&&mydirent->d_name[i]!=0;++i,++j) {
@@ -133,21 +134,22 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       if ( alias_name_from_command != NULL || *TmpBuf2 == '#') {
         stop=0;
 
-        fprintf(actout, "<tr>\n");
-        qmail_button (alias_name, "deldotqmail", user, dom, mytime, "trash.png");
+        qmail_button(uBufA, "deldotqmail", alias_name, "trash.png");
+
         if (*TmpBuf2 == '#')
-          fprintf(actout, "<td> </td>");   /* don't allow modify on blackhole */
+          strcpy( uBufB, "&nbsp;");
         else
-          qmail_button (alias_name, "moddotqmail", user, dom, mytime, "modify.png");
-        fprintf(actout, "<td align=left>%s</td>\n", alias_name);
-        fprintf(actout, "<td align=left>");
+          qmail_button(uBufB, "moddotqmail", alias_name, "modify.png");
+
+        sprintf(uBufC, "%s", alias_name);
 
         if (*TmpBuf2 == '#') {
           /* this is a blackhole account */
-          fprintf (actout, "<I>%s</I>", get_html_text("303"));
+          sprintf (Buffer, "%s", get_html_text("303"));
           stop = 1;
         }
         while (!stop) {
+
           alias_name_from_command = dotqmail_alias_command(TmpBuf2);
                 
           /* check to see if it is an invalid line , 
@@ -182,14 +184,15 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
                 
           if (fgets(TmpBuf2, sizeof(TmpBuf2), fs) == NULL) {
             stop=1;
-            fprintf(actout, "%s ", alias_user);
+            sprintf(Buffer, "%s%s ", Buffer, alias_user);
           } else {
-            fprintf(actout, "%s, ", alias_user);
+            sprintf(Buffer, "%s%s, ", Buffer, alias_user);
           }
+
         }
-        fprintf(actout, "</td>\n");
-                
-        fprintf(actout, "</tr>\n");
+        strcpy(uBufD, Buffer);
+        strcpy(Buffer, "");
+        send_template_now("show_forwards_line.html");
       }
       fclose(fs);
       k++;
@@ -201,24 +204,6 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
     free(namelist[m]);
   free(namelist);
 
-  if (AdminType == DOMAIN_ADMIN) {
-    fprintf(actout, "<tr><td align=\"right\" colspan=\"4\">");
-    fprintf(actout, "[&nbsp;");
-    if(atoi(Pagenumber) > 1 ) {
-      fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,atoi(Pagenumber)-1?atoi(Pagenumber)-1:atoi(Pagenumber),get_html_text("135"));
-      fprintf(actout, "&nbsp;|&nbsp;");
-    }
-    fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%s\">%s</a>",
-      CGIPATH,user,dom,mytime,Pagenumber,get_html_text("136"));
-    fprintf(actout, "&nbsp;|&nbsp;");
-    if (moreusers) {
-      fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,atoi(Pagenumber)+1,get_html_text("137"));    
-      fprintf(actout, "&nbsp;]");
-    }
-    fprintf(actout, "</td></tr>");                                    
-  }
 }
 
 /* 
@@ -251,14 +236,10 @@ int show_dotqmail_file(char *user)
   }
 
   if ( (fs=fopen(dot_file,"r"))==NULL) {
-    sprintf(StatusMessage,"%s %s<br>\n", get_html_text("144"), dot_file);
-    vclose();
-    exit(0);
+    sprintf(StatusMessage,"SDQF %s %s<br>\n", get_html_text("144"), dot_file);
+    return(144);
   }
                 
-  fprintf(actout, "<tr>");
-  fprintf(actout, "<td align=\"center\" valign=\"top\"><b>%s</b></td>", user);
-    
   memset(TmpBuf2, 0, sizeof(TmpBuf2));
 
   while (fgets( TmpBuf2, sizeof(TmpBuf2), fs) != NULL) {
@@ -286,34 +267,7 @@ int show_dotqmail_file(char *user)
                   alias_name_from_command);
        }
     }
-    fprintf(actout, "<td align=\"center\" valign=\"top\">%s</td>\n", alias_user);
-    fprintf(actout, "<td align=\"center\" valign=\"top\">\n");
-    fprintf(actout, "<form method=\"post\" name=\"moddotqmail\" action=\"%s/com/moddotqmailnow\">\n", CGIPATH);
-    fprintf(actout, "<input type=\"hidden\" name=\"user\" value=\"%s\">\n",
-      Username);
-    fprintf(actout, "<input type=\"hidden\" name=\"dom\" value=\"%s\">\n",
-      Domain);
-    fprintf(actout, "<input type=\"hidden\" name=\"time\" value=\"%i\">\n",
-      Mytime);
-    fprintf(actout, "<input type=\"hidden\" name=\"modu\" value=\"%s\">\n",
-      user);
-    fprintf(actout, "<input type=\"hidden\" name=\"linedata\" value=\"%s\">\n",
-      TmpBuf2);
-    fprintf(actout, "<input type=\"hidden\" name=\"action\" value=\"delentry\">\n");
-    fprintf(actout, "<input type=\"image\" border=\"0\" src=\"%s/delete.png\">\n",
-      IMAGEURL);
-    fprintf(actout, "</form>\n");
-
-
-    fprintf(actout, "</td>\n");
-    fprintf(actout, "</tr>\n");
-    fprintf(actout, "<tr>\n");
-    fprintf(actout, "<td align=\"left\">&nbsp;</td>\n");
   }
-  /* finish up the last line (all empty) */
-  fprintf(actout, "<td align=\"left\">&nbsp;</td>");
-  fprintf(actout, "<td align=\"left\">&nbsp;</td>");
-  fprintf(actout, "</tr>");
   fclose(fs);
 }
 
@@ -414,8 +368,6 @@ moddotqmailnow()
 
 adddotqmail()
 {
-  count_forwards();
-  load_limits();
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
     sprintf(StatusMessage, "%s %d\n", 
     get_html_text("157"), MaxForwards);
@@ -438,8 +390,6 @@ adddotqmailnow()
     exit(0);
   }
 
-  count_forwards();
-  load_limits();
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
     sprintf(StatusMessage, "%s %d\n", get_html_text("157"), MaxForwards);
     send_template( "add_forward.html" );
@@ -549,7 +499,6 @@ deldotqmailnow()
   }
 
   /* don't display aliases/forwards if we just deleted the last one */
-  count_forwards();
   if(CurForwards == 0) {
     show_menu(Username, Domain, Mytime);
   } else {

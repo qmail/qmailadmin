@@ -57,7 +57,6 @@ extern int MaxForwards;
 extern int MaxAutoResponders;
 extern int MaxMailingLists;
 
-extern int CallVmoduser;
 extern int DisablePOP;
 extern int DisableIMAP;
 extern int DisableDialup;
@@ -69,13 +68,36 @@ extern int CurPopAccounts;
 extern int CurForwards;
 extern int CurAutoResponders;
 extern int CurMailingLists;
+extern int CurBlackholes;
+extern char CurCatchall[MAX_BUFF];
 
 extern int Uid;
 extern int Gid;
 extern char RealDir[156];
 
-extern char *strstart();
-extern char *safe_getenv();
 extern char Lang[40];
+
+extern char uBufA[MAX_BUFF];
+extern char uBufB[MAX_BUFF];
+extern char uBufC[MAX_BUFF];
+extern char uBufD[MAX_BUFF];
+extern char uBufE[MAX_BUFF];
+extern char uBufF[MAX_BUFF];
+extern char uBufG[MAX_BUFF];
+extern char uBufH[MAX_BUFF];
+extern char uBufI[MAX_BUFF];
+extern char uBufJ[MAX_BUFF];
+extern char uBufK[MAX_BUFF];
+extern char uBufL[MAX_BUFF];
+
 void del_id_files( char *);
 int open_lang( char *lang);
+
+extern char *strstart();
+extern char *safe_getenv();
+
+extern int count_stuff(void); 
+
+/*   Not found in any other QmailAdmin source file    */
+/*  extern int CallVmoduser;  */
+

@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.7 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: template.c,v 1.8 2004-01-30 03:28:19 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,8 +45,6 @@ void ignore_to_end_tag(FILE *fs);
 void get_calling_host();
 char *get_session_val(char *session_var);
 
-static char NTmpBuf[500];
-
 /*
  * send an html template to the browser 
  */
@@ -72,48 +70,58 @@ int send_template_now(char *filename)
  char *qnote = " MB";
  struct vqpasswd *vpw;
  char value[MAX_BUFF];
+ char Buffer[MAX_BUFF];
+ char fqfn[MAX_BUFF];
 
   if (strstr(filename, "/")!= NULL||strstr(filename,"..")!=NULL) {
-    printf("warning: invalid file name %s\n", filename );
+    fprintf(stderr, "Qmailadmin: invalid template name %s\n", filename );
     return(-1);
   }
 
 
+  /*  Try to get the template path from ENVIRONMENT  */
   tmpstr = getenv(QMAILADMIN_TEMPLATEDIR);
-  if (tmpstr == NULL ) tmpstr = HTMLLIBDIR; 
-  snprintf(TmpBuf2, (sizeof(TmpBuf2) - 1), "%s/html/%s", tmpstr, filename);
 
-  if (lstat(TmpBuf2, &mystat) == -1) {
-    printf("Warning: cannot lstat '%s', check permissions.<BR>\n", TmpBuf2);
-    return(-1);
+  /*  If not use the compiled in value  */
+  if (tmpstr == NULL ) tmpstr = HTMLLIBDIR; 
+
+  /*  Build the fully qualified file name  */
+  snprintf(fqfn, (sizeof(fqfn) - 1), "%s/html/%s", tmpstr, filename);
+
+  /*  Does file exist  */
+  if (lstat(fqfn, &mystat) == -1) {
+    fprintf(stderr, "Qmailadmin: Can't stat '%s', check permissions.\n", fqfn);
+    return(-2);
   }
+
+  /*  Don't allow symlinks in template directories  */
   if (S_ISLNK(mystat.st_mode)) {
-    printf("Warning: '%s' is a symbolic link.<BR>\n", TmpBuf2);
-    return(-1);
+    fprintf(stderr, "Qmailadmin: symlink not allowed '%s'\n", fqfn);
+    return(-3);
   }
 
   /* open the template */
-  fs = fopen( TmpBuf2, "r" );
+  fs = fopen( fqfn, "r" );
   if (fs == NULL) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), TmpBuf2);
-    return 0;
+    fprintf(stderr,"STN1 %s %s\n", get_html_text("144"), fqfn);
+    return 144;
   }
 
   /* parse the template looking for "##" pattern */
   while ((inchar = fgetc(fs)) >= 0) {
+
     /* if not '#' then send it */
     if (inchar != '#') {
       fputc(inchar, actout);
 
-    /* found a '#' */
     } else {
-      /* look for a second '#' */
+      /* found a '#' - look for a second '#' */
       inchar = fgetc(fs);
       if (inchar < 0) {
         break;
 
-      /* found a tag */
       } else if (inchar == '#') {
+        /* found a tag */
         inchar = fgetc(fs);
         if (inchar < 0) break;
 
@@ -131,18 +139,11 @@ int send_template_now(char *filename)
 
           /* show number of pop accounts */
           case 'B':
-            load_limits();
-            count_users();
             if(MaxPopAccounts > -1) {
               printf("%d/%d", CurPopAccounts, MaxPopAccounts);
             } else {
               printf("%d/%s", CurPopAccounts, get_html_text("229"));
             }
-            break;
-
-          /* show the lines inside a alias table */
-          case 'b':
-            show_dotqmail_lines(Username,Domain,Mytime,RealDir,"alias");
             break;
 
           /* send the CGIPATH parameter */
@@ -178,70 +179,7 @@ int send_template_now(char *filename)
           /* display a file (used for mod_autorespond ONLY) */
           /* this code should be moved to a function in autorespond.c */
           case 'F':
-            {
-             FILE *fs;
-              sprintf(TmpBuf, ".qmail-%s", ActionUser);
-              for (i=6; TmpBuf[i] != 0; ++i) {
-                if (TmpBuf[i] == '.') TmpBuf[i] = ':';
-              }
-              if ((fs=fopen(TmpBuf, "r")) == NULL) ack("123", 123);
-              fgets(TmpBuf2, sizeof(TmpBuf2), fs);
-
-              if (fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-
-                /* See if it's a Maildir path rather than address */
-                i = strlen(TmpBuf2) - 2;
-                if (TmpBuf2[i] == '/') {
-                  --i;
-                  for(; TmpBuf2[i] != '/'; --i);
-                  --i;
-                  for(;TmpBuf2[i]!='/';--i);
-                  for(++i, j=0; TmpBuf2[i] != '/'; ++j,++i) {
-                    TmpBuf3[j] = TmpBuf2[i];
-                  }
-                  TmpBuf3[j] = '\0';
-                  fprintf(actout, "value=\"%s@%s\"><td>\n", TmpBuf3, Domain);
-                } else {
-                  /* take off newline */
-                  i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;
-                  fprintf(actout, "value=\"%s\"><td>\n", &TmpBuf2[1]);
-                }
-              } 
-              fclose(fs);
-              upperit(ActionUser);
-              sprintf(TmpBuf, "%s/message", ActionUser);
-
-              if ((fs = fopen(TmpBuf, "r")) == NULL) ack("123", 123);
-
-              fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-              fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-              fprintf(actout, "         <td>&nbsp;</td>\n");
-              fprintf(actout, "         </tr>\n");
-              fprintf(actout, "         <tr>\n");
-              fprintf(actout, "         <td align=right><b>%s</b></td>\n", get_html_text("006"));
-
-              /* take off newline */
-              i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;
-              fprintf(actout, "         <td><input type=\"text\" size=40 name=\"alias\" maxlength=128 value=\"%s\"></td>\n",
-                &TmpBuf2[9]);
-              fprintf(actout, "         <td>&nbsp;</td>\n");
-              fprintf(actout, "        </tr>\n");
-              fprintf(actout, "       </table>\n");
-              fprintf(actout, "       <textarea cols=80 rows=40 name=\"message\">");
-                fgets(TmpBuf2, sizeof(TmpBuf2), fs);
-              while (fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-                fprintf(actout, "%s", TmpBuf2);
-              }
-              fprintf(actout, "</textarea>");
-              fclose(fs);
-            }
-            break;
-
-          /* show the forwards */
-          case 'f':
-            if (AdminType == DOMAIN_ADMIN) {
-              show_forwards(Username,Domain,Mytime,RealDir);
-            }
+            display_robot_message();
             break;
 
           /* show the mailing list digest subscribers */
@@ -254,11 +192,6 @@ int send_template_now(char *filename)
           /* show the lines inside a autorespond table */
           case 'g':
             show_autorespond_line(Username,Domain,Mytime,RealDir);
-            break;
-
-          /* show the counts */
-          case 'h':
-            show_counts();
             break;
 
           case 'I':
@@ -279,8 +212,6 @@ int send_template_now(char *filename)
           /* show number of mailing lists */
           /* Added by <mbowe@pipeline.com.au> 5th June 2003 */
           case 'j':
-            load_limits();
-            count_mailinglists();
             if(MaxMailingLists > -1) {
               printf("%d/%d", CurMailingLists, MaxMailingLists);
             } else {
@@ -291,8 +222,6 @@ int send_template_now(char *filename)
           /* show number of forwards */
           /* Added by <mbowe@pipeline.com.au> 5th June 2003 */
           case 'k':
-            load_limits();
-            count_forwards();
             if(MaxForwards > -1) {
               printf("%d/%d", CurForwards, MaxForwards);
             } else {
@@ -303,19 +232,10 @@ int send_template_now(char *filename)
           /* show number of autoresponders */
           /* Added by <mbowe@pipeline.com.au> 5th June 2003 */
           case 'K':
-            load_limits();
-            count_autoresponders();
             if(MaxAutoResponders > -1) {
               printf("%d/%d", CurAutoResponders, MaxAutoResponders);
             } else {
               printf("%d/%s", CurAutoResponders, get_html_text("229"));
-            }
-            break;
-
-          /* show the aliases stuff */
-          case 'l':
-            if (AdminType == DOMAIN_ADMIN) {
-              show_aliases(Username,Domain,Mytime,RealDir);
             }
             break;
 
@@ -336,43 +256,22 @@ int send_template_now(char *filename)
             }
             break;
 
-          /* show the mailing lists */
-          case 'm':
-            if (AdminType == DOMAIN_ADMIN) {
-              show_mailing_lists(Username,Domain,Mytime,RealDir);
-            }
-            break;
-
           /* parse include files */
           case 'N':
             i=0; 
             TmpBuf[i]=fgetc(fs);
             if (TmpBuf[i] == '/') {
-              fprintf(actout, "%s", get_html_text("144"));
+              fprintf(actout, "STN2 %s", get_html_text("144"));
             } else {
               for(;TmpBuf[i] != '\0' && TmpBuf[i] != '#' && i < sizeof(TmpBuf)-1;) {
                 TmpBuf[++i] = fgetc(fs);
               }
               TmpBuf[i] = '\0';
               if ((strstr(TmpBuf, "../")) != NULL) {
-                fprintf(actout, "%s: %s", get_html_text("144"), TmpBuf);
+                fprintf(actout, "STN3 %s: %s", get_html_text("144"), TmpBuf);
               } else if((strcmp(TmpBuf, filename)) != 0) {
                 send_template_now(TmpBuf);
               }
-            }
-            break;
-
-          /* build a pulldown menu of all POP/IMAP users */
-          case 'O':
-            {
-             struct vqpasswd *pw;
-
-               pw = vauth_getall(Domain,1,1);
-               while (pw != NULL) {
-                 fprintf(actout, "<option value=\"%s\">%s</option>\n", 
-                   pw->pw_name, pw->pw_name);
-                 pw = vauth_getall(Domain,0,0);
-               }
             }
             break;
 
@@ -425,7 +324,7 @@ int send_template_now(char *filename)
 
           /* show the catchall name */
           case 's':
-            get_catchall();
+            fprintf(actout,"%s", CurCatchall);
             break;
 
           /* send the time parameter */
@@ -445,134 +344,72 @@ int send_template_now(char *filename)
 
           /* show the users */
           case 'u':
-            show_users(Username,Domain,Mytime,RealDir);
+            switch(fgetc(fs)) {
+              case 'A':
+                fprintf(actout, "%s", uBufA);
+                break;
+   
+              case 'B':
+                fprintf(actout, "%s", uBufB);
+                break;
+   
+              case 'C':
+                fprintf(actout, "%s", uBufC);
+                break;
+   
+              case 'D':
+                fprintf(actout, "%s", uBufD);
+                break;
+   
+              case 'E':
+                fprintf(actout, "%s", uBufE);
+                break;
+   
+              case 'F':
+                fprintf(actout, "%s", uBufF);
+                break;
+   
+              case 'G':
+                fprintf(actout, "%s", uBufG);
+                break;
+   
+              case 'H':
+                fprintf(actout, "%s", uBufH);
+                break;
+   
+              case 'I':
+                fprintf(actout, "%s", uBufI);
+                break;
+   
+              case 'J':
+                fprintf(actout, "%s", uBufJ);
+                break;
+   
+              case 'K':
+                fprintf(actout, "%s", uBufK);
+                break;
+   
+              case 'L':
+                fprintf(actout, "%s", uBufL);
+                break;
+    
+            } 
             break;
 
           /* show version number */
           case 'V':
-            printf("<a href=\"http://sourceforge.net/projects/qmailadmin/\">%s</a> %s<BR>", 
-              QA_PACKAGE, QA_VERSION);
-            printf("<a href=\"http://www.inter7.com/vpopmail/\">%s</a> %s<BR>", 
-              PACKAGE, VERSION);
+            sprintf( uBufA, "%s", QA_PACKAGE );
+            sprintf( uBufB, "%s", QA_VERSION );
+            sprintf( uBufC, "%s", PACKAGE );
+            sprintf( uBufD, "%s", VERSION );
+            send_template_now("version.html");
             break;
 
-          /* display the main menu */
-          /* move this to a function... */
-          case 'v':
-            fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font><br>", 
-              Domain);
-            fprintf(actout, 
-       "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>", 
-              get_html_text("001"));
-            if (AdminType==DOMAIN_ADMIN){
-
-              if (MaxPopAccounts != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showusers?user=%s&time=%i&dom=%s&\">",
-                  CGIPATH,Username,Mytime,Domain); 
-                fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                  get_html_text("061"));
-              }
-
-              if (MaxForwards != 0 || MaxAliases != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showforwards?user=%s&time=%i&dom=%s&\">",
-                  CGIPATH,Username,Mytime,Domain);
-                fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                  get_html_text("122"));
-              }
-
-              if (MaxAutoResponders != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showautoresponders?user=%s&time=%i&dom=%s&\">",
-                  CGIPATH,Username,Mytime,Domain);
-                fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
-                  get_html_text("077"));
-              }
-
-              if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showmailinglists?user=%s&time=%i&dom=%s&\">",
-                  CGIPATH, Username,Mytime,Domain);
-                fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                  get_html_text("080"));
-              }
-            } else {
-              /* the quota code in here is kinda screwy and could use review
-               * then again, with recent changes, the non-admin shouldn't
-               * even get to this page.
-               */
-              long diskquota = 0, maxmsg = 0;
-	      char path[256];
-              vpw = vauth_getpw(Username, Domain);
-
-               fprintf(actout, 
-       "<a href=\"%s/com/moduser?user=%s&time=%i&dom=%s&moduser=%s\">",
-                 CGIPATH,Username,Mytime,Domain,Username);
-               fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s %s</b></font></a><br><br>",
-                 get_html_text("111"), Username);
-              if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
-                quota_to_megabytes(qconvert, vpw->pw_shell);
-              } else {
-                sprintf(qconvert, get_html_text("229")); qnote = "";
-              }
-              fprintf(actout, "<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
-                get_html_text("249"), get_html_text("253"), qconvert, qnote);
-              fprintf(actout, "<br>%s ", get_html_text("254"));
-	      snprintf(path, sizeof(path), "%s/Maildir", vpw->pw_dir);
-              readuserquota(path, &diskquota, &maxmsg);
-              fprintf(actout, "%-2.2lf MB</font><br>", ((double)diskquota)/1048576.0);  /* Convert to MB */
-             }
-
-             if (AdminType == DOMAIN_ADMIN) {
-               fprintf(actout, "<br>");
-               fprintf(actout, 
-       "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>",
-                 get_html_text("124"));
-
-               if (MaxPopAccounts != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/adduser?user=%s&time=%i&dom=%s&\">",
-                   CGIPATH,Username,Mytime,Domain);
-                 fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                   get_html_text("125"));
-               }
-
-               if (MaxForwards != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/adddotqmail?atype=forward&user=%s&time=%i&dom=%s&\">",
-                   CGIPATH, Username,Mytime,Domain);
-                 fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                   get_html_text("127"));
-               }
-
-               if (MaxAutoResponders != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/addautorespond?user=%s&time=%i&dom=%s&\">",
-                   CGIPATH, Username,Mytime,Domain);
-                 fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
-                   get_html_text("128"));
-               }
-
-               if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/addmailinglist?user=%s&time=%i&dom=%s&\">",
-                   CGIPATH, Username,Mytime,Domain);
-                 fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                   get_html_text("129"));
-               }
-             }
-             break;
+          /* send the common URL parms */
+          case 'W':
+            fprintf(actout,"user=%s&dom=%s&time=%d&page=%s", 
+                    Username, Domain, Mytime, Pagenumber);
+            break;
 
           /* dictionary line, we three more chars for the line */
           case 'X':
@@ -586,13 +423,12 @@ int send_template_now(char *filename)
             printf("<a href=\"");
             strcpy (value, get_session_val("returntext="));
             if(strlen(value) > 0) {
-               printf("%s\">%s", 
+               printf("%s\">%s</a>", 
                       get_session_val("returnhttp="), value);
             } else {
-               printf("%s/com/logout?user=%s&dom=%s&time=%d&\">%s",
+               printf("%s/com/logout?user=%s&dom=%s&time=%d&\">%s</a>",
                       CGIPATH, Username, Domain, Mytime, get_html_text("218"));
             }
-            printf("</a>\n");
             break;
 
           /* returnhttp */
@@ -716,141 +552,201 @@ void check_user_forward_vacation(char newchar)
  static struct vqpasswd *vpw = NULL;
  static FILE *fs1=NULL; /* for the .qmail file */
  static FILE *fs2=NULL; /* for the vacation message file */
+ static char IsStandard[9];                /* ##i0 */
+ static char IsForward[9];                 /* ##i1 */
+ static char ForwardAddr[MAX_BUFF];        /* ##i2 */
+ static char IsLocalCopy[9];               /* ##i3 */
+ static char IsVacation[9];                /* ##i4 */
+ static char VacationSubject[MAX_BUFF];    /* ##i5 */
+ static char IsBlackHole[9];               /* ##i8 */
+ static char IsSpamCheck[9];               /* ##i9 */
+ static int Initialized=0;
+ static int ResetVacation=1;
  int i;
+ char NTmpBuf[500];
 
-  if (vpw==NULL) vpw = vauth_getpw(ActionUser, Domain); 
-  if (fs1== NULL) {
+
+  /*********************************************************/
+  
+  if( 0==Initialized ) {    /*  Not Initialized  */
+    fprintf( stderr, "Not initialized user: %s Domain %s\n", 
+             ActionUser, Domain );
+    /*  Get data on user from vpopmail  */
+    vpw = vauth_getpw(ActionUser, Domain); 
+
+    /*  Open the user's .qmail file   */
     snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/.qmail", vpw->pw_dir);
-    fs1 = fopen(NTmpBuf,"r");
-  }
-
-  if ( newchar=='7') {
-    fprintf(actout, "%s", vpw->pw_gecos);
-    return;
-  }
-
-  if (fs1 == NULL) {
-    if (newchar=='0'){
-      printf("checked ");
+    if( (fs1 = fopen(NTmpBuf,"r"))==NULL) {
+      fprintf( stderr, "Unable to open user .qmail file: %s", NTmpBuf );
     }
-    return;
-  } 
 
-  /* start at the begingin if second time thru */
-  rewind(fs1);
+    /*  Initialize display values   */
+    strcpy(IsStandard, "");
+    strcpy(IsForward, "");
+    strcpy(IsLocalCopy, "");
+    strcpy(IsVacation, "");
+    strcpy(IsBlackHole, "");
+    strcpy(IsSpamCheck, "");
 
-  if (fgets(NTmpBuf,sizeof(NTmpBuf),fs1)!=NULL) {
+    if (fs1 == NULL) {   
+      /* No .qmail file - standard delivery  */  
+      strcpy(IsStandard, "checked ");
+
+    } else if (fgets(NTmpBuf,sizeof(NTmpBuf),fs1)!=NULL) {
+      /*  Parse the first line of the .qmail file  */
                            
-    /* if it is a forward to a program */
-    if (strstr(NTmpBuf, "autorespond")!=NULL ) {
-      if (newchar=='4') {
-        printf("checked ");
-      } else if (newchar=='5') {
-        if (fs2 == NULL) { 
-          snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/vacation/message", vpw->pw_dir);
-          fs2 = fopen(NTmpBuf,"r");
-        }
-        if (fs2 != NULL) {
-          rewind(fs2);
-          /*
-           *  it's a hack, the second line always has
-           *  the subject
-           */ 
-          fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
-          fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
-          printf("%s", &NTmpBuf[9]);
-        }
-      } else if (newchar=='6') {
-        if (fs2 == NULL) { 
-          snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/vacation/message", vpw->pw_dir);
-          fs2 = fopen(NTmpBuf,"r");
-        }
-        if (fs2 != NULL) {
-          rewind(fs2);
-          for(i = 0; i < 3 && fgets(NTmpBuf,sizeof(NTmpBuf),fs2) != NULL; ++i);
-          while (fgets(NTmpBuf,sizeof(NTmpBuf),fs2) != NULL) {
-            printf("%s", NTmpBuf);
+      fprintf( stderr, "First line of .qmail file: " );
+      fprintf( stderr, NTmpBuf );
+      fprintf( stderr, "SPAM_COMMAND: " );
+      fprintf( stderr, SPAM_COMMAND );
+      fprintf( stderr, "\n" );
+
+      if( '&'==NTmpBuf[0] ) {  
+        /*   It is a forward   */
+        fprintf( stderr, "Forward\n" );
+        strcpy(IsForward, "checked ");
+        strcpy(ForwardAddr, strtok(&NTmpBuf[1], "\n"));
+
+      } else if (strstr(NTmpBuf, "autorespond")!=NULL ) {
+        /* It is a mail robot */
+        fprintf( stderr, "Vacation\n" );
+        strcpy(IsVacation, "checked ");
+ 
+      } else if (strstr(NTmpBuf, "|/bin/true delete")!=NULL ) {
+        /*  It is a black hole  */
+        fprintf( stderr, "Black Hole\n" );
+        strcpy(IsBlackHole, "checked ");
+
+      } else if (strstr(NTmpBuf, "#")!=NULL ) {
+        /*  It is a better black hole */
+        fprintf( stderr, "Better Black Hole\n" );
+        strcpy(IsBlackHole, "checked ");
+
+      } else if (strstr(NTmpBuf, "preline")!=NULL ) {
+        /*  It is a spam checked simple delivery  */
+        fprintf( stderr, "Spam Checked\n" );
+        strcpy(IsSpamCheck, "checked ");
+ 
+      } else {
+        /*  Nothing identified from first line  */
+        fprintf( stderr, "Not Identified\n" );
+      }
+
+      fprintf( stderr, "Before checking Second Line\n" );
+
+      if (fgets(NTmpBuf,sizeof(NTmpBuf),fs1)!=NULL) {
+        /*  Parse the second line (if any) */
+        fprintf( stderr, "Second Line %s\n", NTmpBuf );
+
+        if (strstr(IsForward, "checked ")!=NULL ) {
+          /*  It is a forward with a saved copy */
+          strcpy(IsLocalCopy, "checked ");
+
+          if(strstr(NTmpBuf, SPAM_COMMAND)!=NULL) {
+            /*  It is spam checked  */
+            fprintf( stderr, "Spam Checked\n" );
+            strcpy(IsSpamCheck, "checked ");
           }
         }
+
+        if (strstr(IsVacation, "checked ")!=NULL ) {
+          /*  It is a Vacation  check for spam */
+          if(strstr(NTmpBuf, SPAM_COMMAND)!=NULL) {
+            /*  It is spam checked  */
+            fprintf( stderr, "Spam Checked\n" );
+            strcpy(IsSpamCheck, "checked ");
+          }
+        }
+
+      } else { /*  There is no second line  */
+        fprintf( stderr, "No Second Line\n" );
+        if (strstr(IsSpamCheck, "checked ")!=NULL ) {
+          /*  One line, spam checked is Standard  */
+          strcpy(IsStandard, "checked ");
+        }
       }
 
-      i = 0;
-      do {
-        if (newchar == '3' && (NTmpBuf[0] == '/' ||
-                               strstr(NTmpBuf, SPAM_COMMAND)!=NULL) ) {
-          printf("checked ");
-          return;
-        }
-        if ( newchar == '2' ) {
-          if (NTmpBuf[0]=='/') continue;
-          if (NTmpBuf[0]=='|') continue;
-          if ( i>0 ) printf(", ");
-          if (NTmpBuf[0]=='&') {
-            printf("%s", strtok(&NTmpBuf[1], "\n"));
-          } else {
-            printf("%s", NTmpBuf[0]);
-          } 
-          ++i;
-        }
-        /* Jeff Hedlund (jeff.hedlund@matrixsi.com) 28 May 2003 */
-        /* i9: "checked" if spam filtering on */
-        if ( newchar == '9' && strstr(NTmpBuf, SPAM_COMMAND)!=NULL ) {
-           printf("checked ");
-           return;
-        }
-      } while(fgets(NTmpBuf,sizeof(NTmpBuf),fs1) != NULL );
-                   
-      
-      return;
-    } else {
+      fprintf( stderr, "Before checking vacation second file\n" );
 
-      /* James Raftery <james@now.ie>, 21 May 2003 */
-      /* i8: "checked" if blackhole */
-      if (strstr(NTmpBuf, " delete\n") != NULL) {
-        if (newchar == '8') {
-           printf("checked ");
-        }
-        return;
+      if (strstr(IsVacation, "checked ")!=NULL ) {
+        fprintf( stderr, "IsVacation - check second file\n" );
+        snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/vacation/message", vpw->pw_dir);
+        fs2 = fopen(NTmpBuf,"r");
+        /* Eat first line */
+        fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
+
+        /* Second line is the subject */
+        fgets(VacationSubject,sizeof(VacationSubject),fs2);
+        /* Leave the file pointing at the start of the message */
+        ResetVacation=0;
       }
 
-      if (newchar == '1' || newchar == '0') {
-        if(strstr(NTmpBuf, SPAM_COMMAND)!=NULL) {
-          if(newchar == '0') printf("checked ");
-        } else {
-          if(newchar == '1') printf("checked ");
-        }
-        return;
-      }
-
-      i = 0;
-      do { 
-        if (newchar == '3' && (NTmpBuf[0] == '/' ||
-                               strstr(NTmpBuf, SPAM_COMMAND)!=NULL)) {
-          printf("checked "); 
-          return;
-        }
-
-        if (newchar == '9' && strstr(NTmpBuf, SPAM_COMMAND)!=NULL ) {
-          printf("checked ");
-          return;
-        }
-        
-        if (newchar == '2') {
-          if (NTmpBuf[0]=='/') continue;
-          if (strstr(NTmpBuf, SPAM_COMMAND)!=NULL) continue;
-          if (i > 0) printf(", ");
-          if (NTmpBuf[0] == '&') {
-            printf("%s", strtok(&NTmpBuf[1], "\n"));
-          } else {
-            printf("%s", NTmpBuf);
-          } 
-          ++i;
-        }
-      } while (fgets(NTmpBuf,sizeof(NTmpBuf),fs1) != NULL);
+    } else {  /*  There are no lines in the .qmail file  */
+      fprintf( stderr, "No lines in the .qmail file\n" );
+      strcpy(IsStandard, "checked ");
     }
+
+    Initialized=1;
+  }  /*  end of Not Initialized  */
+
+/**********************************************************/
+
+  switch(newchar) {
+    case '0':
+    fprintf(actout, "%s", IsStandard);
+    break;
+
+    case '1':
+    fprintf(actout, "%s", IsForward);
+    break;
+
+    case '2':
+    fprintf(actout, "%s", ForwardAddr);
+    break;
+
+    case '3':
+    fprintf(actout, "%s", IsLocalCopy);
+    break;
+
+    case '4':
+    fprintf(actout, "%s", IsVacation);
+    break;
+
+    case '5':
+    fprintf(actout, "%s", VacationSubject);
+    break;
+
+    case '6':
+      if (strstr(IsVacation, "checked ")!=NULL ) {
+        if( 1==ResetVacation ) {
+           rewind(fs2);
+           for(i=0; i<3 && fgets(NTmpBuf,sizeof(NTmpBuf),fs2)!=NULL; i++);
+           }
+
+        while (fgets(NTmpBuf,sizeof(NTmpBuf),fs2)!=NULL) {
+          fprintf(actout, "%s", NTmpBuf );
+          }
+
+        ResetVacation=1;
+      }
+   break;
+
+    case '7':
+    fprintf(actout, "%s", vpw->pw_gecos);
+    break;
+
+    case '8':
+    fprintf(actout, "%s", IsBlackHole);
+    break;
+
+    case '9':
+    fprintf(actout, "%s", IsSpamCheck);
+    break;
   }
+
   return;
 }
+
 
 void transmit_block(FILE *fs) {
    /* tests to see if text between ##tX and ##tt should be transmitted */
@@ -864,32 +760,84 @@ void transmit_block(FILE *fs) {
          /* administrative commands */
          if(AdminType != DOMAIN_ADMIN) { ignore_to_end_tag(fs); }
          break;
+
+      case 'A':
+         /* user (not domain admin) */
+         if(AdminType == DOMAIN_ADMIN) { ignore_to_end_tag(fs); }
+         break;
+
       case 'h':
 #ifndef HELP
          ignore_to_end_tag(fs);
 #endif
          break;
+
+      case 'H':
+#ifdef HELP
+         ignore_to_end_tag(fs);
+#endif
+         break;
+
+      case 'i':
+#ifndef USER_INDEX
+         ignore_to_end_tag(fs);
+#endif
+         break;
+
+      case 'I':
+#ifdef USER_INDEX
+         ignore_to_end_tag(fs);
+#endif
+         break;
+
       case 'm':
 #ifndef ENABLE_MYSQL
          ignore_to_end_tag(fs);
 #endif
          break;
+
+      case 'M':
+#ifdef ENABLE_MYSQL
+         ignore_to_end_tag(fs);
+#endif
+         break;
+
       case 'q':
 #ifndef MODIFY_QUOTA
          ignore_to_end_tag(fs);
 #endif
          break;
+
+      case 'Q':
+#ifdef MODIFY_QUOTA
+         ignore_to_end_tag(fs);
+#endif
+         break;
+
       case 's':
 #ifndef MODIFY_SPAM
          ignore_to_end_tag(fs);
 #endif
          break;
+
+      case 'S':
+#ifdef MODIFY_SPAM
+         ignore_to_end_tag(fs);
+#endif
+         break;
+
       case 't':
          /* explicitly break if it was ##tt, that's an end tag */
          break;
+
       case 'u':
          /* user (not administrative) */
          if(AdminType != USER_ADMIN) { ignore_to_end_tag(fs); }
+         break;
+
+      case 'U':
+         /* administrative commands */
+         if(AdminType == USER_ADMIN) { ignore_to_end_tag(fs); }
          break;
    }
 }
@@ -957,7 +905,7 @@ void get_calling_host() {
 char *get_session_val(char *session_var) {
    /* returns the value of session_var, first checking the .qw file for saved */
    /* value, or the TmpCGI if it's not yet been saved                         */
-   static char value[MAX_BUFF];
+   char value[MAX_BUFF];
    char dir[MAX_BUFF];
    char *retval;
    FILE *fs_qw;

@@ -3,6 +3,10 @@ patch or information related to the entry.
 
 1.2.0 - unreleased
 
+	Tom Collins
+	- Minor formatting changes to configure.in for consistency.
+	- Make function buffers static when returning pointers to them.
+
 1.2.0-rc2 - released 1-Jan-04
 
 	Tom Collins

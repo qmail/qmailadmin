@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.3 - released 7-Oct-04
 
+	Ken Jones
+	- Remove check for C++ compiler in configure.in.
+
 	Rick Widmer
 	- Updated INSTALL documentation (from 2004-05-07).
 

@@ -225,30 +225,30 @@ char msg_buffer[256];
 		  pim[0] goes to 0 (stdin)...the message*/
 		if(fcntl(pim[0],F_GETFL,0) == -1) {
 /*			fprintf(stderr,"Failure getting status flags.\n");*/
-			_exit(120);
+			_exit(111);
 		}
 		close(0);
 		if(fcntl(pim[0],F_DUPFD,0)==-1) {
 /*			fprintf(stderr,"Failure duplicating file descriptor.\n");*/
-			_exit(120);
+			_exit(111);
 		}
 		close(pim[0]);
 		/*pie[0] goes to 1 (stdout)*/
 		if(fcntl(pie[0],F_GETFL,0) == -1) {
 /*			fprintf(stderr,"Failure getting status flags.\n");*/
-			_exit(120);
+			_exit(111);
 		}
 		close(1);
 		if(fcntl(pie[0],F_DUPFD,1)==-1) {
 /*			fprintf(stderr,"Failure duplicating file descriptor.\n");*/
-			_exit(120);
+			_exit(111);
 		}
 		close(pie[0]);
 		if(chdir(QMAIL_LOCATION) == -1) {
-			_exit(120);
+			_exit(111);
 		}
 		execv(*binqqargs,binqqargs);
-		_exit(120);
+		_exit(111);
 	}
 
 	/*I am the parent*/

@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.3 2003-10-12 00:42:43 tomcollins Exp $
+ * $Id: user.c,v 1.4 2003-10-13 22:31:10 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -468,12 +468,20 @@ addusernow()
     (mypw = vauth_getpw( Newu, Domain )) != NULL ) {
 
     /* from the load_limits() function, set user flags */
+    /* These aren't default limits, they're domain limits.
+       They should not be applied to new accounts.
     if( DisablePOP > 0 )     mypw->pw_gid |= NO_POP; 
     if( DisableIMAP > 0 )    mypw->pw_gid |= NO_IMAP; 
     if( DisableDialup > 0 )  mypw->pw_gid |= NO_DIALUP; 
     if( DisablePasswordChanging > 0 ) mypw->pw_gid |= NO_PASSWD_CHNG; 
     if( DisableWebmail > 0 ) mypw->pw_gid |= NO_WEBMAIL; 
     if( DisableRelay > 0 )  mypw->pw_gid |= NO_RELAY; 
+    */
+
+    /* Once we're sure people are using vpopmail 5.3.29 or later,
+     * we can switch back to old code (that only sets quota if
+     * there's something in the field).
+     */
     if (Limits.defaultquota > 0) {
       if (Limits.defaultmaxmsgcount > 0)
         snprintf(pw_shell, sizeof(pw_shell), "%dS,%dC", Limits.defaultquota, Limits.defaultmaxmsgcount);

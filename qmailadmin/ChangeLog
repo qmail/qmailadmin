@@ -1,7 +1,7 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.0 - unreleased
+1.2.0 - released 28-Jan-04
 
 	Tom Collins
 	- Changes to Makefile to avoid copying CVS directories on install.

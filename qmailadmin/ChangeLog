@@ -6,6 +6,9 @@ patch or information related to the entry.
 	Rick Widmer
 	- Updated INSTALL documentation (from 2004-05-07).
 
+	Charlie Garrison
+	- Fix invalid HTML in mod_autorespond.html.
+
 	Tom Collins
 	- Before considering an alias/forward to be a 'blackhole', make
 	  sure it's only a single line.

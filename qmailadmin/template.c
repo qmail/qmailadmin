@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.7.2.1 2004-02-02 00:39:47 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.2 2004-09-07 05:07:45 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,9 +199,9 @@ int send_template_now(char *filename)
                     TmpBuf3[j] = TmpBuf2[i];
                   }
                   TmpBuf3[j] = '\0';
-                  fprintf(actout, "value=\"%s@%s\"><td>\n", TmpBuf3, Domain);
+                  fprintf(actout, "value=\"%s@%s\"></td>\n", TmpBuf3, Domain);
                 } else {
-                  fprintf(actout, "value=\"%s\"><td>\n", &TmpBuf2[1]);
+                  fprintf(actout, "value=\"%s\"></td>\n", &TmpBuf2[1]);
                 }
               } 
               upperit(ActionUser);

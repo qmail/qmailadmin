@@ -1,5 +1,5 @@
 /* 
- * $Id: dotqmail.c,v 1.2.2.1 2004-02-02 00:39:47 tomcollins Exp $
+ * $Id: dotqmail.c,v 1.2.2.2 2004-02-23 18:12:20 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,11 @@
 #include <sys/stat.h>
 #include <vpopmail.h>
 #include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"

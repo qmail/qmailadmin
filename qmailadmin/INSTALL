@@ -3,6 +3,7 @@ Install guide
 QmailAdmin 1.2.0 and later requires Vpopmail 5.4.0 or later.
 
 If you are installing on x86_64 platform (64-bit Intel/AMD processor),
+or if configure exits with an "Invalid configuration" error,
 you will need to run `libtoolize --force` in the QmailAdmin source
 directory before following any other instructions in this guide.
 
@@ -231,5 +232,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.5.2.4 2005-01-07 06:58:19 tomcollins Exp $
+$Id: INSTALL,v 1.5.2.5 2005-03-14 07:22:00 tomcollins Exp $
 

@@ -5,6 +5,12 @@ patch or information related to the entry.
 
 	Tom Collins
 	- More updates related to build process.
+	- Fix HTML formatting on display subscribers page.
+	- Convert HTTP_ACCEPT_LANGUAGE entries to lowercase, rename pt-BR
+	  to pt-br. [852963]
+	- Major cleanup of hooks code (fix call to execl, allow blank
+	  lines, don't require entries for all hooks, pass proper 
+	  parameters to hook program, update documentation). [855707]
 
 1.0.29 - released 20-Nov-03
 

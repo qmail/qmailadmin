@@ -5,6 +5,7 @@ patch or information related to the entry.
 
 	Tom Collins
 	- Remove unnecessary name attributes in SUBMIT buttons. [869292]
+	- configure.in: Compile with all warnings on.
 
 1.2.4 - released 15-Nov-04
 

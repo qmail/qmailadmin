@@ -45,6 +45,9 @@ AC_FUNC_CLOSEDIR_VOID
 #AC_FUNC_STAT
 AC_CHECK_FUNCS([dup2 memset mkdir strcasecmp strchr strdup strncasecmp strrchr strstr])
 
+if test "$GCC" = yes ; then
+  CFLAGS="$CFLAGS -Wall"
+fi
 
 CGIBINTARGETS=qmailadmin
 AC_SUBST(CGIBINTARGETS)

@@ -4031,6 +4031,9 @@ fi
 done
 
 
+if test "$GCC" = yes ; then
+  CFLAGS="$CFLAGS -Wall"
+fi
 
 CGIBINTARGETS=qmailadmin
 

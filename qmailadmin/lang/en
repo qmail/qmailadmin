@@ -232,7 +232,7 @@
 264 Only subscribers can post, all others bounce.
 265 Only subscribers can post, all others go to moderators for approval.
 266 Only moderators can post, all others bounce.
-267 Only moderators can post, all others go to moderators for approval.
+267 Only moderators can post, all messages go to moderators for approval.
 268 List Options
 269 Prefix outgoing subject headers with <B>[%s]</B>.
 270 Include a trailer at the end of each message.

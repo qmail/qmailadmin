@@ -1,6 +1,8 @@
 /*
 	autorespond for qmail
-
+*/
+#define AUTORESPOND_VERSION "2.0.5"
+/*
 	Copyright 1998 Eric Huss
 	E-mail: e-huss@netmeridian.com
 
@@ -32,9 +34,13 @@
 					the new commandline options are optional by now
 					
 		BD 06/2001	2.0.0   Removed excess code, cleaned up some code
-		
+		OE 08/2003	2.0.4	Debian security fix
+		TC 09/2003	2.0.5	Change exit codes for fewer bounces
+
 	MH - Matthias Henze matthias@mhcsoftware.de
         BD - Brad Dameron <bdameron@tscnet.com>
+	OE - Oden Eriksson <oden.eriksson@kvikkjokk.net>
+	TC - Tom Collins <tom@tomlogic.com>
 
 	TODO:
 
@@ -184,7 +190,7 @@ char * frb;
 /****************************************************************
 ** A wrapper for qmail-queue
 ** borrowed from djb                   */
-
+/* couldn't we just use qmail-inject here? */
 int send_message(char * msg, char * from, char ** recipients, int num_recipients)
 {
 /*	...Adds Date:
@@ -554,7 +560,7 @@ char *TheUser;
 char *TheDomain;
 
 	if(argc > 7 || argc < 5) {
-		fprintf(stderr, "\nautorespond: ");
+		fprintf(stderr, "\nautorespond v%s: ", AUTORESPOND_VERSION);
 		fprintf(stderr, "usage: time num message dir [ flag arsender ]\n\n");
 		fprintf(stderr, "time - amount of time to consider a message (in seconds)\n");
 		fprintf(stderr, "num - maximum number of messages to allow within time seconds\n");
@@ -621,29 +627,28 @@ char *TheDomain;
 
 	/*don't autorespond to a mailer-daemon*/
 	if( sender[0]==0 || strncasecmp(sender,"mailer-daemon",13)==0 || strchr(sender,'@')==NULL || strcmp(sender,"#@[]")==0 ) {
-		/*exit with success but request to stop parsing .qmail file*/
-		fprintf(stderr,"AUTORESPOND:  Stopping on mail from [%s].\n",sender);
-		_exit(99);
+		/*exit with success*/
+		_exit(0);
 	}
 
 
 	if ( inspect_headers("mailing-list", (char *)NULL ) != (char *)NULL )
 	{
-		fprintf(stderr,"AUTORESPOND: I can't handle a message with a Mailing-List header.\n");
-		_exit(100);			/*hard error*/
+		/*fprintf(stderr,"AUTORESPOND: This looks like it's from a mailing list, I will ignore it.\n");*/
+		_exit(0);			/*report success and exit*/
 	}
 	if ( inspect_headers("Delivered-To", "Autoresponder" ) != (char *)NULL )
 	{
 		/*got one of my own messages...*/
-		fprintf(stderr,"AUTORESPOND: This message is looping...it has my Delivered-To header.\n");
-		_exit(100);			/*hard error*/
+		/*fprintf(stderr,"AUTORESPOND: This message is looping...it has my Delivered-To header.\n");*/
+		_exit(0);			/*don't respond*/
 	}
 	if ( inspect_headers("precedence", "junk" ) != (char *)NULL ||
 	     inspect_headers("precedence", "bulk" ) != (char *)NULL ||
 	     inspect_headers("precedence", "list" ) != (char *)NULL )
 	{
-		fprintf(stderr,"AUTORESPOND: Junk mail received.\n");
-		_exit(100);
+		/*fprintf(stderr,"AUTORESPOND: Junk mail received.\n");*/
+		_exit(0); /* don't respond */
 	}
 
 	/*check the logs*/
@@ -693,8 +698,8 @@ char *TheDomain;
 		}
 	}
 	if(count>num) {
-		fprintf(stderr,"AUTORESPOND: too many received from [%s]\n",sender);
-		_exit(99);
+		/* fprintf(stderr,"AUTORESPOND: too many received from [%s]\n",sender); */
+		_exit(0);
 	}
 
 	sprintf(filename,"tmp%u.%u",getpid(),timer);

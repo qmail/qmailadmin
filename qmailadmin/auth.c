@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3 2004-01-14 15:59:50 tomcollins Exp $
+ * $Id: auth.c,v 1.3.2.1 2004-09-06 17:29:23 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,7 +124,7 @@ auth_user_domain(ip_addr,pw)
   GetValue(TmpBuf, ip_value, "ip_addr=", sizeof(ip_value)); 
   if ( strcmp(ip_addr, ip_value) != 0 ) {
     unlink(TmpBuf1);
-    sprintf(StatusMessage, "%s %d (%s != %s .. %s)\n", get_html_text("150"), 6, ip_addr, ip_value, TmpBuf);
+    sprintf(StatusMessage, "%s %d (%s != %s)\n", get_html_text("150"), 6, ip_addr, ip_value);
     show_login();
     vclose();
     exit(0);

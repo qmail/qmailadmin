@@ -8,6 +8,8 @@ patch or information related to the entry.
 	  email address and go directly to the modify or delete page,
 	  regardless of address type (mailbox, forward, list, etc.).
 	  Thanks to PinkRoccade Public Sector for sponsoring this feature.
+	- Modify User: For clarity, change "Deleted" to "All mail deleted"
+	  and "Vacation" to "Send Vacation Auto-Repsonse".
 
 1.2.6 - released 24-Dec-04
 

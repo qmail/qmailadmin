@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.7 2004-12-07 00:34:21 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.8 2004-12-17 05:50:56 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -652,6 +652,8 @@ void set_qmaildefault(char *opt)
 
 void setremotecatchallnow() 
 {
+  char *fwdaddr;
+
   GetValue(TmpCGI,Newu, "newu=", sizeof(Newu));
 
   if (check_email_addr(Newu) ) {
@@ -659,7 +661,17 @@ void setremotecatchallnow()
     setremotecatchall();
     exit(0);
   }
-  set_qmaildefault (Newu);
+  if (*Newu == '@') {
+    /* forward all mail to external domain */
+    fwdaddr = malloc (strlen(Newu) + 4 + 1);
+    if (fwdaddr != NULL) {
+      sprintf (fwdaddr, "$EXT%s", Newu);
+      set_qmaildefault (fwdaddr);
+      free (fwdaddr);
+    }
+  } else {
+    set_qmaildefault (Newu);
+  }
 }
 
 void bounceall()
@@ -695,9 +707,13 @@ int get_catchall()
 
   } else if ( strstr(TmpBuf, "@") != NULL ) {
     i=strlen(TmpBuf);
-    for(;TmpBuf[i]!=' ';--i);
-    printh ("<b>%s %H</b>", get_html_text("062"), &TmpBuf[i]);
-
+    for(;TmpBuf[i-1]!=' ';--i);
+    if (strncmp (&TmpBuf[i], "$EXT@", 5) == 0) {
+      /* forward to an entire domain */
+      printh ("<b>%s <I>user</I>%H</b>", get_html_text("062"), &TmpBuf[i+4]);
+    } else {
+      printh ("<b>%s %H</b>", get_html_text("062"), &TmpBuf[i]);
+    }
   } else {
     i = strlen(TmpBuf) - 1;
     for(;TmpBuf[i]!='/';--i);

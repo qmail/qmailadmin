@@ -5,6 +5,8 @@ patch or information related to the entry.
 
 	Tom Collins
 	- user.c: fix bug in handling .qmail files with blank lines.
+	- user.c: new catchall option, forward unknown users to remote
+	  domain (e.g., x -> x@dom.com, y -> y@dom.com, etc.) [910410]
 
 1.2.5 - released 1-Dec-04
 

@@ -17,6 +17,9 @@ patch or information related to the entry.
 
 	Tom Collins
 	- Properly handle mailing list prefixes (strip square brackets).
+	- Update configure.in to try htmldir as starting point for 
+	  cgibindir and imagedir.
+	- Update configure.in to use imageurl when building imagedir.
 
 1.0.27 - released 9-Sep-03
 

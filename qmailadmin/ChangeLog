@@ -6,6 +6,10 @@ patch or information related to the entry.
 	Rick Widmer
 	- Updated INSTALL documentation (from 2004-05-07).
 
+	Tom Collins
+	- Before considering an alias/forward to be a 'blackhole', make
+	  sure it's only a single line.
+
 1.2.2 - released 25-Jun-04
 
 	Oden Eriksson

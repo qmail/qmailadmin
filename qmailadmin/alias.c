@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.5 2004-04-29 23:31:36 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.6 2004-08-25 23:58:56 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -132,8 +132,16 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       }
       if (k > startnumber) {
         if (*alias_line == '#') {
-          add_alias_entry (alias_name, "#");
-        } else while (1) {
+          alias_line = valias_select_all_next (alias_name);
+          if (strcmp (this_alias, alias_name) != 0) {
+            /* single comment, treat as blackhole */
+            add_alias_entry (this_alias, "#");
+            continue;
+          } else {
+            alias_name_from_command = dotqmail_alias_command(alias_line);
+          }
+        }
+        while (1) {
           if (alias_name_from_command != NULL) {
             add_alias_entry (alias_name, alias_name_from_command);
           }
@@ -197,16 +205,17 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
           continue;
         }
 
-      /* Note that the current system fails for multi-line .qmail-user files
-         where the first line starts with a '#' or is invalid.
-         This is good for mailing lists (since dotqmail_alias_command bails
-         on program delivery that contains ezmlm) but bad for people who
-         may have complex .qmail-user files that start with a comment. */
-
         if (*TmpBuf2 == '#') {
-          /* this is a blackhole account */
-          add_alias_entry (alias_name, "#");
-        } else while (1) {
+          if (fgets(TmpBuf2, sizeof(TmpBuf2), fs) == NULL) {
+            /* just a single comment, this is a blackhole account */
+            add_alias_entry (alias_name, "#");
+            fclose(fs);
+            continue;
+          } else {
+            alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+          }
+        }
+        while (1) {
           if (alias_name_from_command != NULL) {
             add_alias_entry (alias_name, alias_name_from_command);
           }

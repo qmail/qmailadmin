@@ -143,7 +143,7 @@ AC_ARG_ENABLE(imagedir, [  --enable-imagedir=DIR     Where to put the image file
     ] )
 AC_SUBST(imagedir)
 
-htmllibdir="/usr/local/share/qmailadmin/"
+htmllibdir="/usr/local/share/qmailadmin"
 
 AC_ARG_ENABLE(htmllibdir, [  --enable-htmllibdir=DIR   qmailadmin HTML library directory.],
     htmllibdir="$enableval",

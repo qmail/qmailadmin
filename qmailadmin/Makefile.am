@@ -66,14 +66,16 @@ install-data-local:
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@
 	rm -rf                   $(DESTDIR)@htmllibdir@/html
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/html 
-	cp $(srcdir)/html/[^C]*  $(DESTDIR)@htmllibdir@/html
+	cp $(srcdir)/html/*.html $(DESTDIR)@htmllibdir@/html
+	cp $(srcdir)/html/colortable $(DESTDIR)@htmllibdir@/html
 	chmod 755                $(DESTDIR)@htmllibdir@/html
 	chmod 644                $(DESTDIR)@htmllibdir@/html/*
 	rm -rf                   $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/lang 
-	cp $(srcdir)/lang/[^C]*  $(DESTDIR)@htmllibdir@/lang
+	cp $(srcdir)/lang/??     $(DESTDIR)@htmllibdir@/lang
+	cp $(srcdir)/lang/??-??  $(DESTDIR)@htmllibdir@/lang
 	chmod 755                $(DESTDIR)@htmllibdir@/lang
 	chmod 644                $(DESTDIR)@htmllibdir@/lang/*
 	$(mkinstalldirs)         $(DESTDIR)@imagedir@
-	cp $(srcdir)/images/[^C]* $(DESTDIR)@imagedir@
+	cp $(srcdir)/images/*.png $(DESTDIR)@imagedir@
 

@@ -10,6 +10,8 @@ patch or information related to the entry.
 	  Thanks to PinkRoccade Public Sector for sponsoring this feature.
 	- Modify User: For clarity, change "Deleted" to "All mail deleted"
 	  and "Vacation" to "Send Vacation Auto-Repsonse".
+	- template.c: Add macro for current language (##~) and document
+	  in html/README.  [818883]
 
 1.2.6 - released 24-Dec-04
 

@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.9 2004-12-31 01:02:40 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.10 2004-12-31 01:38:33 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,6 +129,10 @@ int send_template_now(char *filename)
           /* send stock (user, dom, time) cgi parameters */
           case '&':
             printh ("user=%C&dom=%C&time=%d&", Username, Domain, Mytime);
+            break;
+
+          case '~':
+            printf ("%s", Lang);
             break;
 
           /* send the action user parameter */

@@ -31,6 +31,11 @@ a particular tag, leave '-v' out of the second grep.
 
 -------------------------------------------------------------------------
 
+##~	Current selected language (e.g., "en").  Could be useful in
+	selecting alternate graphics for alternate languages.
+
+-------------------------------------------------------------------------
+
 ##A	Send the user name currently being acted upon.  (ActionUser)
 	If postmaster was editing someone this would be someone.
 

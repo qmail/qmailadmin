@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.4 2005-01-23 17:35:11 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.5 2005-02-10 00:11:37 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1296,18 +1296,19 @@ void show_current_list_values() {
 
   printf ("<P><B><U>%s</U></B><BR>\n", html_text[289]);
   build_option_str ("CHECKBOX", "opt14", "a", html_text[290]);
-  printf ("<BR>\n");
-  /* note that if user doesn't have ezmlm-cgi installed, it might be
-     a good idea to default to having option i off. */
-  build_option_str ("CHECKBOX", "opt15", "i", html_text[291]);
-  printf ("<BR>\n%s\n<SELECT NAME=\"opt15\">", html_text[292]);
+  printf (" &nbsp; %s\n<SELECT NAME=\"opt15\">", html_text[292]);
   printf ("<OPTION VALUE=\"BG\"%s>%s\n",
   	checkopt['B'] && checkopt['G'] ? " SELECTED" : "", html_text[293]);
   printf ("<OPTION VALUE=\"Bg\"%s>%s\n",
   	checkopt['B'] && checkopt['g'] ? " SELECTED" : "", html_text[294]);
   printf ("<OPTION VALUE=\"b\"%s>%s\n",
   	checkopt['b'] ? " SELECTED" : "", html_text[295]);
-  printf ("</SELECT>.</P>\n");
+  printf ("</SELECT>.");
+  printf ("<BR>\n");
+  /* note that if user doesn't have ezmlm-cgi installed, it might be
+     a good idea to default to having option i off. */
+  build_option_str ("CHECKBOX", "opt15", "i", html_text[291]);
+  printf ("</P>\n");
 
   /***********************/
   /* begin MySQL options */

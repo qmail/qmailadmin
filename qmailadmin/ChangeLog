@@ -7,6 +7,8 @@ patch or information related to the entry.
 	- Added single page for changing password. [775208]
 	- Switch to improved method of handling strings in language files,
 	  resulting in reduced disk access and faster rendering of pages.
+	- malinglists: Update settings screen to show that archive 
+	  retrieval limitations don't apply to ezmlm-cgi.
 
 1.2.7 - released 23-Jan-05
 

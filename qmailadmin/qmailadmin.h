@@ -36,7 +36,7 @@
 
 #define NUM_SQL_OPTIONS	  6
 
-char *get_html_text( char *index );
+char *get_html_text( int target );
 int open_lang();
 
 int quota_to_bytes(char[], char*);     //jhopper prototype

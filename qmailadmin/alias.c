@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.8 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: alias.c,v 1.9 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
 
   if ( (mydir = opendir(".")) == NULL ) {
     strcpy(uBufA, "4");
-    sprintf(uBufB, "%s %d", get_html_text("143"), 1);
+    sprintf(uBufB, "%s %d", get_html_text(143), 1);
     send_template("show_error_line.html");
     return(0);
   }
@@ -102,7 +102,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
 
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         strcpy(uBufA, "4");
-        sprintf(uBufB, "SDQL %s %s", get_html_text("144"), mydirent->d_name);
+        sprintf(uBufB, "SDQL %s %s", get_html_text(144), mydirent->d_name);
         send_template("show_error_line.html");
         continue;
       }
@@ -134,7 +134,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
 
         if (*Buffer2 == '#') {
           /* this is a blackhole account */
-          sprintf (Buffer1, "%s", get_html_text("303"));
+          sprintf (Buffer1, "%s", get_html_text(303));
           stop = 1;
         }
         while (!stop) {
@@ -226,7 +226,7 @@ int show_dotqmail_file(char *user)
   }
 
   if ( (fs=fopen(dot_file,"r"))==NULL) {
-    sprintf(StatusMessage,"SDQF %s %s<br>\n", get_html_text("144"), dot_file);
+    sprintf(StatusMessage,"SDQF %s %s<br>\n", get_html_text(144), dot_file);
     return(144);
   }
                 
@@ -317,17 +317,17 @@ int moddotqmailnow()
 
   if (strcmp(Action,"delentry")==0) {
     if (onevalidonly(ActionUser) ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("149"));
+      sprintf(StatusMessage, "%s\n", get_html_text(149));
       moddotqmail();
       return(0);
     }
         
     if (dotqmail_del_line(ActionUser,LineData) ) {
-      sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 1);
+      sprintf(StatusMessage, "%s %d\n", get_html_text(150), 1);
       moddotqmail();
       return(150);
     }
-    sprintf(StatusMessage, "%s\n", get_html_text("151") );
+    sprintf(StatusMessage, "%s\n", get_html_text(151) );
     moddotqmail();
     return(151);
     
@@ -336,12 +336,12 @@ int moddotqmailnow()
       moddotqmail();
       return(0);
     } else {
-      sprintf(StatusMessage,"%s %s\n", get_html_text("152"), Newu);
+      sprintf(StatusMessage,"%s %s\n", get_html_text(152), Newu);
       moddotqmail();
       return(0);
     }
   } else {
-    sprintf(StatusMessage, "%s\n", get_html_text("155"));
+    sprintf(StatusMessage, "%s\n", get_html_text(155));
     return(0);
   }
 }
@@ -349,7 +349,7 @@ int moddotqmailnow()
 int adddotqmail()
 {
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("157"), MaxForwards);
+    sprintf(StatusMessage, "%s %d\n", get_html_text(157), MaxForwards);
     show_menu();
     return(157);
   }
@@ -364,12 +364,12 @@ int adddotqmailnow()
 
   if (AdminType!=DOMAIN_ADMIN && 
       !(AdminType==USER_ADMIN && strcmp(ActionUser, Username)==0)) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("157"), MaxForwards);
+    sprintf(StatusMessage, "%s %d\n", get_html_text(157), MaxForwards);
     send_template( "add_forward.html" );
     return(0);
   }
@@ -381,7 +381,7 @@ int adddotqmailnow()
     return(0);
   } else {
 
-    sprintf(StatusMessage, "%s\n", get_html_text("152"));
+    sprintf(StatusMessage, "%s\n", get_html_text(152));
     show_forwards(Username,Domain,Mytime,RealDir);
   }
 }
@@ -396,24 +396,24 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
    /* jeff.hedlund@matrixsi.com                               */
 
   if (strlen(forwardname)<=0) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("163"), forwardname);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(163), forwardname);
     return(-1);
     
   /* make sure forwardname is valid */
   } else if (fixup_local_name(forwardname)) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("163"), forwardname);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(163), forwardname);
     return(-1);
     
   /* check to see if we already have a user with this name (only for create) */
   } else if (create != 0 && check_local_user(forwardname)) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("175"), forwardname);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(175), forwardname);
     return(-1);
   }
 
   /* see if forwarding to a local user */
   if (strstr(dest, "@") == NULL) {
     if (check_local_user(dest) == 0) {
-       sprintf(StatusMessage, "%s\n", get_html_text("161"));
+       sprintf(StatusMessage, "%s\n", get_html_text(161));
        return(-1);
     } else {
        /* make it an email address */
@@ -423,13 +423,13 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
   
   /* check that it's a valid email address */
   if (check_email_addr(dest)) {
-     sprintf(StatusMessage, "%s %s\n", get_html_text("162"), dest);
+     sprintf(StatusMessage, "%s %s\n", get_html_text(162), dest);
      return(-1);
   }
 
   sprintf(Buffer, "&%s\n", dest);
   if (dotqmail_add_line(forwardname, Buffer)) {
-     sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 2);
+     sprintf(StatusMessage, "%s %d\n", get_html_text(150), 2);
      return(-1);
   }
 
@@ -440,7 +440,7 @@ int deldotqmail()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
   send_template( "del_forward_confirm.html" );
@@ -452,7 +452,7 @@ int deldotqmailnow()
 
   if (AdminType!=DOMAIN_ADMIN && 
        !(AdminType==USER_ADMIN && !strcmp(ActionUser, Username))) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     show_menu(Username, Domain, Mytime);
     return(142);
   }
@@ -460,16 +460,16 @@ int deldotqmailnow()
 
   /* check to see if we already have a user with this name */
   if (fixup_local_name(ActionUser)) {
-    sprintf(StatusMessage,"%s %s\n", get_html_text("160"), Alias);
+    sprintf(StatusMessage,"%s %s\n", get_html_text(160), Alias);
     deldotqmail();
     return(160);
   }
 
   if (!(dotqmail_delete_files(ActionUser))) {
-    sprintf(StatusMessage, "%s %s %s\n", get_html_text("167"), 
+    sprintf(StatusMessage, "%s %s %s\n", get_html_text(167), 
       Alias, ActionUser);
   } else {
-    sprintf(StatusMessage, "%s %s %s\n", get_html_text("168"), 
+    sprintf(StatusMessage, "%s %s %s\n", get_html_text(168), 
       Alias, ActionUser);
   }
 

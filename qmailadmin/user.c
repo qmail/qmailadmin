@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.15 2004-02-01 00:50:28 rwidmer Exp $
+ * $Id: user.c,v 1.16 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -117,7 +117,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   if (pw == NULL) {
     /*  No more users to view  */
     sprintf(uBufA, "%i", colspan);
-    sprintf(uBufB, "%s", get_html_text("131"));
+    sprintf(uBufB, "%s", get_html_text(131));
     send_template("show_error_line.html");
     moreusers = 0;
 
@@ -150,7 +150,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
             }
 
           } else { 
-            sprintf(uBufC, "%s&nbsp;/&nbsp;%s", uBufD, get_html_text("229"));
+            sprintf(uBufC, "%s&nbsp;/&nbsp;%s", uBufD, get_html_text(229));
           }
 
         /* display button to modify user */
@@ -206,12 +206,12 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
                                                 
   if ( MaxPopAccounts != -1 && CurPopAccounts >= MaxPopAccounts ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("199"),
+    sprintf(StatusMessage, "%s %d\n", get_html_text(199),
       MaxPopAccounts);
     show_menu();
     return(199);
@@ -226,7 +226,7 @@ int moduser()
 
   if (!( AdminType==DOMAIN_ADMIN ||
         (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -262,12 +262,12 @@ int addusernow()
   arguments = (char **)malloc(MAX_BUFF);
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( MaxPopAccounts != -1 && CurPopAccounts >= MaxPopAccounts ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("199"),
+    sprintf(StatusMessage, "%s %d\n", get_html_text(199),
       MaxPopAccounts);
     show_menu();
     return(199);
@@ -276,13 +276,13 @@ int addusernow()
   GetValue(TmpCGI,Newu, "newu=", sizeof(Newu));
 
   if ( fixup_local_name(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("148"), Newu);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(148), Newu);
     adduser();
     return(148);
   } 
 
   if ( check_local_user(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("175"), Newu);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(175), Newu);
     adduser();
     return(175);
   } 
@@ -293,14 +293,14 @@ int addusernow()
   GetValue(TmpCGI,Password1, "password1=", sizeof(Password1));
   GetValue(TmpCGI,Password2, "password2=", sizeof(Password2));
   if ( strcmp( Password1, Password2 ) != 0 ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("200"));
+    sprintf(StatusMessage, "%s\n", get_html_text(200));
     adduser();
     return(200);
   }
 
 #ifndef ENABLE_LEARN_PASSWORDS
   if ( strlen(Password1) <= 0 ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("234"));
+    sprintf(StatusMessage, "%s\n", get_html_text(234));
     adduser();
     return(234);
   }
@@ -316,13 +316,13 @@ int addusernow()
   GetValue(TmpCGI, c_num, "number_of_mailinglist=", MAX_BUFF);
   num = atoi(c_num);
   if(!(mailingListNames = malloc(sizeof(char *) * num))) {
-    sprintf(StatusMessage, "%s\n", get_html_text("201"));
+    sprintf(StatusMessage, "%s\n", get_html_text(201));
     return(201);
 
   } else {
     for(cnt = 0; cnt < num; cnt++) {
       if(!(mailingListNames[cnt] = malloc(MAX_BUFF))) {
-        sprintf(StatusMessage, "%s\n", get_html_text("201"));
+        sprintf(StatusMessage, "%s\n", get_html_text(201));
         return(201);
       }
     }
@@ -362,7 +362,7 @@ int addusernow()
       vsetuserquota (Newu, Domain, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
-        sprintf(StatusMessage, get_html_text("314"));
+        sprintf(StatusMessage, get_html_text(314));
       } else {
         vsetuserquota (Newu, Domain, qconvert);
       }
@@ -381,13 +381,13 @@ int addusernow()
 
     /* report success */
     sprintf(StatusMessage, "%s %s@%s (%s) %s",
-      get_html_text("002"), Newu, Domain, Gecos,
-      get_html_text("119"));
+      get_html_text(2), Newu, Domain, Gecos,
+      get_html_text(119));
 
   } else {
     /* otherwise, report error */
     sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
-      get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
+      get_html_text(2), Newu, Domain, Gecos, get_html_text(120));
   }
 
   call_hooks(HOOK_ADDUSER, Newu, Domain, Password1, Gecos);
@@ -451,7 +451,7 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
        at the start of the program name only.    BUG 2003-12 */
     error = execl(cmd, cmd, p1, p2, p3, p4, NULL);
     fprintf(actout, "Error %d %s \"%s\", %s, %s, %s, %s, %s\n",
-      errno, get_html_text("202"), cmd, hook_type, p1, p2, p3, p4);
+      errno, get_html_text(202), cmd, hook_type, p1, p2, p3, p4);
     /* if (error == -1) return (-1); */
     exit(127);
   } else {
@@ -475,13 +475,13 @@ int delusergo()
  struct vqpasswd *pw;
      
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   vdeluser( ActionUser, Domain );
 
-  sprintf(StatusMessage, "%s %s", ActionUser, get_html_text("141"));
+  sprintf(StatusMessage, "%s %s", ActionUser, get_html_text(141));
 
   /* Start create forward when delete - 
    * Code added by Eugene Teo 6 June 2000 
@@ -492,7 +492,7 @@ int delusergo()
   if (strcmp(forward, "on") == 0) {
     GetValue(TmpCGI, forwardto, "forwardto=", sizeof(forwardto));    
     if(adddotqmail_shared(ActionUser, forwardto, -1)!=0) {
-       sprintf(StatusMessage, get_html_text("315"), forwardto);
+       sprintf(StatusMessage, get_html_text(315), forwardto);
     }
   } 
 
@@ -510,7 +510,7 @@ int setremotecatchallnow()
   GetValue(TmpCGI,Newu, "newu=", sizeof(Newu));
 
   if (check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("148"), Newu);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(148), Newu);
     setremotecatchall();
     return(148);
   }
@@ -523,7 +523,7 @@ int set_remote_catchall_now()
 
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
     fprintf(stderr,"QmailAdmin: SRCN %s %s\n", 
-            get_html_text("144"), ".qmail-default");
+            get_html_text(144), ".qmail-default");
 
   } else {
     fprintf(fs,"| %s/bin/vdelivermail '' %s\n",VPOPMAILDIR,Newu);
@@ -540,12 +540,12 @@ int bounceall()
 
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
     fprintf(stderr,"QmailAdmin: BA %s %s\n", 
-            get_html_text("144"), ".qmail-default");
+            get_html_text(144), ".qmail-default");
   } else {
     fprintf(fs,"| %s/bin/vdelivermail '' bounce-no-mailbox\n",VPOPMAILDIR);
     fclose(fs);
   }
-  strcpy(CurCatchall, get_html_text("130"));
+  strcpy(CurCatchall, get_html_text(130));
   show_users(Username, Domain, Mytime);
   return(130);
 }
@@ -556,12 +556,12 @@ int deleteall()
 
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
     fprintf(stderr,"QmailAdmin: DA %s %s\n", 
-            get_html_text("144"), ".qmail-default");
+            get_html_text(144), ".qmail-default");
   } else {
     fprintf(fs,"| %s/bin/vdelivermail '' delete\n",VPOPMAILDIR);
     fclose(fs);
   }
-  strcpy(CurCatchall, get_html_text("303"));
+  strcpy(CurCatchall, get_html_text(303));
   show_users(Username, Domain, Mytime);
   return(303);
 }
@@ -584,24 +584,24 @@ int modusergo()
 
   if (!( AdminType==DOMAIN_ADMIN ||
          (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if (strlen(Password1)>0 && strlen(Password2)>0 ) {
     if ( strcmp( Password1, Password2 ) != 0 ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("200"));
+      sprintf(StatusMessage, "%s\n", get_html_text(200));
       moduser();
       return(200);
     }
     ret_code = vpasswd( ActionUser, Domain, Password1, USE_POP);
     if ( ret_code != VA_SUCCESS ) {
-      sprintf(StatusMessage, "%s (%s)", get_html_text("140"), 
+      sprintf(StatusMessage, "%s (%s)", get_html_text(140), 
         verror(ret_code));
     } else {
-      /* sprintf(StatusMessage,"%s %s@%s.", get_html_text("139"), 
+      /* sprintf(StatusMessage,"%s %s@%s.", get_html_text(139), 
 ActionUser, Domain ); */
-      strcpy (StatusMessage, get_html_text("139"));
+      strcpy (StatusMessage, get_html_text(139));
     }
   }
 
@@ -616,23 +616,23 @@ ActionUser, Domain ); */
       /* Blank or no change, do nothing */
     } else if (strncmp(Quota, "NOQUOTA", 2)==0) {
       if (vsetuserquota( ActionUser, Domain, Quota )) {
-        sprintf(StatusMessage, get_html_text("307"));  /* invalid quota */
+        sprintf(StatusMessage, get_html_text(307));  /* invalid quota */
       } else {
-        sprintf(StatusMessage, get_html_text("308"));
+        sprintf(StatusMessage, get_html_text(308));
       }
     } else if (atoi(Quota)) {
       quotaptr = Quota;
       if (quota_to_bytes(qconvert, quotaptr)) {
-        sprintf(StatusMessage, get_html_text("307"));
+        sprintf(StatusMessage, get_html_text(307));
       } else if(strcmp(qconvert, vpw->pw_shell)==0) {
         /* unchanged, do nothing */
       } else if(vsetuserquota( ActionUser, Domain, qconvert )) {
-        sprintf(StatusMessage, get_html_text("307"));
+        sprintf(StatusMessage, get_html_text(307));
       } else { 
-        sprintf(StatusMessage, get_html_text("309"), qconvert);
+        sprintf(StatusMessage, get_html_text(309), qconvert);
       }
     } else {
-      sprintf(StatusMessage, get_html_text("307"));
+      sprintf(StatusMessage, get_html_text(307));
     }
   }
 #endif
@@ -721,13 +721,13 @@ ActionUser, Domain ); */
 
     /* If nothing was entered, error */
     if ( box[0] == 0 ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("215"));
+      sprintf(StatusMessage, "%s\n", get_html_text(215));
       moduser();
       return(215);
 
     /* check it for a valid email address
     } else if ( check_email_addr( box ) == 1 )  {
-      sprintf(StatusMessage, "%s\n", get_html_text("148"));
+      sprintf(StatusMessage, "%s\n", get_html_text(148));
       moduser();
     */
     }
@@ -772,7 +772,7 @@ ActionUser, Domain ); */
 
     /* if no subject, error */
     if ( box[0] == 0 ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("216"));
+      sprintf(StatusMessage, "%s\n", get_html_text(216));
       moduser();
       return(216);
     }

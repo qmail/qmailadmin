@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.7 2004-02-01 00:50:28 rwidmer Exp $
+ * $Id: auth.c,v 1.8 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,8 +89,8 @@ int create_session_file( char *ip_addr, char *domaindir)
   sprintf(Buffer, "%s/Maildir/%d.qw", domaindir, Mytime);
   fs = fopen(Buffer, "w");
   if ( fs == NULL ) {
-    fprintf(actout,"MAIN %s %s\n", get_html_text("144"), Buffer);
-    fprintf(stderr,"MAIN %s %s\n", get_html_text("144"), Buffer);
+    fprintf(actout,"MAIN %s %s\n", get_html_text(144), Buffer);
+    fprintf(stderr,"MAIN %s %s\n", get_html_text(144), Buffer);
     return(1);
   }
 

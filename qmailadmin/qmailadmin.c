@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.11 2004-02-01 02:13:56 rwidmer Exp $
+ * $Id: qmailadmin.c,v 1.12 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
+
+#define debug
+
+#define debug
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -164,7 +168,7 @@ setuidgid(char *Domain)
   }
 
   if ( chdir(RealDir) < 0 ) {
-    fprintf(stderr, "MAIN %s %s\n", get_html_text("171"), RealDir );
+    fprintf(stderr, "MAIN %s %s\n", get_html_text(171), RealDir );
   }
 }
 
@@ -173,12 +177,16 @@ int get_command_parms( char *commandparms, int parmsize )
  char *pi;
  int i,j;
 
+  #ifdef debug
   fprintf(stderr, "get_command_parms started\n" );
+  #endif
 
   pi=getenv("PATH_INFO");
   if ( pi )  pi = strdup(pi);
 
+  #ifdef debug
   fprintf(stderr, "get_command_parms pi: %s\n", pi );
+  #endif
 
   memset(commandparms, 0, parmsize);
   fprintf(stderr, "sizeof commandparms: %d", parmsize);
@@ -186,11 +194,15 @@ int get_command_parms( char *commandparms, int parmsize )
   /*  Cut off the first five characters...  '/com/'   */
   if (pi && strncmp(pi, "/com/", 5) == 0) {
     for(j=0,i=5;pi[i]!=0&&j<99;++i,++j) commandparms[j] = pi[i];
+    #ifdef debug
     fprintf(stderr, "get command parms - found it: %s\n", commandparms );
+    #endif
     return( 0 );
   }
 
+  #ifdef debug
   fprintf(stderr, "get command parms - nothing\n" );
+  #endif
   return(1);
 }
 
@@ -249,7 +261,9 @@ main(argc,argv)
   if (!get_command_parms(CommandParms, sizeof(CommandParms))) {
 
     /*  Have command - prepare to execute it  */
-    fprintf( stderr, "\nMystery if case #1\n" );
+    #ifdef debug
+    fprintf( stderr, "\nHave command\n" );
+    #endif
     setuidgid( Domain );
     set_admin_type();
     count_stuff();
@@ -257,9 +271,8 @@ main(argc,argv)
     if( errors = get_session_data( Username, Domain, ip_addr )) {
  
       /*  Error with session data - need to login  */
-      sprintf(err_code, "%3d\n", errors );
-      fprintf( stderr, "Error code returned: %s", err_code);
-      sprintf(StatusMessage, "%s\n", get_html_text( err_code ));
+      fprintf( stderr, "Error code returned: %d", errors);
+      sprintf(StatusMessage, "%s\n", get_html_text( errors ));
       show_login();
 
     } else {
@@ -271,28 +284,41 @@ main(argc,argv)
 
 
   } else if ( strlen(Action) == 0) {    
+    #ifdef debug
+    fprintf( stderr, "No button pressed - show login\n\n" );
+    #endif
 
     /*  No button pressed...   Show login page   */
     show_login();
 
   } else if (0 == strlen(Username) || 0==strlen(Password)) {
+    #ifdef debug
+    fprintf( stderr, "Missing required fields\n\n" );
+    #endif
 
     /*  If they left anything blank, don't bother to authenticate  */
-    sprintf(StatusMessage, "%s\n", get_html_text("316"));
+    sprintf(StatusMessage, "%s\n", get_html_text(316));
     show_login();
 
   } else if (NULL == (pw = vauth_user( Username, Domain, Password, "" ))) { 
+    #ifdef debug
+    fprintf( stderr, "Invalid username/password\n\n" );
+    #endif
 
     /*  Invalid user/domain/password - show error message */
-    sprintf(StatusMessage, "%s\n", get_html_text("198"));
+    sprintf(StatusMessage, "%s\n", get_html_text(198));
     show_login();
 
   } else {
+    #ifdef debug
+    fprintf( stderr, "Try to login\n\n" );
+    #endif
 
     /*  Just logged in   */
     setuidgid( Domain );
     if( create_session_file( ip_addr, pw->pw_dir )) {
 
+      fprintf(stderr, "Unable to create session file" );
       printf( "Unable to create session file" );
 
     } else {

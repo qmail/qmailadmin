@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.10 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: template.c,v 1.11 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
+
+//#define debug
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +59,7 @@ int send_template(char *filename)
  int j;
  int inchar;
  int testint;
+ int target;
  char *tmpstr;
  struct stat mystat;
  char qconvert[11];
@@ -70,6 +74,9 @@ int send_template(char *filename)
     return(-1);
   }
 
+  #ifdef debug
+  fprintf(stderr, "Send Template %s\n", filename);
+  #endif
 
   /*  Try to get the template path from ENVIRONMENT  */
   tmpstr = getenv(QMAILADMIN_TEMPLATEDIR);
@@ -79,6 +86,10 @@ int send_template(char *filename)
 
   /*  Build the fully qualified file name  */
   snprintf(fqfn, (sizeof(fqfn) - 1), "%s/html/%s", tmpstr, filename);
+
+  #ifdef debug
+  fprintf(stderr, "Final template filename: %s\n", fqfn);
+  #endif
 
   /*  Does file exist  */
   if (lstat(fqfn, &mystat) == -1) {
@@ -95,7 +106,7 @@ int send_template(char *filename)
   /* open the template */
   fs = fopen( fqfn, "r" );
   if (fs == NULL) {
-    fprintf(stderr,"STN1 %s %s\n", get_html_text("144"), fqfn);
+    fprintf(stderr,"STN1 %s %s\n", get_html_text(144), fqfn);
     return 144;
   }
 
@@ -134,7 +145,7 @@ int send_template(char *filename)
             if(MaxPopAccounts > -1) {
               printf("%d/%d", CurPopAccounts, MaxPopAccounts);
             } else {
-              printf("%d/%s", CurPopAccounts, get_html_text("229"));
+              printf("%d/%s", CurPopAccounts, get_html_text(229));
             }
             break;
 
@@ -169,12 +180,6 @@ int send_template(char *filename)
             show_mailing_list_line(Username,Domain,Mytime,RealDir);
             break;
 
-          /* display a file (used for mod_autorespond ONLY) */
-          /* this code should be moved to a function in autorespond.c */
-          case 'F':
-            display_robot_message();
-            break;
-
           /* show the mailing list digest subscribers */
           case 'G':
             show_list_group_now(2);
@@ -206,7 +211,7 @@ int send_template(char *filename)
             if(MaxMailingLists > -1) {
               printf("%d/%d", CurMailingLists, MaxMailingLists);
             } else {
-              printf("%d/%s", CurMailingLists, get_html_text("229"));
+              printf("%d/%s", CurMailingLists, get_html_text(229));
             }
             break;
 
@@ -216,7 +221,7 @@ int send_template(char *filename)
             if(MaxForwards > -1) {
               printf("%d/%d", CurForwards, MaxForwards);
             } else {
-              printf("%d/%s", CurForwards, get_html_text("229"));
+              printf("%d/%s", CurForwards, get_html_text(229));
             }
             break;
 
@@ -226,7 +231,7 @@ int send_template(char *filename)
             if(MaxAutoResponders > -1) {
               printf("%d/%d", CurAutoResponders, MaxAutoResponders);
             } else {
-              printf("%d/%s", CurAutoResponders, get_html_text("229"));
+              printf("%d/%s", CurAutoResponders, get_html_text(229));
             }
             break;
 
@@ -250,14 +255,14 @@ int send_template(char *filename)
             i=0; 
             Buffer[i]=fgetc(fs);
             if (Buffer[i] == '/') {
-              fprintf(actout, "STN2 %s", get_html_text("144"));
+              fprintf(actout, "STN2 %s", get_html_text(144));
             } else {
               for(;Buffer[i] != '\0' && Buffer[i] != '#' && i < sizeof(Buffer)-1;) {
                 Buffer[++i] = fgetc(fs);
               }
               Buffer[i] = '\0';
               if ((strstr(Buffer, "../")) != NULL) {
-                fprintf(actout, "STN3 %s: %s", get_html_text("144"), Buffer);
+                fprintf(actout, "STN3 %s: %s", get_html_text(144), Buffer);
               } else if((strcmp(Buffer, filename)) != 0) {
                 send_template(Buffer);
               }
@@ -293,7 +298,7 @@ int send_template(char *filename)
                if(AdminType == DOMAIN_ADMIN) 
                   printf("NOQUOTA");
                else
-                  printf(get_html_text("229"));
+                  printf(get_html_text(229));
             }
             break; 
 
@@ -395,7 +400,12 @@ int send_template(char *filename)
           case 'X':
             for(i=0;i<3;++i) dchar[i] = fgetc(fs);
             dchar[i] = 0;
-            printf("%s", get_html_text(dchar));
+            target = atoi( dchar );
+            #ifdef debug
+            fprintf(stderr, "X - dchar: %s target: %d\n", dchar, target);
+            fflush(stderr);
+            #endif
+            printf("%s", get_html_text(target));
             break;
 
           /* logout link/text */
@@ -407,7 +417,7 @@ int send_template(char *filename)
                       get_session_val("returnhttp="), value);
             } else {
                printf("%s/com/logout?user=%s&dom=%s&time=%d&\">%s</a>",
-                      CGIPATH, Username, Domain, Mytime, get_html_text("218"));
+                      CGIPATH, Username, Domain, Mytime, get_html_text(218));
             }
             break;
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.8 2004-02-01 00:50:28 rwidmer Exp $
+ * $Id: autorespond.c,v 1.9 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,9 +31,6 @@
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 
-static int FileReady=0;
-static FILE *MessageFile=NULL;
-
 show_autoresponders(user,dom,mytime,dir)
  char *user;
  char *dom;
@@ -43,7 +40,7 @@ show_autoresponders(user,dom,mytime,dir)
   if ( MaxAutoResponders == 0 ) return(0);
 
   if(CurAutoResponders == 0) {
-    sprintf(StatusMessage,"%s", get_html_text("233"));
+    sprintf(StatusMessage,"%s", get_html_text(233));
     show_menu(Username, Domain, Mytime);
   } else {
     send_template( "show_autorespond.html" );
@@ -60,7 +57,7 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
  int i,j;
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(stderr, "%s\n", get_html_text("143"));
+    fprintf(stderr, "%s\n", get_html_text(143));
     return 143;
   }
 
@@ -71,7 +68,7 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         strcpy(uBufA, "3");
-        sprintf(uBufB, "SAL %s %s\n", get_html_text("144"), mydirent->d_name);
+        sprintf(uBufB, "SAL %s %s\n", get_html_text(144), mydirent->d_name);
         send_template("show_error_line.html");
         continue;
       }
@@ -103,12 +100,12 @@ addautorespond()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
-    fprintf(actout, "%s %d\n", get_html_text("158"), MaxAutoResponders);
+    fprintf(actout, "%s %d\n", get_html_text(158), MaxAutoResponders);
     show_menu();
     return(158);
   }
@@ -126,49 +123,49 @@ addautorespondnow()
  char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
-    fprintf(actout, "%s %d\n", get_html_text("158"), MaxAutoResponders);
+    fprintf(actout, "%s %d\n", get_html_text(158), MaxAutoResponders);
     show_menu();
     return(158);
   }
 
   if ( fixup_local_name(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("174"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(174), ActionUser);
     addautorespond();
     return(174);
   }
 
 
   if ( check_local_user(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("175"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(175), ActionUser);
     addautorespond();
     return(175);
   }
 
   if ( strlen(ActionUser) == 0 ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("176"));
+    sprintf(StatusMessage, "%s\n", get_html_text(176));
     addautorespond();
     return(176);
   }
 
   if ( strlen(Newu)>0 && check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("177"), Newu);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(177), Newu);
     addautorespond();
     return(177);
   }
 
   if (strlen(Alias) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("178"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(178), ActionUser);
     addautorespond();
     return(178);
   }
 
   if (strlen(Message) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("179"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(179), ActionUser);
     addautorespond();
     return(179);
   }
@@ -212,7 +209,7 @@ addautorespondnow()
    * Report success
    */
   CurAutoResponders++;
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("180"),
+  sprintf(StatusMessage, "%s %s@%s\n", get_html_text(180),
     ActionUser, Domain);
   show_autoresponders(Username,Domain);
 
@@ -221,7 +218,7 @@ addautorespondnow()
 delautorespond()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
   send_template( "del_autorespond_confirm.html" );
@@ -235,13 +232,13 @@ delautorespondnow()
  char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   for(i=0;ActionUser[i]!=0;++i) if (ActionUser[i]=='.') ActionUser[i] = ':';
   sprintf(Buffer2, ".qmail-%s", ActionUser);
-  if ( unlink(Buffer2) != 0 ) ack( get_html_text("181"), 345);
+  if ( unlink(Buffer2) != 0 ) ack( get_html_text(181), 345);
 
   memset(Buffer2,0,sizeof(Buffer2));
   for(i=0;ActionUser[i]!=0;++i) {
@@ -256,7 +253,7 @@ delautorespondnow()
         for(i=0;ActionUser[i]!=0;++i) if (ActionUser[i]==':') ActionUser[i] = '.';
   sprintf(Buffer1, "%s/%s", RealDir, Buffer2);
   vdelfiles(Buffer1);
-  sprintf(StatusMessage, "%s %s\n", get_html_text("182"), ActionUser);
+  sprintf(StatusMessage, "%s %s\n", get_html_text(182), ActionUser);
 
   CurAutoResponders--;
   if(CurAutoResponders == 0) {
@@ -269,14 +266,14 @@ delautorespondnow()
 modautorespond()
 {
  char fqfn[MAX_BUFF];
- char Buffer[MAX_BUFF];
- char Subj[MAX_BUFF];
+ char Buffer[MAX_BIG_BUFF];
+ char Line[MAX_BUFF];
  FILE *fs;
  int i,j;
 
 /*
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 */
@@ -317,7 +314,9 @@ modautorespond()
     } else {
       /* Full Address - take off newline */
       i = strlen(Buffer); --i; Buffer[i] = 0;
-      strcpy(uBufA, Buffer);
+      for(i=1, j=0; Buffer[i] != 0; ++j,++i) {
+        uBufA[j] = Buffer[i];
+      }
     }
   } 
 
@@ -332,33 +331,33 @@ modautorespond()
   sprintf(fqfn, "%s/message", Buffer);
 
   /*  Open the message file  */
-  if ((MessageFile = fopen(fqfn, "r")) == NULL) { 
+  if ((fs = fopen(fqfn, "r")) == NULL) { 
     ack("123", 123);
   }
 
   /*  Discard the From line  */
-  fgets(Buffer, sizeof(Buffer), MessageFile);
+  fgets(Buffer, sizeof(Buffer), fs);
 
   /*  Read the Subject  */
-  fgets(uBufA, sizeof(uBufB), MessageFile);
+  fgets(uBufB, sizeof(uBufB), fs);
 
   /*  Discard blank line  */
-  fgets(Buffer, sizeof(Buffer), MessageFile);
-  FileReady=1;
+  fgets(Buffer, sizeof(Buffer), fs);
+
+  i=0;
+  while (fgets(Line, sizeof(Line), fs)) {
+     for(j=0; 0 != Line[j] && j<MAX_BUFF; i++,j++  ) {
+        Buffer[i]=Line[j];
+     }
+     Buffer[i] = 0;
+  }
+
+  strcpy(uBufC, Buffer);
 
   send_template( "mod_autorespond.html" );
 
-  fclose( MessageFile );
-}
-
-
-int display_robot_message() 
-{
- char Buffer[MAX_BUFF];
-
-  while (fgets(Buffer, sizeof(Buffer), MessageFile)) {
-    fprintf(actout, "%s", Buffer);
-  }
+  // Close Message file
+  fclose( fs );
 }
 
 
@@ -372,30 +371,30 @@ modautorespondnow()
  char Buffer3[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( fixup_local_name(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("174"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(174), ActionUser);
     modautorespond();
     return(174);
   }
 
   if ( strlen(Newu)>0 && check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("177"), Newu);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(177), Newu);
     modautorespond();
     return(177);
   }
 
   if (strlen(Alias) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("177"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(177), ActionUser);
     modautorespond();
     return(177);
   }
 
   if (strlen(Message) <= 1) {
-    sprintf(StatusMessage, get_html_text("BODY_EMPTY"), ActionUser);
+    sprintf(StatusMessage, get_html_text(1), ActionUser);
     modautorespond();
     return(0);
   }
@@ -442,6 +441,6 @@ modautorespondnow()
   /*
    * Report success
    */
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("183"),ActionUser,Domain);
+  sprintf(StatusMessage, "%s %s@%s\n", get_html_text(183),ActionUser,Domain);
   show_autoresponders(Username, Domain, Mytime);
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.10 2004-02-01 02:13:56 rwidmer Exp $
+ * $Id: util.c,v 1.11 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,10 +148,10 @@ int count_stuff(void)
     fprintf( stderr, ".qmail-default: %s\n", Buffer);
 
     if (strstr(Buffer, " bounce-no-mailbox\n") != NULL) {
-      sprintf(CurCatchall,"%s", get_html_text("130"));
+      sprintf(CurCatchall,"%s", get_html_text(130));
 
     } else if (strstr(Buffer, " delete\n") != NULL) {
-      sprintf(CurCatchall,"%s", get_html_text("236"));
+      sprintf(CurCatchall,"%s", get_html_text(236));
 
     } else if ( strstr(Buffer, "@") != NULL ) {
       /* check for local user to forward to */
@@ -502,10 +502,23 @@ int open_lang()
 /* It's a good thing qmailadmin is a cgi script, because this
    function leaks memory.  That's OK though, Tom has plans
    for rewriting the html_text stuff soon. */
-char *get_html_text( char *index )
+char *get_html_text( int target )
 {
  static char *tmpbuf;
  char *tmpstr;
+ char index[4];
+
+  #ifdef DEBUG_GET_TEXT
+  fprintf( stderr, "get_html_text target: %d\n", target);
+  fflush( stderr );
+  #endif
+
+  sprintf( index, "%03d", target );
+
+  #ifdef DEBUG_GET_TEXT
+  fprintf( stderr, "Converted index: %s\n", index );
+  fflush( stderr );
+  #endif
 
   tmpbuf = malloc(400);
 

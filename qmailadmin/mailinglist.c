@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.9 2004-02-01 02:13:56 rwidmer Exp $
+ * $Id: mailinglist.c,v 1.10 2004-02-07 09:22:36 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,13 +49,13 @@ int show_mailing_lists(char *user, char *dom, time_t mytime)
 
  fprintf(stderr, "show_mailing_lists was called\n");
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   /* see if there's anything to display */
    if ( CurMailingLists == 0 ) {
-    sprintf(StatusMessage,"%s", get_html_text("231"));
+    sprintf(StatusMessage,"%s", get_html_text(231));
     show_menu();
     return(231);
   }
@@ -77,7 +77,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
   int i,j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
    if ( MaxMailingLists == 0 ) {
@@ -86,7 +86,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
 
   if ( (mydir = opendir(".")) == NULL ) {
     fprintf(stderr,"QmailAdmin: %s %s", 
-            get_html_text("143"), "domain directory");
+            get_html_text(143), "domain directory");
     return(143);
   }
 
@@ -101,7 +101,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
 #else
         strcpy(uBufA, "5");
 #endif
-        sprintf(uBufB, "SMLL %s %s\n", get_html_text("144"), mydirent->d_name);
+        sprintf(uBufB, "SMLL %s %s\n", get_html_text(144), mydirent->d_name);
         send_template("show_error_line.html");
         continue;
       }
@@ -177,7 +177,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
  char Buffer[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -186,7 +186,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(stderr,"%s %s\n", get_html_text("143"), "domain directory");
+    fprintf(stderr,"%s %s\n", get_html_text(143), "domain directory");
     return(143);
   }
 
@@ -196,7 +196,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
   while( (mydirent=readdir(mydir)) != NULL ) {
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(stderr,"SMLL3 %s %s\n", get_html_text("144"), mydirent->d_name);
+        fprintf(stderr,"SMLL3 %s %s\n", get_html_text(144), mydirent->d_name);
         continue;
       }
       fgets( Buffer, sizeof(Buffer), fs);
@@ -235,12 +235,12 @@ int addmailinglist(void)
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
-    fprintf(actout, "%s %d\n", get_html_text("184"), 
+    fprintf(actout, "%s %d\n", get_html_text(184), 
       MaxMailingLists);
     show_menu();
     return(184);
@@ -260,7 +260,7 @@ int addmailinglist(void)
 int delmailinglist(void)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -276,12 +276,12 @@ int delmailinglistnow(void)
  char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout,"%s %d<BR>\n", get_html_text("143"), 1);
+    fprintf(actout,"%s %d<BR>\n", get_html_text(143), 1);
     fprintf(actout,"</table>");
     return 0;
   }
@@ -299,13 +299,13 @@ int delmailinglistnow(void)
     /* delete the main .qmail-"list" file */
     if ( strcmp(Buffer2, mydirent->d_name) == 0 ) {
       if ( unlink(mydirent->d_name) != 0 ) {
-        ack(get_html_text("185"), Buffer2);
+        ack(get_html_text(185), Buffer2);
       }
 
     /* delete secondary .qmail-"list"-* files */
     } else if ( strncmp(Buffer1, mydirent->d_name, strlen(Buffer1)) == 0 ) {
       if ( unlink(mydirent->d_name) != 0 ) {
-        ack(get_html_text("185"), Buffer2);
+        ack(get_html_text(185), Buffer2);
       }
     }
   }
@@ -317,7 +317,7 @@ int delmailinglistnow(void)
 
   CurMailingLists--;
 
-  sprintf(StatusMessage, "%s %s\n", get_html_text("186"), ActionUser);
+  sprintf(StatusMessage, "%s %s\n", get_html_text(186), ActionUser);
     if ( CurMailingLists == 0 ) {
         show_menu();
     } else {
@@ -391,12 +391,12 @@ ezmlm_make (int newlist)
   char listopt[] = "A  D   hIj L N pQRST      ";
   
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   if ( fixup_local_name(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("188"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(188), ActionUser);
     addmailinglist();
     return(188);
   }
@@ -567,14 +567,14 @@ ezmlm_make (int newlist)
 int addmailinglistnow(void)
 {
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
-    fprintf(actout, "%s %d\n", get_html_text("184"),
+    fprintf(actout, "%s %d\n", get_html_text(184),
       MaxMailingLists);
     show_menu();
     return(184);
   }
 
   if ( check_local_user(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("175"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(175), ActionUser);
     addmailinglist();
     return(175);
   }
@@ -582,7 +582,7 @@ int addmailinglistnow(void)
   ezmlm_make(1);
   CurMailingLists++;
 
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("187"),
+  sprintf(StatusMessage, "%s %s@%s\n", get_html_text(187),
           ActionUser, Domain);
   show_mailing_lists(Username, Domain, Mytime);
 }
@@ -592,6 +592,9 @@ int show_list_group_now(int mod)
  char Buffer1[MAX_BUFF];
  char Buffer2[MAX_BUFF];
  char Buffer3[MAX_BUFF];
+ int buff1;
+ int buff2;
+ int buff3;
 
   /* mod = 0 for subscribers, 1 for moderators, 2 for digest users */
   
@@ -601,7 +604,7 @@ int show_list_group_now(int mod)
  char *addr;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -638,25 +641,25 @@ int show_list_group_now(int mod)
 
     /* Display subscriber/moderator/digest list, along with delete button */
     if(mod == 1) {
-        strcpy(Buffer3, "228"); strcpy(Buffer1, "220");
-        /* strcpy(Buffer2, "087"); */
+        buff1 = 220;
+        buff3 = 228; 
     } else if(mod == 2) {
-        strcpy(Buffer3, "244"); strcpy(Buffer1, "246");
-        /* strcpy(Buffer2, "245"); */
+        buff1 = 246;
+        buff3 = 244;
     } else {
-        strcpy(Buffer3, "230"); strcpy(Buffer1, "222");
-        /* strcpy(Buffer2, "084"); */
+        buff3 = 230; 
+        buff1 = 222;
     }
-    strcpy(Buffer2, "072");
+    buff2 = 072;
     fprintf(actout,"<TABLE border=0 width=\"100%%\">\n");
     fprintf(actout," <TR>\n");
-    fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(Buffer3), subuser_count);
+    fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(buff3), subuser_count);
     fprintf(actout," </TR>\n");
     fprintf(actout," <TR align=center bgcolor=\"#cccccc\">\n");
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer2));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer1));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer2));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer1));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(buff2));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(buff1));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(buff2));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(buff1));
     fprintf(actout," </TR>\n");
 
     if(mod == 1) {
@@ -687,8 +690,8 @@ int show_list_group_now(int mod)
     fprintf(actout,"</TABLE>");
     fclose(fs); close(handles[0]);
     wait(&pid);
-    sprintf(StatusMessage, "%s\n", get_html_text("190"));
-    fprintf(actout, get_html_text("END_LIST_NAMES"));
+    sprintf(StatusMessage, "%s\n", get_html_text(190));
+    fprintf(actout, get_html_text(1));
 
   }
 }
@@ -702,7 +705,7 @@ int show_list_digest_users_now(void) { return show_list_group_now(2); }
 int show_list_group(char *template)
 {
   if (AdminType != DOMAIN_ADMIN) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
   
@@ -722,7 +725,7 @@ int show_list_moderators(void) { return show_list_group("show_moderators.html");
 addlistgroup (char *template)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -744,14 +747,14 @@ char Buffer2[MAX_BUFF];
  int pid;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
   lowerit(ActionUser);
 
   if ( check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("148"), Newu);
+    sprintf(StatusMessage, "%s %s\n", get_html_text(148), Newu);
     if (mod == 1) {
       addlistmod();
     } else if (mod == 2) {
@@ -778,15 +781,15 @@ char Buffer2[MAX_BUFF];
 
   if(mod == 1 ) {
     sprintf(StatusMessage, "%s %s %s@%s\n", Newu, 
-        get_html_text("194"), ActionUser, Domain);
+        get_html_text(194), ActionUser, Domain);
     send_template( "add_listmod.html" );
   } else if(mod == 2) {
     sprintf(StatusMessage, "%s %s %s@%s\n", Newu, 
-        get_html_text("240"), ActionUser, Domain);
+        get_html_text(240), ActionUser, Domain);
     send_template( "add_listdig.html" );
   } else {
     sprintf(StatusMessage, "%s %s %s@%s\n", Newu, 
-        get_html_text("193"), ActionUser, Domain);
+        get_html_text(193), ActionUser, Domain);
     send_template( "add_listuser.html" );
   }
   return(999);
@@ -801,7 +804,7 @@ addlistdignow() { addlistgroupnow(2); }
 dellistgroup(char *template)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -821,7 +824,7 @@ dellistgroupnow(int mod)
  char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -842,13 +845,13 @@ dellistgroupnow(int mod)
   } else wait(&pid);
 
   if(mod == 1) {
-    sprintf(StatusMessage, "%s %s %s@%s\n", Newu, get_html_text("197"),
+    sprintf(StatusMessage, "%s %s %s@%s\n", Newu, get_html_text(197),
         ActionUser, Domain);
   } else if(mod == 2) {
-    sprintf(StatusMessage, "%s %s %s@%s\n", Newu, get_html_text("242"),
+    sprintf(StatusMessage, "%s %s %s@%s\n", Newu, get_html_text(242),
         ActionUser, Domain);
   } else {
-    sprintf(StatusMessage, "%s %s %s@%s\n", Newu, get_html_text("203"),
+    sprintf(StatusMessage, "%s %s %s@%s\n", Newu, get_html_text(203),
         ActionUser, Domain);
   }
   show_mailing_lists(Username, Domain, Mytime);
@@ -871,7 +874,7 @@ modmailinglist()
  char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    sprintf(StatusMessage,"%s", get_html_text(142));
     return(142);
   }
 
@@ -927,7 +930,7 @@ modmailinglistnow()
 {
   ezmlm_make(0);
   
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("226"),
+  sprintf(StatusMessage, "%s %s@%s\n", get_html_text(226),
     ActionUser, Domain);
   show_mailing_lists(Username, Domain, Mytime);
 }
@@ -1165,91 +1168,91 @@ show_current_list_values() {
     strcpy (listname, dotqmail_name);
     str_replace (listname, ':', '.');
   } else {
-    sprintf (listname, "<I>%s</I>", get_html_text("261"));
+    sprintf (listname, "<I>%s</I>", get_html_text(261));
   }
 
   /* Posting Messages */
-  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("262"));
-  build_option_str ("RADIO", "opt1", "MU", get_html_text("263"));
+  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text(262));
+  build_option_str ("RADIO", "opt1", "MU", get_html_text(263));
   fprintf(actout, "<BR>\n");
-  build_option_str ("RADIO", "opt1", "Mu", get_html_text("264"));
+  build_option_str ("RADIO", "opt1", "Mu", get_html_text(264));
   fprintf(actout, "<BR>\n");
-  build_option_str ("RADIO", "opt1", "mu", get_html_text("265"));
+  build_option_str ("RADIO", "opt1", "mu", get_html_text(265));
   fprintf(actout, "<BR>\n");
-  build_option_str ("RADIO", "opt1", "mUo", get_html_text("266"));
+  build_option_str ("RADIO", "opt1", "mUo", get_html_text(266));
   fprintf(actout, "<BR>\n");
-  build_option_str ("RADIO", "opt1", "mUO", get_html_text("267"));
+  build_option_str ("RADIO", "opt1", "mUO", get_html_text(267));
   fprintf(actout, "</P>\n");
 
   /* List Options */
-  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("268"));
+  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text(268));
   /* this next option isn't necessary since we use the edit box to
    * set/delete the prefix
-  sprintf (Buffer4, get_html_text("269"), listname);
+  sprintf (Buffer4, get_html_text(269), listname);
   build_option_str ("CHECKBOX", "opt3", "f", Buffer4);
   fprintf(actout, "<BR>\n");
   */
   fprintf(actout, "<TABLE><TR><TD ROWSPAN=3 VALIGN=TOP>%s</TD>",
-    get_html_text("310"));
+    get_html_text(310));
   fprintf(actout, "<TD><INPUT TYPE=RADIO NAME=\"replyto\" VALUE=\"%d\"%s>%s</TD></TR>\n",
-    REPLYTO_SENDER, (replyto == REPLYTO_SENDER) ? " CHECKED" : "", get_html_text("311"));
+    REPLYTO_SENDER, (replyto == REPLYTO_SENDER) ? " CHECKED" : "", get_html_text(311));
   fprintf(actout, "<TR><TD><INPUT TYPE=RADIO NAME=\"replyto\" VALUE=\"%d\"%s>%s</TD></TR>\n",
-    REPLYTO_LIST, (replyto == REPLYTO_LIST) ? " CHECKED" : "", get_html_text("312"));
+    REPLYTO_LIST, (replyto == REPLYTO_LIST) ? " CHECKED" : "", get_html_text(312));
   fprintf(actout, "<TR><TD><INPUT TYPE=RADIO NAME=\"replyto\" VALUE=\"%d\"%s>%s ",
-    REPLYTO_ADDRESS, (replyto == REPLYTO_ADDRESS) ? " CHECKED" : "", get_html_text("313"));
+    REPLYTO_ADDRESS, (replyto == REPLYTO_ADDRESS) ? " CHECKED" : "", get_html_text(313));
   fprintf(actout, "<INPUT TYPE=TEXT NAME=\"replyaddr\" VALUE=\"%s\" SIZE=30></TD></TR>\n",
     replyto_addr);
   fprintf(actout, "</TABLE><BR>\n");
-  build_option_str ("CHECKBOX", "opt4", "t", get_html_text("270"));
+  build_option_str ("CHECKBOX", "opt4", "t", get_html_text(270));
   fprintf(actout, "<BR>\n");
-  build_option_str ("CHECKBOX", "opt5", "d", get_html_text("271"));
-  sprintf (Buffer4, get_html_text("272"), listname);
+  build_option_str ("CHECKBOX", "opt5", "d", get_html_text(271));
+  sprintf (Buffer4, get_html_text(272), listname);
   fprintf(actout, "<SMALL>(%s)</SMALL>", Buffer4);
   fprintf(actout, "<BR>\n");
-  sprintf (Buffer4, get_html_text("273"), listname);
+  sprintf (Buffer4, get_html_text(273), listname);
   build_option_str ("CHECKBOX", "opt6", "q", Buffer4);
   fprintf(actout, "<BR>\n");
-  sprintf (Buffer4, get_html_text("274"), listname, listname, listname);
+  sprintf (Buffer4, get_html_text(274), listname, listname, listname);
   fprintf(actout, "&nbsp; &nbsp; <SMALL>(%s)</SMALL></P>", Buffer4);
 
   /* Remote Administration */
-  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("275"));
-  build_option_str ("CHECKBOX", "opt7", "r", get_html_text("276"));
+  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text(275));
+  build_option_str ("CHECKBOX", "opt7", "r", get_html_text(276));
   fprintf(actout, "<BR>\n");
-  build_option_str ("CHECKBOX", "opt8", "P", get_html_text("277"));
-  fprintf(actout, "<SMALL>(%s)</SMALL><BR>", get_html_text("278"));
+  build_option_str ("CHECKBOX", "opt8", "P", get_html_text(277));
+  fprintf(actout, "<SMALL>(%s)</SMALL><BR>", get_html_text(278));
   fprintf(actout, "<TABLE><TR><TD ROWSPAN=2 VALIGN=TOP>%s</TD>",
-    get_html_text("279"));
+    get_html_text(279));
   fprintf(actout, "<TD>");
-  build_option_str ("CHECKBOX", "opt9", "l", get_html_text("280"));
+  build_option_str ("CHECKBOX", "opt9", "l", get_html_text(280));
   fprintf(actout, "</TD>\n</TR><TR>\n<TD>");
-  build_option_str ("CHECKBOX", "opt10", "n", get_html_text("281"));
-  fprintf(actout, "<SMALL>(%s)</SMALL>.</TD>\n", get_html_text("282"));
+  build_option_str ("CHECKBOX", "opt10", "n", get_html_text(281));
+  fprintf(actout, "<SMALL>(%s)</SMALL>.</TD>\n", get_html_text(282));
   fprintf(actout, "</TR></TABLE>\n</P>\n");
 
-  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("283"));
-  fprintf(actout, "%s<BR>\n&nbsp; &nbsp; ", get_html_text("284"));
-  build_option_str ("CHECKBOX", "opt11", "H", get_html_text("285"));
+  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text(283));
+  fprintf(actout, "%s<BR>\n&nbsp; &nbsp; ", get_html_text(284));
+  build_option_str ("CHECKBOX", "opt11", "H", get_html_text(285));
   fprintf(actout, "<BR>\n&nbsp; &nbsp; ");
-  build_option_str ("CHECKBOX", "opt12", "s", get_html_text("286"));
-  fprintf(actout, "<BR>\n%s<BR>\n&nbsp; &nbsp; ", get_html_text("287"));
-  build_option_str ("CHECKBOX", "opt13", "J", get_html_text("285"));
+  build_option_str ("CHECKBOX", "opt12", "s", get_html_text(286));
+  fprintf(actout, "<BR>\n%s<BR>\n&nbsp; &nbsp; ", get_html_text(287));
+  build_option_str ("CHECKBOX", "opt13", "J", get_html_text(285));
   fprintf(actout, "<BR>\n");
-  fprintf(actout, "<SMALL>%s</SMALL>\n</P>\n", get_html_text("288"));
+  fprintf(actout, "<SMALL>%s</SMALL>\n</P>\n", get_html_text(288));
 
-  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("289"));
-  build_option_str ("CHECKBOX", "opt14", "a", get_html_text("290"));
+  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text(289));
+  build_option_str ("CHECKBOX", "opt14", "a", get_html_text(290));
   fprintf(actout, "<BR>\n");
   /* note that if user doesn't have ezmlm-cgi installed, it might be
      a good idea to default to having option i off. */
-  build_option_str ("CHECKBOX", "opt15", "i", get_html_text("291"));
-  fprintf(actout, "<BR>\n%s\n<SELECT NAME=\"opt15\">", get_html_text("292"));
+  build_option_str ("CHECKBOX", "opt15", "i", get_html_text(291));
+  fprintf(actout, "<BR>\n%s\n<SELECT NAME=\"opt15\">", get_html_text(292));
   fprintf(actout, "<OPTION VALUE=\"BG\"%s>%s\n",
-  	checkopt['B'] && checkopt['G'] ? " SELECTED" : "", get_html_text("293"));
+  	checkopt['B'] && checkopt['G'] ? " SELECTED" : "", get_html_text(293));
   fprintf(actout, "<OPTION VALUE=\"Bg\"%s>%s\n",
-  	checkopt['B'] && checkopt['g'] ? " SELECTED" : "", get_html_text("294"));
+  	checkopt['B'] && checkopt['g'] ? " SELECTED" : "", get_html_text(294));
   fprintf(actout, "<OPTION VALUE=\"b\"%s>%s\n",
-  	checkopt['b'] ? " SELECTED" : "", get_html_text("295"));
+  	checkopt['b'] ? " SELECTED" : "", get_html_text(295));
   fprintf(actout, "</SELECT>.</P>\n");
 
   /***********************/
@@ -1272,9 +1275,9 @@ show_current_list_values() {
     fclose(fs);
   }
 #ifdef ENABLE_MYSQL
-  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("099"));
+  fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text(99));
   fprintf(actout, "<input type=checkbox name=\"sqlsupport\" value=\"-6\"%s> %s",
-    checked ? " CHECKED" : "", get_html_text("053"));
+    checked ? " CHECKED" : "", get_html_text(53));
 
   /* parse dir/sql file for SQL settings */
   fprintf(actout, "    <table cellpadding=0 cellspacing=2 border=0>\n");
@@ -1295,7 +1298,7 @@ show_current_list_values() {
 
 #ifdef ENABLE_MYSQL
   fprintf(actout, "      <tr>\n");
-  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text("054"));
+  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text(54));
   fprintf(actout, "          </td><td>\n");
   fprintf(actout, "          <input type=text name=sql1 value=\"%s\"></td>\n", checked1);
 #else
@@ -1312,7 +1315,7 @@ show_current_list_values() {
     }       
   }       
 #ifdef ENABLE_MYSQL
-  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text("055"));
+  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text(055));
   fprintf(actout, "          </td><td>\n");
   fprintf(actout, "          <input type=text size=7 name=sql2 value=\"%s\"></td>\n", checked1);
   fprintf(actout, "      </tr>\n");
@@ -1331,7 +1334,7 @@ show_current_list_values() {
   }       
 #ifdef ENABLE_MYSQL
   fprintf(actout, "      <tr>\n");
-  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text("056"));
+  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text(56));
   fprintf(actout, "          </td><td>\n");
   fprintf(actout, "          <input type=text name=sql3 value=\"%s\"></td>\n", checked1);
 #else
@@ -1348,7 +1351,7 @@ show_current_list_values() {
     }
   }
 #ifdef ENABLE_MYSQL
-  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text("057"));
+  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text(57));
   fprintf(actout, "          </td><td>\n");
   fprintf(actout, "          <input type=text name=sql4 value=\"%s\"></td>\n", checked1);
   fprintf(actout, "      </tr>\n");
@@ -1367,7 +1370,7 @@ show_current_list_values() {
   }       
 #ifdef ENABLE_MYSQL
   fprintf(actout, "      <tr>\n");
-  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text("058"));
+  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text(58));
   fprintf(actout, "          </td><td>\n");
   fprintf(actout, "          <input type=text name=sql5 value=\"%s\"></td>\n", checked1);
 #else
@@ -1384,7 +1387,7 @@ show_current_list_values() {
     }       
   }       
 #ifdef ENABLE_MYSQL
-  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text("059"));
+  fprintf(actout, "        <td ALIGN=RIGHT>%s:\n", get_html_text(59));
   fprintf(actout, "          </td><td>\n");
   fprintf(actout, "          <input type=text name=\"sql6\" value=\"%s\"></td>\n", checked1);
   fprintf(actout, "      </tr>\n");

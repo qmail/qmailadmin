@@ -5,6 +5,26 @@ made all these changes, but it has not been tested extensivly.
 I see no need to worry about that now as the rip and tear is 
 not over, as you can see in TODO.
 
+#################################################################
+
+040207 
+
+get_html_text now takes an int instead of a string.
+
+   char *get_html_text( int target )  
+
+Merge display_robot_message() into modautorespond()  so file 
+pointer MessageFile can now be function local.
+
+Remove obsolete ##F tag from template.c
+
+Remove obsolete mod_autorespond_line.html.
+
+Add some conditional (ifdef) debug trace lines that report to stderr.
+
+
+#################################################################
+
 The following information relates to a large block of changes
 that Rick Widmer added right before the final release of 1.2.0.
 I built up a large number of changes and will commit them in 

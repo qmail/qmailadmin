@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.3 2003-12-08 17:52:12 tomcollins Exp $
+ * $Id: util.c,v 1.4 2004-01-07 15:36:26 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -281,6 +281,9 @@ int open_lang(char *lang)
   return(0);
 }
 
+/* It's a good thing qmailadmin is a cgi script, because this
+   function leaks memory.  That's OK though, Tom has plans
+   for rewriting the html_text stuff soon. */
 char *get_html_text( char *index )
 {
  char *tmpbuf;
@@ -316,7 +319,7 @@ int open_colortable()
 
 char *get_color_text( char *index )
 {
- char tmpbuf[400];
+ static char tmpbuf[400];
  char *tmpstr;
 
   if (color_table == NULL) return("");
@@ -333,8 +336,7 @@ char *get_color_text( char *index )
 }
 /* bk - use maildir++ quotas now
 char *get_quota_used(char *dir) {
-    char *tmpstr;
-    char tmpbuff[MAX_BUFF];
+    static char tmpbuff[40];
     double size;
 
     size = get_du(dir);
@@ -342,8 +344,7 @@ char *get_quota_used(char *dir) {
         size = size / 1048576; 
     }
     sprintf(tmpbuff, "%.2lf", size);
-    tmpstr = tmpbuff;
-    return tmpstr;
+    return tmpbuff;
 }
 */
 /* quota_to_bytes: used to convert user entered quota (given in MB)

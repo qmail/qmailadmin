@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.5 2003-12-24 05:22:05 tomcollins Exp $
+ * $Id: template.c,v 1.6 2004-01-07 15:36:26 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -952,7 +952,7 @@ void get_calling_host() {
 char *get_session_val(char *session_var) {
    /* returns the value of session_var, first checking the .qw file for saved */
    /* value, or the TmpCGI if it's not yet been saved                         */
-   char value[MAX_BUFF];
+   static char value[MAX_BUFF];
    char dir[MAX_BUFF];
    char *retval;
    FILE *fs_qw;

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.5 2003-12-08 18:55:09 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6 2004-01-26 00:41:07 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,10 +25,15 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include "config.h"
 #include "qmailadmin.h"
 #include <vpopmail.h>
-#include <vpopmail_config.h>
 #include <vauth.h>
 #include <vlimits.h>
 

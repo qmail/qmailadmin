@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.6 2004-01-07 15:36:26 tomcollins Exp $
+ * $Id: template.c,v 1.7 2004-01-26 00:41:07 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,11 @@
 #include <dirent.h>
 #include <vpopmail.h>
 #include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include <vauth.h>
 #include "config.h"
 #include "qmailadmin.h"

@@ -7,6 +7,8 @@ patch or information related to the entry.
 	- Changes to Makefile to avoid copying CVS directories on install.
 	  Fixes previous attempt that wasn't compatible with all platforms.
 	- Update all mentions of --with-htmllibdir to --enable-htmllibdir.
+	- undef some macros defined in vpopmail_config.h and later defined
+	  in QmailAdmin's config.h (PACKAGE_*). [883245]
 
 1.2.0-rc3 - released 19-Jan-04
 

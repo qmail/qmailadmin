@@ -7,7 +7,7 @@ patch or information related to the entry.
 	- Added single page for changing password. [775208]
 	- Switch to improved method of handling strings in language files,
 	  resulting in reduced disk access and faster rendering of pages.
-	- malinglists: Update settings screen to show that archive 
+	- mailinglists: Update settings screen to show that archive 
 	  retrieval limitations don't apply to ezmlm-cgi.
 	- mailinglist.c: Fix compile error with non-idx ezmlm installs.
 

@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(config.h)
 AC_CANONICAL_HOST
 
 QA_PACKAGE="qmailadmin"
-QA_VERSION="1.0.29"
+QA_VERSION="1.0.30"
 
 AC_DEFINE_UNQUOTED(QA_PACKAGE,"$QA_PACKAGE","")
 AC_DEFINE_UNQUOTED(QA_VERSION,"$QA_VERSION","")
@@ -15,10 +15,9 @@ AC_SUBST(QA_VERSION)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_RANLIB
-
-AC_ISC_POSIX
 AC_AIX
+AC_PROG_LIBTOOL
+AC_ISC_POSIX
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lcrypt:

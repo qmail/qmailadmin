@@ -24,7 +24,7 @@ EXTRA_PROGRAMS=qmailadmin
 qmailadmin_DEPENDENCIES=$(COMMONDEPENDENCIES)
 
 COMMONSOURCES=qmailadmin.c alias.c autorespond.c forward.c mailinglist.c \
-	      user.c util.c auth.c template.c \
+	      user.c util.c printh.c auth.c template.c \
 	      command.c show.c cgi.c limits.c dotqmail.c \
 	      qmailadmin.h qmailadminx.h
 
@@ -38,6 +38,7 @@ forward.o: config.h qmailadmin.h qmailadminx.h
 mailinglist.o: config.h qmailadmin.h qmailadminx.h 
 user.o: config.h qmailadmin.h qmailadminx.h 
 util.o: config.h qmailadmin.h qmailadminx.h 
+printh.o: printh.h
 auth.o: config.h qmailadmin.h qmailadminx.h 
 template.o: config.h qmailadmin.h qmailadminx.h 
 command.o: qmailadmin.h qmailadminx.h 

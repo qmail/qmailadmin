@@ -107,7 +107,7 @@ EXTRA_PROGRAMS = qmailadmin
 qmailadmin_DEPENDENCIES = $(COMMONDEPENDENCIES)
 
 COMMONSOURCES = qmailadmin.c alias.c autorespond.c forward.c mailinglist.c \
-	      user.c util.c auth.c template.c \
+	      user.c util.c printh.c auth.c template.c \
 	      command.c show.c cgi.c limits.c dotqmail.c \
 	      qmailadmin.h qmailadminx.h
 
@@ -127,9 +127,9 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am__objects_1 = qmailadmin.$(OBJEXT) alias.$(OBJEXT) \
 	autorespond.$(OBJEXT) forward.$(OBJEXT) mailinglist.$(OBJEXT) \
-	user.$(OBJEXT) util.$(OBJEXT) auth.$(OBJEXT) template.$(OBJEXT) \
-	command.$(OBJEXT) show.$(OBJEXT) cgi.$(OBJEXT) limits.$(OBJEXT) \
-	dotqmail.$(OBJEXT)
+	user.$(OBJEXT) util.$(OBJEXT) printh.$(OBJEXT) auth.$(OBJEXT) \
+	template.$(OBJEXT) command.$(OBJEXT) show.$(OBJEXT) \
+	cgi.$(OBJEXT) limits.$(OBJEXT) dotqmail.$(OBJEXT)
 am_qmailadmin_OBJECTS = $(am__objects_1)
 qmailadmin_OBJECTS = $(am_qmailadmin_OBJECTS)
 qmailadmin_LDFLAGS =
@@ -143,7 +143,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/autorespond.Po ./$(DEPDIR)/cgi.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/command.Po ./$(DEPDIR)/dotqmail.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/forward.Po ./$(DEPDIR)/limits.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mailinglist.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/mailinglist.Po ./$(DEPDIR)/printh.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/qmailadmin.Po ./$(DEPDIR)/show.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/template.Po ./$(DEPDIR)/user.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/util.Po
@@ -240,6 +240,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/forward.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/limits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailinglist.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printh.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qmailadmin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/show.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/template.Po@am__quote@
@@ -480,6 +481,7 @@ forward.o: config.h qmailadmin.h qmailadminx.h
 mailinglist.o: config.h qmailadmin.h qmailadminx.h 
 user.o: config.h qmailadmin.h qmailadminx.h 
 util.o: config.h qmailadmin.h qmailadminx.h 
+printh.o: printh.h
 auth.o: config.h qmailadmin.h qmailadminx.h 
 template.o: config.h qmailadmin.h qmailadminx.h 
 command.o: qmailadmin.h qmailadminx.h 

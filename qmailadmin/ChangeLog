@@ -11,6 +11,8 @@ patch or information related to the entry.
 	- Better detect .qmail-alias files that are tied to mailing lists.
 	  (Aliases that end in "-owner" but aren't tied to ezmlm lists 
 	  will now display properly.)
+	- Add printh.c, new routines for generating HTML-safe and CGI-safe
+	  strings.
 
 1.2.3 - released 7-Oct-04
 

@@ -6,6 +6,7 @@ patch or information related to the entry.
 	Tom Collins
 	- Changes to Makefile to avoid copying CVS directories on install.
 	  Fixes previous attempt that wasn't compatible with all platforms.
+	- Update all mentions of --with-htmllibdir to --enable-htmllibdir.
 
 1.2.0-rc3 - released 19-Jan-04
 

@@ -1,10 +1,17 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.0 - unreleased
+1.2.0-rc2 - released 1-Jan-04
 
 	Tom Collins
 	- Added comment and added minor fix to ##z macro in template.c.
+	- Fix Makefile.am to use correct owner/group/perm for 
+	  install-strip. [864310]
+	- Change html/header to use ##D instead of ##H in title.
+
+	Rick Widmer
+	- Remove fclose(NULL) call in alias.c.
+	- Add html/README with information on template macros.
 
 1.2.0-rc1 - released 21-Dec-03
 

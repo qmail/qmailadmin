@@ -5,9 +5,14 @@ patch or information related to the entry.
 
 	Tom Collins
 	- Totally fix enable-htmllibdir option in configure.in. [812535]
+	- Change from seteuid()/setegid() to setuid()/setgid(). [834008,
+	  830695].  This code only gets executed if the cgi is suid root.
+	  Note that we can use these calls since we don't need to get
+	  root privileges back at any point.
 
 	Nikolai V. Ivanyushin
 	- Fix codepage name from koi-8r to koi8-r. [827792]
+	- Updated Russian translation. [831398]
 
 	Nicolas Croiset		- Updated French translation.
 

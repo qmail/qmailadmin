@@ -19,6 +19,8 @@ patch or information related to the entry.
 	  QmailAdmin into an infinite loop (Modify Alias). [941082]
 	- Display non-ezmlm aliases with "-owner" in the name.
 	- Display aliases with "-default" in the name.
+	- Use "# delete" instead of "|/bin/true delete" for blackholed
+	  accounts.
 
 1.2.1 - released 10-Feb-04
 

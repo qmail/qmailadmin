@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11 2004-01-26 18:16:40 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.1 2004-06-12 21:28:04 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -996,8 +996,10 @@ ActionUser, Domain ); */
     snprintf(NewBuf,sizeof(NewBuf),"%s/.qmail", vpw->pw_dir);
     fs = fopen(NewBuf,"w");
 
-    /* for now we use /bin/true, eventually switch this to '# delete' */
-    fprintf(fs, "|%s/true delete\n", TRUE_PATH);
+    /* we use '# delete' since comments are ignored in vdelivermail, 
+     * but qmailadmin looks for ' delete' to know that it's a
+     * blackhole account. */
+    fprintf(fs, "# delete\n");
 
     fclose(fs);
 

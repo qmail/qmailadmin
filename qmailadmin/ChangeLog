@@ -9,6 +9,7 @@ patch or information related to the entry.
 	  resulting in reduced disk access and faster rendering of pages.
 	- malinglists: Update settings screen to show that archive 
 	  retrieval limitations don't apply to ezmlm-cgi.
+	- mailinglist.c: Fix compile error with non-idx ezmlm installs.
 
 1.2.7 - released 23-Jan-05
 

@@ -210,11 +210,22 @@ users will need to me manually changed via vmoduser.
    Then you can log into qmailadmin with "your new domain name" and
    the password you set with the vadddomain command.
 
-10. Enjoy
+10. There are a number of things you can pass to qmailadmin when you run
+it.  I believe they can be sent via either post or get. 
+
+   domain = set the domain name in the login page.
+
+   user = set the user name in the login page.
+
+   returnhttp and returntext (both must be used) = create a link to 
+   returnhttp on all qmailadmin pages with returntext for its label.
+
+
+11. Enjoy
 
 If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.5.2.2 2004-02-10 20:48:02 tomcollins Exp $
+$Id: INSTALL,v 1.5.2.3 2004-08-24 05:51:03 tomcollins Exp $
 

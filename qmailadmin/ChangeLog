@@ -5,6 +5,9 @@ patch or information related to the entry.
 
 	Tom Collins
 	- Add note to INSTALL about requiring vpopmail 5.4.0 or later.
+	- Store aliases and autoresponders in valias table if vpopmail
+	  was compiled with --enable-valias.  Development of this feature
+	  was sponsored by ACIS Pty Ltd <http://www.acis.com.au/>.
 
 1.2.0 - released 28-Jan-04
 

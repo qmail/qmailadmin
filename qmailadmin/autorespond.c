@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.3 2004-01-13 06:28:34 tomcollins Exp $
+ * $Id: autorespond.c,v 1.3.2.1 2004-02-02 00:39:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,42 +51,24 @@ show_autoresponders(user,dom,mytime,dir)
 
 int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
 {
- DIR *mydir;
- struct dirent *mydirent;
- FILE *fs;
  char *addr;
+ char alias_name[MAX_FILE_NAME];
+ char *alias_line;
  int i,j;
-
-  if ( (mydir = opendir(".")) == NULL ) {
-    fprintf(actout, "<tr><td colspan=\"3\">%s %d</td></tr>\n", 
-      get_html_text("143"), 1);
-    return 0;
-  }
 
   sort_init();
 
-  while( (mydirent=readdir(mydir)) != NULL ) {
-    /* does name start with ".qmail-" ? */
-    if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
-      if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout, "<tr><td colspan=\"3\">%s %s</td></tr>\n", 
-         get_html_text("144"), mydirent->d_name);
-        continue;
-      }
-
-      fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-      fclose(fs);
-
-      if ( strstr( TmpBuf2, "autorespond") != 0 ) {
-        sort_add_entry (&mydirent->d_name[7], 0);
-      }
+  alias_line = valias_select_all (alias_name, Domain);
+  while( alias_line != NULL ) {
+    if ( strstr( alias_line, "/autorespond ") != 0 ) {
+      sort_add_entry (alias_name, 0);
     }
+    alias_line = valias_select_all_next (alias_name);
   }
-  closedir(mydir);
+
   sort_dosort();
 
   for (i = 0; addr = sort_get_entry(i); ++i) {
-    str_replace (addr, ':', '.');
     fprintf(actout, "<tr>");
     
     fprintf(actout, "<td align=\"center\">");
@@ -158,7 +140,6 @@ addautorespondnow()
     exit(0);
   }
 
-
   if ( check_local_user(ActionUser) ) {
     sprintf(StatusMessage, "%s %s\n", get_html_text("175"), ActionUser);
     addautorespond();
@@ -196,7 +177,7 @@ addautorespondnow()
 
 
   /*
-   * Make the autorespodner directory
+   * Make the autoresponder directory
    */
   memset(TmpBuf2,0,sizeof(TmpBuf2));
   strncpy(TmpBuf2, ActionUser, sizeof(TmpBuf2));
@@ -206,18 +187,14 @@ addautorespondnow()
   /*
    * Make the autoresponder .qmail file
    */
-  sprintf(TmpBuf, ".qmail-%s", ActionUser);
-  for(i=6;TmpBuf[i]!=0;++i) if ( TmpBuf[i] == '.' ) TmpBuf[i] = ':';
-
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
-
-  fprintf(fs, "|%s/autorespond 10000 5 %s/%s/message %s/%s\n",
+  valias_delete (ActionUser, Domain);
+  sprintf(TmpBuf, "|%s/autorespond 10000 5 %s/%s/message %s/%s",
     AUTORESPOND_PATH, RealDir, TmpBuf2, RealDir, TmpBuf2);
-
+  valias_insert (ActionUser, Domain, TmpBuf);
   if ( strlen(Newu) > 0 ) {
-    fprintf(fs, "&%s\n", Newu);
+    sprintf(TmpBuf, "&%s", Newu);
+    valias_insert (ActionUser, Domain, TmpBuf);
   } 
-  fclose(fs);
 
   /*
     * Make the autoresponder message file
@@ -234,8 +211,7 @@ addautorespondnow()
    */
   sprintf(StatusMessage, "%s %s@%s\n", get_html_text("180"),
     ActionUser, Domain);
-  show_autoresponders(Username,Domain);
-
+  show_autoresponders(Username, Domain, Mytime);
 }
 
 delautorespond()
@@ -259,9 +235,8 @@ delautorespondnow()
     exit(0);
   }
 
-  for(i=0;ActionUser[i]!=0;++i) if (ActionUser[i]=='.') ActionUser[i] = ':';
-  sprintf(TmpBuf2, ".qmail-%s", ActionUser);
-  if ( unlink(TmpBuf2) != 0 ) ack( get_html_text("181"), 345);
+  /* delete the alias */
+  valias_delete (ActionUser, Domain);
 
   memset(TmpBuf2,0,sizeof(TmpBuf2));
   for(i=0;ActionUser[i]!=0;++i) {
@@ -272,8 +247,7 @@ delautorespondnow()
     }
   }
 
-        for(i=0;TmpBuf2[i]!=0;++i) if (TmpBuf2[i]==':') TmpBuf2[i] = '.';
-        for(i=0;ActionUser[i]!=0;++i) if (ActionUser[i]==':') ActionUser[i] = '.';
+  /* delete the autoresponder directory */
   sprintf(TmpBuf, "%s/%s", RealDir, TmpBuf2);
   vdelfiles(TmpBuf);
   sprintf(StatusMessage, "%s %s\n", get_html_text("182"), ActionUser);
@@ -298,6 +272,7 @@ modautorespond()
 }
 
 
+/* addautorespondnow and modautorespondnow should be merged into a single function */
 modautorespondnow()
 {
  FILE *fs;
@@ -325,14 +300,14 @@ modautorespondnow()
   }
 
   if (strlen(Alias) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("177"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text("178"), ActionUser);
     modautorespond();
     vclose();
     exit(0);
   }
 
   if (strlen(Message) <= 1) {
-    sprintf(StatusMessage, get_html_text("BODY_EMPTY"), ActionUser);
+    sprintf(StatusMessage, "%s %s\n", get_html_text("179"), ActionUser);
     modautorespond();
     vclose();
     exit(0);
@@ -342,31 +317,22 @@ modautorespondnow()
   /*
    * Make the autoresponder directory
    */
-        strcpy(TmpBuf2,ActionUser);
-        upperit(TmpBuf2);
-        mkdir(TmpBuf2, 0750);
+  memset(TmpBuf2,0,sizeof(TmpBuf2));
+  strncpy(TmpBuf2, ActionUser, sizeof(TmpBuf2));
+  upperit(TmpBuf2);
+  mkdir(TmpBuf2, 0750);
 
   /*
    * Make the autoresponder .qmail file
    */
-  sprintf(TmpBuf, ".qmail-%s", ActionUser);
-  for(i=6;TmpBuf[i]!=0;++i) if ( TmpBuf[i] == '.' ) TmpBuf[i] = ':';
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
-
-  fprintf(fs, "|%s/autorespond 10000 5 %s/%s/message %s/%s\n",
+  valias_delete (ActionUser, Domain);
+  sprintf(TmpBuf, "|%s/autorespond 10000 5 %s/%s/message %s/%s",
     AUTORESPOND_PATH, RealDir, TmpBuf2, RealDir, TmpBuf2);
-
+  valias_insert (ActionUser, Domain, TmpBuf);
   if ( strlen(Newu) > 0 ) {
-    for(i=0;Newu[i]!='@';TmpBuf3[i] = Newu[i],++i);
-    if((vpw=vauth_getpw(TmpBuf3, Domain))!=NULL && (strstr(Newu,Domain)!= 0)){
-      fprintf(fs, "%s/Maildir/\n", vpw->pw_dir);
-    } else {
-      fprintf(fs, "&%s\n", Newu);
-    }
-  } else if ( (vpw = vauth_getpw(ActionUser, Domain)) != NULL) {
-    fprintf(fs, "%s/Maildir/\n", vpw->pw_dir);
-  }
-  fclose(fs);
+    sprintf(TmpBuf, "&%s", Newu);
+    valias_insert (ActionUser, Domain, TmpBuf);
+  } 
 
   /*
    * Make the autoresponder message file
@@ -376,44 +342,29 @@ modautorespondnow()
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
   fprintf(fs, "Subject: %s\n\n", Alias);
   fprintf(fs, "%s", Message);
+  fclose(fs);
 
   /*
    * Report success
    */
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("183"),ActionUser,Domain);
+  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("183"),
+    ActionUser, Domain);
   show_autoresponders(Username, Domain, Mytime);
 }
 
 count_autoresponders()
 {
- DIR *mydir;
- struct dirent *mydirent;
- FILE *fs;
- char mailinglist_name[MAX_FILE_NAME];
- int i,j;
-
-  if ( (mydir = opendir(".")) == NULL ) { 
-    fprintf(actout,"%s %d<BR>\n", get_html_text("143"), 1);
-    fprintf(actout,"</table>");
-    return(0);
-  }
+ char alias_name[MAX_FILE_NAME];
+ char *alias_line;
 
   CurAutoResponders = 0;
-  while( (mydirent=readdir(mydir)) != NULL ) {
-    /* does name start with ".qmail-" ? */
-    if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
-      if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        fprintf(actout,"%s %s<br>\n", get_html_text("144"),
-          mydirent->d_name);
-        continue;
-      }
-      fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-      if ( strstr( TmpBuf2, "autorespond") != 0 ) {
-        ++CurAutoResponders;
-      }
-      fclose(fs);
+
+  alias_line = valias_select_all (alias_name, Domain);
+  while( alias_line != NULL ) {
+    if ( strstr( alias_line, "/autorespond ") != 0 ) {
+      CurAutoResponders++;
     }
+    alias_line = valias_select_all_next (alias_name);
   }
-  closedir(mydir);
 
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: dotqmail.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: dotqmail.c,v 1.2.2.1 2004-02-02 00:39:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,26 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <vpopmail.h>
+#include <vpopmail_config.h>
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 
+int dotqmail_delete_files(char *user) 
+{
+	return (! valias_delete (user, Domain));
+}
+int dotqmail_add_line(char *user, char *line)
+{
+	return (valias_insert (user, Domain, line));
+}
+#ifdef VALIAS
+int dotqmail_del_line(char *user, char *line)
+{
+	return (valias_remove (user, Domain, line));
+}
+#else
 #define _(String) gettext(String)
 
 #define MAX_LINE		512
@@ -67,24 +83,6 @@ int dotqmail_open_files(char *user)
   return(0);
 }
 
-int dotqmail_delete_files(char *user) 
-{
- int i,j;
-	
-  i = strlen(user);
-	
-  mydotqmail_name = strcat(strcpy(malloc(8 + i), ".qmail-"), user);
-  for(j=8;mydotqmail_name[j]!=0;j++) {
-    if (mydotqmail_name[j]=='.') {
-      mydotqmail_name[j] = ':';
-    }
-  }
-	
-  if (!(unlink(mydotqmail_name))) return(1);
-  return(0);
-
-}
-
 void dotqmail_close_files(char *user, int keep)
 {
   if (fr) fclose(fr);
@@ -100,36 +98,6 @@ void dotqmail_close_files(char *user, int keep)
 
   free(mydotqmail_name);
   free(dotqmail_bak_name);
-}
-
-int dotqmail_add_line(char *user, char *line)
-{
-  int exist = 0;
-  int i;
-
-  if (dotqmail_open_files(user)) return(1);
-
-
-  if (fr) {
-    while (fgets(LineBuf, sizeof(LineBuf), fr)) {
-      i = strlen(line);
-			
-      if (!strncmp(LineBuf, line, sizeof(LineBuf))) {
-        exist = 1;
-      }
-      fputs(LineBuf, fw);
-      lr++;
-    }
-    lw = lr;
-  }
-
-  if (!exist) {
-    fputs(line, fw);
-    lw++;
-  }
-
-  dotqmail_close_files(user, exist);
-  return(0);
 }
 
 int dotqmail_del_line(char *user, char *line)
@@ -190,3 +158,4 @@ int dotqmail_count(char *user)
   dotqmail_close_files(user, 1);
   return(lr);
 }
+#endif

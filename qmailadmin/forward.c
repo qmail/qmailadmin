@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: forward.c,v 1.2.2.1 2004-02-02 00:39:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,43 +55,41 @@ int show_forwards(char *user, char *dom, time_t mytime, char *dir)
   return 0;
 }
 
-int count_forwards(void)
+int count_forwards()
 {
- DIR *mydir;
- struct dirent *mydirent;
- struct stat mystat;
- FILE *fs;
+ char *alias_line;
  char *alias_name_from_command;
+ char alias_name[MAX_FILE_NAME];
+ char this_alias[MAX_FILE_NAME];
+ int isforward;
 
-  /* FIXME: Do some caching here. */
   CurForwards = 0;
 
-  if ((mydir = opendir(".")) == NULL) {
-    fprintf(actout, "<tr><td>%s %d</tr></td>\n", get_html_text("143"), 1);
-    return 0;
-  }
-
-  while ((mydirent=readdir(mydir)) != NULL) {
-    /*
-     *  don't read files that are really ezmlm-idx listowners,
-     *  i.e. .qmail-user-owner
-     *
-     */
-    if (strncmp (".qmail-", mydirent->d_name, 7) == 0) {
-      /* ignore symbolic links (ezmlm files) */
-      if (!lstat(mydirent->d_name, &mystat) && S_ISLNK(mystat.st_mode)) continue;
-
-      if ((fs=fopen(mydirent->d_name,"r")) == NULL) {
-        fprintf(actout, "%s %s<br>\n", get_html_text("144"), mydirent->d_name);
-        continue;
+  alias_line = valias_select_all (alias_name, Domain);
+  while (alias_line != NULL) {
+    strcpy (this_alias, alias_name);
+    if (*alias_line == '#') { /* blackhole++ */ }
+    else {
+      char *p1, *p2;
+      int isforward;
+      isforward = 1;
+      while (isforward && (alias_line != NULL) 
+        && (strcmp (this_alias, alias_name) == 0)) {
+        p1 = strstr (alias_line, "/ezmlm-");
+        p2 = strchr (alias_line, ' ');
+        if ( (p1 != NULL) && (p2 == NULL || p1 < p2) ) isforward = 0;
+        if (strstr (alias_line, "/autorespond ")) isforward = 0;
+        alias_line = valias_select_all_next(alias_name);
       }
-      memset(TmpBuf2, 0, sizeof(TmpBuf2));
-      fgets(TmpBuf2, sizeof(TmpBuf2), fs);
-      if (*TmpBuf2 != '|' && *TmpBuf2 != '#') CurForwards++;
-      fclose(fs);
+      if (isforward) CurForwards++;
+    }
+
+    /* burn through remaining lines for this alias, if necessary */
+    while ((alias_line != NULL) && (strcmp (this_alias, alias_name) == 0)) {
+      alias_line = valias_select_all_next(alias_name);
     }
   }
-  closedir(mydir);
 
   return 0;
 }
+

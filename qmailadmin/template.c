@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.7 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.1 2004-02-02 00:39:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -180,17 +180,16 @@ int send_template_now(char *filename)
           case 'F':
             {
              FILE *fs;
-              sprintf(TmpBuf, ".qmail-%s", ActionUser);
-              for (i=6; TmpBuf[i] != 0; ++i) {
-                if (TmpBuf[i] == '.') TmpBuf[i] = ':';
-              }
-              if ((fs=fopen(TmpBuf, "r")) == NULL) ack("123", 123);
-              fgets(TmpBuf2, sizeof(TmpBuf2), fs);
+             char *alias_line;
 
-              if (fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
+              alias_line = valias_select (ActionUser, Domain);
+              /* should verify here that alias_line contains "/autorespond " */
+
+              if (alias_line = valias_select_next()) {
+                strcpy (TmpBuf2, alias_line);
 
                 /* See if it's a Maildir path rather than address */
-                i = strlen(TmpBuf2) - 2;
+                i = strlen(TmpBuf2) - 1;
                 if (TmpBuf2[i] == '/') {
                   --i;
                   for(; TmpBuf2[i] != '/'; --i);
@@ -202,12 +201,9 @@ int send_template_now(char *filename)
                   TmpBuf3[j] = '\0';
                   fprintf(actout, "value=\"%s@%s\"><td>\n", TmpBuf3, Domain);
                 } else {
-                  /* take off newline */
-                  i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;
                   fprintf(actout, "value=\"%s\"><td>\n", &TmpBuf2[1]);
                 }
               } 
-              fclose(fs);
               upperit(ActionUser);
               sprintf(TmpBuf, "%s/message", ActionUser);
 

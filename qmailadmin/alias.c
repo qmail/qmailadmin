@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4 2004-01-14 21:23:25 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.1 2004-02-02 00:39:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,12 @@
 #include <errno.h>
 #include <dirent.h>
 #include <vpopmail.h>
+#include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include <vauth.h>
 #include "config.h"
 #include "qmailadmin.h"
@@ -53,6 +59,35 @@ int qa_sort(const void * a, const void * b)
                      (*(const struct dirent **) b)->d_name);
 }
 
+struct aliasentry {
+  char alias_name[MAX_FILE_NAME];
+  char alias_command[MAX_BUFF];
+  struct aliasentry *next;
+};
+
+struct aliasentry *firstalias = NULL, *curalias = NULL;
+
+add_alias_entry (char *alias_name, char *alias_command)
+{
+  if (firstalias == NULL) {
+    firstalias = malloc (sizeof(struct aliasentry));
+    curalias = firstalias;
+  } else {
+    curalias->next = malloc (sizeof (struct aliasentry));
+    curalias = curalias->next;
+  }
+  curalias->next = NULL;
+  strcpy (curalias->alias_name, alias_name);
+  strcpy (curalias->alias_command, alias_command);
+}
+struct aliasentry *get_alias_entry()
+{
+  struct aliasentry *temp;
+  
+  temp = curalias->next;
+  free (curalias);
+  return temp;
+}
 
 show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
 {
@@ -66,7 +101,10 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  char *alias_name_from_command;
  int i,j,stop,k,startnumber;
  int m,n;
+ int page;
  struct dirent **namelist;
+ char this_alias[MAX_FILE_NAME];
+ char *alias_line;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -74,13 +112,50 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
     exit(0);
   }
 
-  if (atoi(Pagenumber)==0) {
-    *Pagenumber='1';
-  }
+  page = atoi(Pagenumber);
+  if (page == 0) page = 1;
 
-  startnumber = MAXALIASESPERPAGE * (atoi(Pagenumber) - 1);
+  startnumber = MAXALIASESPERPAGE * (page - 1);
   k=0;
 
+#ifdef VALIAS
+  alias_line = valias_select_all(alias_name, Domain);
+  while (alias_line != NULL) {
+    strcpy (this_alias, alias_name);
+    alias_name_from_command = dotqmail_alias_command(alias_line);
+    if ( alias_name_from_command != NULL || *alias_line == '#') {
+      k++;
+      
+      if (k > MAXALIASESPERPAGE + startnumber) {
+        moreusers = 1;
+        break;
+      }
+      if (k > startnumber) {
+        if (*alias_line == '#') {
+          add_alias_entry (alias_name, "#");
+        } else while (1) {
+          if (alias_name_from_command != NULL) {
+            add_alias_entry (alias_name, alias_name_from_command);
+          }
+          alias_line = valias_select_all_next(alias_name);
+          
+          /* exit if we run out of alias lines, or go to a new alias name */
+          if ((alias_line == NULL) || (strcmp (this_alias, alias_name) != 0)) break;
+            
+          alias_name_from_command = dotqmail_alias_command(alias_line);
+        }
+      }
+    }
+    /* burn through remaining lines for this alias, if necessary */
+    while ((alias_line != NULL) && (strcmp (this_alias, alias_name) == 0)) {
+      alias_line = valias_select_all_next(alias_name);
+    }
+  }
+#else
+  /* We can't use valias code here, because it doesn't return a sorted
+     list of aliases.  If we update vpopmail's vpalias.c to do that,
+     then qmailadmin could use the single set of valias_ functions above.
+   */
   if ( (mydir = opendir(".")) == NULL ) {
     fprintf(actout,"<tr><td colspan=\"4\">");
     fprintf(actout,"%s %d", get_html_text("143"), 1);
@@ -101,15 +176,6 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       if ( strstr(mydirent->d_name, "-owner") != NULL ) continue; 
       if ( strstr(mydirent->d_name, "-default") != NULL ) continue; 
 
-      if ( k < startnumber ) {
-        k++; 
-        continue;
-      }
-      if ( k >MAXALIASESPERPAGE + startnumber) {
-        moreusers=1;
-        break;
-      }
-
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         fprintf(actout,"<tr><td colspan=4>");
         fprintf(actout,"%s %s", get_html_text("144"), mydirent->d_name);
@@ -124,97 +190,126 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       fgets(TmpBuf2, sizeof(TmpBuf2), fs);
       alias_name_from_command = dotqmail_alias_command(TmpBuf2);
 
+      if ( alias_name_from_command != NULL || *TmpBuf2 == '#') {
+        k++;
+      
+        if ( k >MAXALIASESPERPAGE + startnumber) {
+          moreusers=1;
+          fclose(fs);
+          break;
+        }
+        if (k <= startnumber) {
+          fclose (fs);
+          continue;
+        }
+
       /* Note that the current system fails for multi-line .qmail-user files
          where the first line starts with a '#' or is invalid.
          This is good for mailing lists (since dotqmail_alias_command bails
          on program delivery that contains ezmlm) but bad for people who
          may have complex .qmail-user files that start with a comment. */
 
-      if ( alias_name_from_command != NULL || *TmpBuf2 == '#') {
-        stop=0;
-
-        fprintf(actout, "<tr>\n");
-        qmail_button (alias_name, "deldotqmail", user, dom, mytime, "trash.png");
-        if (*TmpBuf2 == '#')
-          fprintf(actout, "<td> </td>");   /* don't allow modify on blackhole */
-        else
-          qmail_button (alias_name, "moddotqmail", user, dom, mytime, "modify.png");
-        fprintf(actout, "<td align=left>%s</td>\n", alias_name);
-        fprintf(actout, "<td align=left>");
-
         if (*TmpBuf2 == '#') {
           /* this is a blackhole account */
-          fprintf (actout, "<I>%s</I>", get_html_text("303"));
-          stop = 1;
-        }
-        while (!stop) {
+          add_alias_entry (alias_name, "#");
+        } else while (1) {
+          if (alias_name_from_command != NULL) {
+            add_alias_entry (alias_name, alias_name_from_command);
+          }
+
+          if (fgets(TmpBuf2, sizeof(TmpBuf2), fs) == NULL) break;
           alias_name_from_command = dotqmail_alias_command(TmpBuf2);
-                
-          /* check to see if it is an invalid line , 
-           * if so skip to next
-           */
-          if (alias_name_from_command == NULL ) {
-            if (fgets(TmpBuf2, sizeof(TmpBuf2), fs)==NULL) { 
-              stop=1;
-            }
-            continue;
-          }
-                    
-          strcpy(alias_user, alias_name_from_command);
-          alias_domain=alias_user;
-          /* get the domain alone from alias_user */
-          for(;*alias_domain != '\0' && *alias_domain != '@'
-            && *alias_domain != ' '; alias_domain++);
-          alias_domain++;
-          if(strcmp(alias_domain, Domain)==0) {
-             /* if a local user, exclude the domain */
-             strcpy(TmpBuf3, alias_user);
-             for(j=0; TmpBuf3[j]!=0 && TmpBuf3[j]!='@';j++);
-             TmpBuf3[j]=0;
-             if (check_local_user(TmpBuf3)) {
-                strcpy(alias_user, TmpBuf3);
-             } else {
-                /* make it red so it jumps out -- this is no longer a valid forward */
-                sprintf(alias_user, "<font color=\"red\">%s</font>", 
-                        alias_name_from_command);
-             }
-          }
-                
-          if (fgets(TmpBuf2, sizeof(TmpBuf2), fs) == NULL) {
-            stop=1;
-            fprintf(actout, "%s ", alias_user);
-          } else {
-            fprintf(actout, "%s, ", alias_user);
-          }
         }
-        fprintf(actout, "</td>\n");
-                
-        fprintf(actout, "</tr>\n");
       }
       fclose(fs);
-      k++;
     }
   }
   closedir(mydir);
-  /* bk: fix memory leak */
-  for (m=0; m<n; m++)
-    free(namelist[m]);
+  /* free memory allocated by bkscandir */
+  for (m=0; m<n; m++) free(namelist[m]);
   free(namelist);
+#endif
+
+  curalias = firstalias;
+  while (curalias != NULL) {
+    strcpy (this_alias, curalias->alias_name);
+    /* display the entry */
+    
+    /* We assume that if first char is '#', this is a blackhole.
+     * This is a big assumption, and may cause problems at some point.
+     */
+    
+    fprintf(actout, "<tr>\n");
+    qmail_button (this_alias, "deldotqmail", user, dom, mytime, "trash.png");
+    if (*curalias->alias_command == '#')
+      fprintf(actout, "<td> </td>");   /* don't allow modify on blackhole */
+    else
+      qmail_button (this_alias, "moddotqmail", user, dom, mytime, "modify.png");
+    fprintf(actout, "<td align=left>%s</td>\n", this_alias);
+    fprintf(actout, "<td align=left>");
+    
+    stop=0;
+    if (*curalias->alias_command == '#') {
+      /* this is a blackhole account */
+      fprintf (actout, "<I>%s</I>", get_html_text("303"));
+      stop = 1;
+    }
+    
+    while (!stop) {          
+      strcpy(alias_user, curalias->alias_command);
+      /* get the domain alone from alias_user */
+      for(alias_domain = alias_user;
+        *alias_domain != '\0' && *alias_domain != '@' && *alias_domain != ' ';
+        alias_domain++);
+        
+      /* if a local user, strip domain name from address */
+      if ((*alias_domain == '@') && (strcasecmp (alias_domain+1, Domain) == 0)) {
+        /* strip domain name from address */
+        *alias_domain = '\0';
+  
+        if (!check_local_user(alias_user)) {
+          /* make it red so it jumps out -- this is no longer a valid forward */
+          sprintf(alias_user, "<font color=\"red\">%s</font>", 
+            curalias->alias_command);
+        }
+      }
+      
+      /* find next entry, so we know if we should print a , or not */
+      while (1) {
+        curalias = get_alias_entry();
+        
+        /* exit if we run out of alias lines, or go to a new alias name */
+        if ((curalias == NULL) || (strcmp (this_alias, curalias->alias_name) != 0)) {
+          stop = 1;
+          fprintf (actout, "%s", alias_user);
+          break;
+        }
+        
+        fprintf (actout, "%s, ", alias_user);
+        break;
+      }
+    }
+    /* burn through any remaining entries */
+    while ((curalias != NULL) && (strcmp (this_alias, curalias->alias_name) == 0)) {
+      curalias = get_alias_entry();
+    }
+    fprintf(actout, "</td>\n</tr>\n");
+  }
 
   if (AdminType == DOMAIN_ADMIN) {
     fprintf(actout, "<tr><td align=\"right\" colspan=\"4\">");
     fprintf(actout, "[&nbsp;");
-    if(atoi(Pagenumber) > 1 ) {
+    if(page > 1 ) {
       fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,atoi(Pagenumber)-1?atoi(Pagenumber)-1:atoi(Pagenumber),get_html_text("135"));
+        CGIPATH,user,dom,mytime,page - 1,get_html_text("135"));
       fprintf(actout, "&nbsp;|&nbsp;");
     }
-    fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%s\">%s</a>",
-      CGIPATH,user,dom,mytime,Pagenumber,get_html_text("136"));
+    fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
+      CGIPATH,user,dom,mytime,page,get_html_text("136"));
     fprintf(actout, "&nbsp;|&nbsp;");
     if (moreusers) {
       fprintf(actout, "<a href=\"%s/com/showforwards?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,atoi(Pagenumber)+1,get_html_text("137"));    
+        CGIPATH,user,dom,mytime,page+1,get_html_text("137"));    
       fprintf(actout, "&nbsp;]");
     }
     fprintf(actout, "</td></tr>");                                    
@@ -228,30 +323,14 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  */
 int show_dotqmail_file(char *user) 
 {
- FILE *fs;
  char alias_user[MAX_BUFF];
  char *alias_domain;
  char *alias_name_from_command;
- char *dot_file;
- int l,j;
+ char *alias_line;
+ int j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
-  }
-    
-  l = strlen(user);
-  dot_file= strcat(strcpy(malloc(8 + l), ".qmail-"), user);
-
-  for(j=8;dot_file[j]!=0;j++) {
-    if (dot_file[j]=='.') {
-      dot_file[j] = ':';
-    }
-  }
-
-  if ( (fs=fopen(dot_file,"r"))==NULL) {
-    sprintf(StatusMessage,"%s %s<br>\n", get_html_text("144"), dot_file);
     vclose();
     exit(0);
   }
@@ -259,14 +338,21 @@ int show_dotqmail_file(char *user)
   fprintf(actout, "<tr>");
   fprintf(actout, "<td align=\"center\" valign=\"top\"><b>%s</b></td>", user);
     
-  memset(TmpBuf2, 0, sizeof(TmpBuf2));
-
-  while (fgets( TmpBuf2, sizeof(TmpBuf2), fs) != NULL) {
-    alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+  alias_line = valias_select (user, Domain);
+  while (alias_line != NULL) {
+    alias_name_from_command = dotqmail_alias_command(alias_line);
                         
-    /* check to see if it is an invalid line , if so skip to next*/
+    /* check to see if it is an invalid line , if so skip to next */
     if (alias_name_from_command == NULL ) continue;
 
+    add_alias_entry (user, alias_line);
+    alias_line = valias_select_next();
+  }
+  
+  curalias = firstalias;
+  while (curalias != NULL) {
+    alias_line = curalias->alias_command;
+    alias_name_from_command = dotqmail_alias_command (alias_line);
     strcpy(alias_user, alias_name_from_command);
     /* get the domain alone from alias_user */
     alias_domain = alias_user;
@@ -298,7 +384,7 @@ int show_dotqmail_file(char *user)
     fprintf(actout, "<input type=\"hidden\" name=\"modu\" value=\"%s\">\n",
       user);
     fprintf(actout, "<input type=\"hidden\" name=\"linedata\" value=\"%s\">\n",
-      TmpBuf2);
+      alias_line);
     fprintf(actout, "<input type=\"hidden\" name=\"action\" value=\"delentry\">\n");
     fprintf(actout, "<input type=\"image\" border=\"0\" src=\"%s/delete.png\">\n",
       IMAGEURL);
@@ -309,51 +395,29 @@ int show_dotqmail_file(char *user)
     fprintf(actout, "</tr>\n");
     fprintf(actout, "<tr>\n");
     fprintf(actout, "<td align=\"left\">&nbsp;</td>\n");
+    curalias = get_alias_entry();
   }
   /* finish up the last line (all empty) */
   fprintf(actout, "<td align=\"left\">&nbsp;</td>");
   fprintf(actout, "<td align=\"left\">&nbsp;</td>");
   fprintf(actout, "</tr>");
-  fclose(fs);
 }
 
 int onevalidonly(char *user) {
- FILE *fs;
+ char *alias_line;
  char *alias_name_from_command;
- char *dot_file;
- int l,j;
+ int lines;
 
-  l = strlen(user);
-  dot_file= strcat(strcpy(malloc(8 + l), ".qmail-"), user);
-  for(j=8;dot_file[j]!=0;j++) {
-    if (dot_file[j]=='.') {
-      dot_file[j] = ':';
-    }
-  }
-
-  if ( (fs=fopen(dot_file,"r"))==NULL) {
-    sprintf(StatusMessage,"%s %s<br>\n", get_html_text("144"),
-    dot_file);
-    vclose();
-    exit(0);
-  }
-            
-  j=0;
-  while( fgets( TmpBuf2, sizeof(TmpBuf2), fs) != NULL ) {
-    alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+  lines=0;
+  alias_line = valias_select (user, Domain);
+  while( alias_line != NULL ) {
     /* check to see if it is an invalid line , if so skip to next */
-    if (alias_name_from_command == NULL ) continue;
-        
-    j++;
+    if (dotqmail_alias_command(alias_line) != NULL ) lines++;
+    alias_line = valias_select_next();
   }
-  fclose(fs);
 
-  if (j <2 ) return (1);
-  else return (0);
-
+  return (lines < 2);
 }
-
-
 
 moddotqmail()
 {
@@ -499,7 +563,7 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
      return(-1);
   }
 
-  sprintf(TmpBuf2, "&%s\n", dest);
+  sprintf(TmpBuf2, "&%s", dest);
   if (dotqmail_add_line(forwardname, TmpBuf2)) {
      sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 2);
      return(-1);

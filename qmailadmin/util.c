@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4 2004-01-07 15:36:26 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.1 2004-02-02 00:39:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,14 +115,19 @@ check_local_user( user )
  struct stat buf;
  int i,j;
 
+  /* check for aliases and autoresponders */
+  if ( valias_select (user, Domain)) return(-1);
+
+  /* check for mailing list */
   strcpy(TmpBuf, ".qmail-");
   for(i=0,j=7;user[i]!=0;++i,++j){
     if ( user[i] == '.' ) TmpBuf[j] = ':'; 
     else TmpBuf[j] = user[i];
   }
   TmpBuf[j] = 0;
-
   if ( stat(TmpBuf, &buf) == 0 ) return(-1);
+
+  /* check for POP/IMAP user */
   if ( vauth_getpw(user, Domain)) return(-1);
 
   return(0);

@@ -93,7 +93,7 @@ while ($entry = <ASSIGN>) {
 		$changed = 0;
 		open (DOTQMAIL, "$path/$fn");
 		while ($line = <DOTQMAIL>) {
-			if ($line =~ /\/.*\/([^\/]{2,})\/(.\/)?([^\/]+)\/Maildir(\/)?$/) {
+			if ($line =~ /\/.*\/([^\/]{2,})\/(.\/)?([^\/]+)\/(Maildir|\.maildir)(\/)?$/) {
 				chop $line;
 				($user, $domain) = ($3, $1);
 				print "    converting '$line' to '&$user\@$domain'\n";

@@ -3,6 +3,10 @@ patch or information related to the entry.
 
 1.2.4 - unreleased
 
+	Tom Collins
+	- Modify contrib/alias2forward.pl to work with '/Maildir' or
+	  '/.maildir' directory names.
+
 1.2.3 - released 7-Oct-04
 
 	Ken Jones

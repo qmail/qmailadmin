@@ -22,6 +22,7 @@ patch or information related to the entry.
 	  one didn't already exist.
 	- INSTALL: Add note about running `libtoolize --force` on x86_64.
 	- Update config.guess and config.sub scripts.
+	- Include charset in HTTP Content-Type header. [1098891]
 
 1.2.6 - released 24-Dec-04
 

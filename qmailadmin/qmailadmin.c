@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.5 2004-12-31 01:02:40 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.6 2005-01-12 15:14:27 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -283,6 +283,7 @@ void init_globals()
 {
   char *accept_lang;
   char *langptr, *qptr;
+  char *charset;
   int lang_err;
   float maxq, thisq;
 
@@ -391,7 +392,9 @@ void init_globals()
 
   umask(VPOPMAIL_UMASK);
 
-  printf ("Content-Type: text/html\n");
+  charset = get_html_text("000");
+  printf ("Content-Type: text/html; charset=%s\n",
+    *charset == '\0' ? "iso-8859-1" : charset);
 #ifdef NO_CACHE
   printf ("Cache-Control: no-cache\n"); 
   printf ("Cache-Control: no-store\n"); 

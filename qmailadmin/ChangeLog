@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.5 - unreleased
 
+	Tom Collins
+	- Remove unnecessary name attributes in SUBMIT buttons. [869292]
+
 1.2.4 - released 15-Nov-04
 
 	Tom Collins

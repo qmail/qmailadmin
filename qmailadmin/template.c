@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: template.c,v 1.3 2003-12-09 01:08:42 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,11 +79,11 @@ int send_template_now(char *filename)
   snprintf(TmpBuf2, (sizeof(TmpBuf2) - 1), "%s/html/%s", tmpstr, filename);
 
   if (lstat(TmpBuf2, &mystat) == -1) {
-    printf("warning: cannot lstat '%s', check permissions.\n", filename);
+    printf("Warning: cannot lstat '%s', check permissions.<BR>\n", TmpBuf2);
     return(-1);
   }
   if (S_ISLNK(mystat.st_mode)) {
-    printf("warning: '%s' is a symbolic link\n", filename);
+    printf("Warning: '%s' is a symbolic link.<BR>\n", TmpBuf2);
     return(-1);
   }
 

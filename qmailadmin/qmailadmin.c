@@ -1,4 +1,5 @@
 /* 
+ * $Id: qmailadmin.c,v 1.6 2004-01-26 00:41:07 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,10 +25,15 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include "config.h"
 #include "qmailadmin.h"
 #include <vpopmail.h>
-#include <vpopmail_config.h>
 #include <vauth.h>
 #include <vlimits.h>
 
@@ -121,13 +127,13 @@ main(argc,argv)
     memset(TmpBuf2, 0, sizeof(TmpBuf2));
     for(j=0,i=5;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
     rm = getenv("REQUEST_METHOD");
-    rm = strdup(rm);
+    rm = (rm == NULL ? "" : strdup(rm));
 
     if ( strncmp(rm , "POST", 4) == 0 ) {
       get_cgi();
     } else {
-      TmpCGI = (char *)getenv("QUERY_STRING");
-      TmpCGI = strdup(TmpCGI);
+      TmpCGI = getenv("QUERY_STRING");
+      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
     }
 
     GetValue(TmpCGI, Username, "user=", sizeof(Username));
@@ -139,8 +145,8 @@ main(argc,argv)
     /* get the real uid and gid and change to that user */
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
     if ( geteuid() == 0 ) {
-      if ( setegid(Gid) != 0 ) perror("setgid");
-      if ( seteuid(Uid) != 0 ) perror("setuid");
+      if ( setgid(Gid) != 0 ) perror("setgid");
+      if ( setuid(Uid) != 0 ) perror("setuid");
     }
 
     if ( chdir(RealDir) < 0 ) {
@@ -162,13 +168,13 @@ main(argc,argv)
     memset(TmpBuf2, 0, sizeof(TmpBuf2));
     for(j=0,i=6;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
     rm = getenv("REQUEST_METHOD");
-    rm = strdup(rm);
+    rm = (rm == NULL ? "" : strdup(rm));
 
     if ( strncmp(rm , "POST", 4) == 0 ) {
       get_cgi();
     } else {
-      TmpCGI = (char *)getenv("QUERY_STRING");
-      TmpCGI = strdup(TmpCGI);
+      TmpCGI = getenv("QUERY_STRING");
+      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
     }
 
     GetValue(TmpCGI, Username, "user=", sizeof(Username));
@@ -178,8 +184,8 @@ main(argc,argv)
 
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
     if ( geteuid() == 0 ) {
-      if ( setegid(Gid) != 0 ) perror("setgid");
-      if ( seteuid(Uid) != 0 ) perror("setuid");
+      if ( setgid(Gid) != 0 ) perror("setgid");
+      if ( setuid(Uid) != 0 ) perror("setuid");
     }
     vclose();
     exit(0);
@@ -198,8 +204,8 @@ main(argc,argv)
        if ( strncmp(rm , "POST", 4) == 0 ) {
          get_cgi();
        } else {
-         TmpCGI = (char *)getenv("QUERY_STRING");
-         TmpCGI = strdup(TmpCGI);
+         TmpCGI = getenv("QUERY_STRING");
+         TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
        }
 
        GetValue(TmpCGI, Username, "username=", sizeof(Username));
@@ -208,8 +214,8 @@ main(argc,argv)
 
        vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
        if ( geteuid() == 0 ) {
-         if ( setegid(Gid) != 0 ) perror("setgid");
-         if ( seteuid(Uid) != 0 ) perror("setuid");
+         if ( setgid(Gid) != 0 ) perror("setgid");
+         if ( setuid(Uid) != 0 ) perror("setuid");
        }
 
        /* Authenticate a user and domain admin */
@@ -377,7 +383,7 @@ init_globals()
   /* open the color table */
   open_colortable();
 
-  umask(0077);
+  umask(VPOPMAIL_UMASK);
 
   fprintf(actout,"Content-Type: text/html\n");
 #ifdef NO_CACHE

@@ -69,7 +69,7 @@
 101 Radera e-postlista
 102 Radera användare
 103 eftersändningsadress
-104 Ja, skicka vidare till:
+104 Ja, eftersänd till:
 105 Ändra e-postrobot
 106 Namn
 107 Innehåll
@@ -99,7 +99,7 @@
 131 Inga fler att visa, återvänd till föregående sida
 132 Standard
 133 Index:
-134 Set catchall email bounced 
+134 Sätt "Fånga allt konto": Studsa
 135 Föregående sida
 136 Ladda om sidan
 137 Nästa sida
@@ -170,11 +170,11 @@
 202 Parametrarna är:
 203 Raderade e-postadressen från e-postlistan
 204 Gå till användare
-205 Inaktivera vidaresändning/e-postrobot
+205 Inaktivera eftersändning/e-postrobot
 206 Sätt fånga allt adress externt
 207 Sätt extern fånga allt adress
 208 Extern fånga allt adress:
-209 Aktivera vidaresändning
+209 Aktivera eftersändning
 210 Aktivera spara, kopiera och eftersändning
 211 Eftersänd e-post till:
 212 Aktivera e-postrobot
@@ -187,7 +187,7 @@
 219 e-postlistmoderatorer
 220 Moderator Adress
 221 e-postlistsprenumeranter
-222 Prenumerant adress
+222 Prenumerantadress
 223 Hittade ej användare
 224 (klicka för att ändra)
 225 Ändra e-postlista
@@ -225,7 +225,7 @@
 257 Användarhandbok
 258 Administrationshandbok
 259 Hjälpindex
-260 Routing
+260 Rutter
 261 listnamm
 262 Skicka meddelanden
 263 Vem som helst kan posta.
@@ -264,11 +264,20 @@
 296 Mailbox flaggor
 297 på
 298 av
-299 Flag0
-300 Flag1
-301 Flag2
-302 Flag3
+299 Flagga0
+300 Flagga1
+301 Flagga2
+302 Flagga3
 303 raderat
 304 Spåra Spam?
 305 Destination
 306 eftersänd till
+307 Ogiltig quota
+308 Obegränsad quota
+309 Quota satt till %s bytes
+310 Svar ska gå till
+311 ursprunglig avsändare
+312 alla på listan
+313 adressen
+314 Ogiltig quota inmatning
+315 Användaren borttagen. Kunde inte sätta eftersändningsadressen till '%s'.

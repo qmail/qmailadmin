@@ -1,274 +1,284 @@
 000 ISO-8859-9
-001 Ana Men&#252;
-002 Pop Hesab&#305;
-003 Otomatik Cevaplay&#305;c&#305; ekle:
-004 Otomatik Cevaplay&#305;c&#305; ad&#305;:
-005 Kullan&#305;c&#305; eposta adresi:
+001 Ana Menü
+002 Pop Hesabý
+003 Otomatik Cevaplayýcý ekle:
+004 Otomatik Cevaplayýcý adresi:
+005 Kullanýcý eposta adresi:
 006 Konu: 
-007 Y&#246;nlendirme Hesab&#305; ekle:
-008 Y&#246;nlendirilen Eposta adresi: 
-009 Y&#246;nlendirme epostas&#305;:
-010 Y&#246;nlendirme email adresi <B>user@domain.com</B> &#351;eklinde olmal&#305;.  <BR>Kullan&#305;c&#305;n&#305;n isimi <B>popaccount</B> &#351;eklinde olmal&#305; <BR><b> &#214;rnek, </b> <BR>Y&#246;nlendirme: joe@enderunix.org Kullan&#305;c&#305;n&#305;n isimi: deneme <BR>Bu  deneme@##D hesab&#305;na g&#246;nderilen t&#252;m mailleri joe@enderunix.org adresine y&#246;nlendirir.
-011 Liste moderat&#246;r&#252; ekle
-012 Bir eposta listesine moderat&#246;r ekle
-013 Eposta Hesab&#305;:
-014 Email Listesine &#252;ye ekle 
+007 Yönlendirme Hesabý ekle:
+008 Yönlendirilen Eposta adresi: 
+009 Yönlendirme epostasý:
+010 (Yönlendirme yapýlacak kullanýcý adý<br>YADA<br>baþka bir alan adýna yönlendirilecekse tam e-posta adresi)
+011 Liste moderatörü ekle
+012 Bir eposta listesine moderatör ekle
+013 Eposta Hesabý:
+014 Email Listesine üye ekle 
 015 Email Listesi ekle
-016 Email Listesi ad&#305;
+016 Email Listesi adý
 017 Liste sahibinin eposta adresi: 
-018 Ar&#351;ivlenmi&#351;
-039 Liste y&#246;netimi ile alakal&#305; mesajlara cevap ver.Ar&#351;ivlerin g&#246;nderilmesine izin ver.
-053 SQL deste&#287;ini aktif hale getir
+018 Arþivlenmiþ
+039 Liste yönetimi ile alakalý mesajlara cevap ver.Arþivlerin gönderilmesine izin ver.
+053 SQL desteðini aktif hale getir
 054 SQL sunucusu
-055 Port Numaras&#305;
-056 Kullan&#305;c&#305; ad&#305; 
-057 &#351;ifre
-058 Database ad&#305;
+055 Port Numarasý
+056 Kullanýcý adý
+057 Þifre
+058 Veritabaný adý
 059 Tablo (table)
 060 Ekle
-061 Pop Hesaplar&#305;
+061 Pop Hesaplarý
 062 Hesap
-063 Ger&#231;ek isim
-064 De&#287;i&#351;iklik Yap <BR> Kullan&#305;c&#305; ad&#305;
-065 <BR>Hesab&#305;n&#305; sil
-066 <BR>Hepsini yakala(CatchAll) Hesab&#305;
-067 Pop Hesab&#305; olu&#351;tur
-068 Alias hesaplar&#305;
+063 Gerçek isim
+064 Deðþiklik Yap <BR> Kullanýcý adý
+065 <BR>Hesabýný sil
+066 <BR>Hepsini yakala(CatchAll) Hesabý
+067 Pop Hesabý oluþtur
+068 Alias hesaplarý
 069 Alias
-070 Pop Hesab&#305;
-071 De&#287;i&#351;iklik Yap
+070 Pop Hesabý
+071 Deðiþiklik yap
 072 Sil
 073 Yeni Alias ekle
-074 Y&#246;nlendirme Hesaplar&#305; 
-075 Y&#246;nlendir
-076 Yeni Y&#246;nlendirme ekle 
-077 Otomatik Cevaplay&#305;c&#305;lar
-078 Otamatik Cevaplay&#305;c&#305;
-079 Yeni Otomatik Cevaplay&#305;c&#305;
+074 Yönlendirme Hesaplarý
+075 Yönlendir
+076 Yeni Yönlendirme ekle 
+077 Otomatik Cevaplayýcýlar
+078 Otamatik Cevaplayýcý
+079 Yeni Otomatik Cevaplayýcý
 080 Mail Listeleri
 081 List
 082 Sil
-083 &#220;ye<BR>ekle
-084 &#220;ye<BR>sil
-085 &#220;yeleri<BR>g&#246;ster
-086 Moderat&#246;r<BR>ekle
-087 Moderat&#246;r<BR>sil
-088 Moderat&#246;rleri<BR>g&#246;ster
+083 Üye<BR>ekle
+084 Üye<BR>sil
+085 Üyeleri<BR>göster
+086 Moderatör<BR>ekle
+087 Moderatör<BR>sil
+088 Moderatörleri<BR>göster
 089 Yeni Mail Listesi
-090 Pop hesab&#305; ekle
-091 &#351;ifre (tekrar):
-092 Ger&#231;ek isim
-093 Liste ad&#305;
-094 Kullan&#305;c&#305;y&#305; listeye ekle 
-095 Kullan&#305;c&#305;y&#305; &#351;u listelere &#252;ye yap
+090 Pop hesabý ekle
+091 Þifre (tekrar):
+092 Gerçek isim
+093 Liste adý
+094 Kullanýcýyý listeye ekle 
+095 Kullanýcýyý þu listelere üye yap
 096 Alias Sil
-097 Silme i&#351;lemini onayla
-098 Otamatik cevaplay&#305;c&#305; sil
-099 SQL Ayarlar&#305;
-100 Y&#246;nlendirme sil
-101 Mail listesi silt
-102 Kullan&#305;c&#305; sil
-103 Y&#246;nlendirme emaili
-104 Evet, maili &#351;u hesaba y&#246;nlendir:
-105 Otamatik cevaplay&#305;c&#305;lar &#252;zerinde oynama yap
-106 &#304;sim
-107 &#304;&#231;erikler
-108 Eposta hesab&#305; ekle
-109 Kullan&#305;c&#305; &#252;zerinde de&#287;i&#351;iklik yap
-110 Yeni &#351;ifre
-111 Ayarlari Etkinle&#351;tir
+097 Silme iþlemini onayla
+098 Otamatik cevaplayýcý sil
+099 SQL Ayarlarý
+100 Yönlendirme sil
+101 Mail listesi sil
+102 Kullanýcý sil
+103 Yönlendirme e-postasý
+104 Evet, maili þu hesaba yönlendir:
+105 Otamatik cevaplayýcýlar üzerinde oynama yap
+106 Ýsim
+107 Ýçerikler
+108 Eposta hesabý ekle
+109 Kullanýcý  üzerinde deðiþiklik yap
+110 Yeni þifre
+111 Ayarlari Etkinleþtir
 112 Ana Hesap
-113 Alan Ad&#305; 
-114 G&#246;nder
-115 Kullan&#305;c&#305;lar i&#231;in y&#246;nlendirmeler
-116 &#351;u anki tekrar y&#246;nlendirmeler
-117 Tekrar y&#246;nlendirme Ekle/De&#287;&#351;itir
-118 Tekrar y&#246;nlendirmeyi sil
-119 Ba&#351;ar&#305; ile eklendi
+113 Alan Adý
+114 Gönder
+115 Kullanýcýlar için yönlendirmeler
+116 þu anki tekrar yönlendirmeler
+117 Tekrar yönlendirme Ekle/Deðiþtir
+118 Tekrar yönlendirmeyi sil
+119 Baþarýyla eklendi
 120 Eklenemiyor
-121 Alias hesaplar&#305;
-122 Y&#246;nlendirmeler
-123 Tekrar y&#246;nlendirmeleri g&#246;ster
-124 &#199;abuk Linkler
-125 Yeni Pop Hesaplar&#305;
+121 Alias hesaplarý
+122 Yönlendirmeler
+123 Tekrar yönlendirmeleri göster
+124 Çabuk Linkler
+125 Yeni Pop Hesaplarý
 126 Yeni Aliaslar
-127 Yeni Y&#246;nlendirmeler
-128 Yeni Otamatik Cevaplay&#305;c&#305;lar
+127 Yeni Yönlendirmeler
+128 Yeni Otamatik Cevaplayýcýlar
 129 Yeni Mail Listeleri
-130 Z&#305;plama
-131 G&#246;r&#252;lecek yeni kullan&#305;c&#305;lar var.L&#252;tfen bir &#246;nceki sayfaya d&#246;n&#252;n
-132 Varsay&#305;lan
-133 &#304;ndeks:
-134 Hepsini yakala geri d&#246;ns&#252;n(bounce) 
-135 &#214;nceki Sayfa
-136 Sayfay&#305; Tazele
+130 Zýplama(Bounce)
+131 Görülecek yeni kullanýcýlar var.Lütfen bir önceki sayfaya dönün
+132 Varsayýlan
+133 Ýndeks:
+134 Hepsini yakala geri dönsün(bounce) 
+135 Önceki Sayfa
+136 Sayfayý Tazele
 137 Sonraki Sayfa
-138 &#350;ifre yaz&#305;n
-139 Pop Hesab&#305;n&#305;n &#351;ifresi ba&#351;ar&#305; ile de&#287;i&#351;tirildi
-140 &#351;ifre De&#287;i&#351;tirelemedi.
-141 Kullan&#305;c&#305; ba&#351;ar&#305; ile silindi
+138 Þifre yazýn
+139 Pop Hesabýnýn þifresi baþarý ile deðiþtirildi
+140 þifre Deðiþtirelemedi.
+141 Kullanýcý baþarý ile silindi
 142 &#304;zin Yok
-143 Dizin izin haklar&#305; hatas&#305;
-144 Dosya izin hatas&#305;
-145 Olmayan kullan&#305;c&#305; Program hatas&#305;
-146 Tekrar y&#246;nlendirmeyi ger&#231;ekle&#351;tiremiyor
-147 Tekrar y&#246;nlendirmeyi &#351;imdi yap
-148 Var olmayan Email Hesab&#305;
-149 En son girilen de&#287;eri silinemiyor
-150 Dosya hatas&#305;
-151 Sat&#305;r ba&#351;ar&#305; ile silindi
-152 Y&#246;nlendirme ba&#351;ar&#305; ile eklendi
-153 Kullan&#305;c&#305; ad&#305; yok
-154 Alias ba&#351;ar&#305; ile eklendi
-155 Var olmayan y&#246;ntem
-156 Ula&#351;&#305;lan en &#231;ok alias say&#305;s&#305;
-157 Ula&#351;&#305;lan en &#231;ok y&#246;nlendirme say&#305;s&#305; 
-158 Ula&#351;&#305;lan en &#231;ok otomatik cevaplay&#305;c&#305; say&#305;s&#305; 
-159 Varolmayan DotQmail &#231;e&#351;idi: adddotqmail()
+143 Dizin izin haklarý hatasý
+144 Dosya izin hatasý
+145 Olmayan kullanýcý Program hatasý
+146 Tekrar yönlendirmeyi gerçekleþtiremiyor
+147 Tekrar yönlendirmeyi þimdi yap
+148 Var olmayan Email Hesabý
+149 En son girilen deðeri silinemiyor
+150 Dosya hatasý
+151 Satýr baþarý ile silindi
+152 Yönlendirme baþarý ile eklendi
+153 Kullanýcý adý yok
+154 Alias baþarý ile eklendi
+155 Var olmayan yöntem
+156 Ulaþýlan en çok alias sayýsý
+157 Ulaþýlan en çok yönlendirme sayýsý 
+158 Ulaþýlan en çok otomatik cevaplayýcý sayýsý 
+159 Varolmayan DotQmail çeþidi: adddotqmail()
 160 Varolmayan alias
-161 Alias eklenemedi.Pop Hesab&#305; var olan bir hesap olmal&#305;.
-162 Var olmayan Pop Hesab&#305;
-163 Var olmayan Kullan&#305;c&#305; isimi
-164 Var olmayab Alias &#231;e&#351;idi : adddotqmailnow()
-165 Pop hesab&#305;na Alias eklerken hata olu&#351;tu
-166 Pop Hesab&#305; i&#231;in Alias ba&#351;ar&#305; ile eklendi.
-167 Pop Hesab&#305; i&#231;in Alias/Y&#246;nlendirme hesab&#305;n&#305; silerken hata olu&#351;tu.
-168 Pop Hesab&#305; i&#231;in Alias/Y&#246;nlendirme ba&#351;ar&#305; ile eklendi. 
-169 Pop Hesab&#305; i&#231;in TekrarY&#246;nlendirme/Y&#246;nlendirme hesab&#305;n&#305; silerken hata olu&#351;tu 
-170 Pop Hesab&#305; i&#231;in TekrarY&#246;nlendirme/Y&#246;nlendirme silindi
-171 Hata : Dizine ula&#351;&#305;lam&#305;yor  
-172 Sistem postmaster kullan&#305;c&#305;s&#305; olarak bir seferde sadece bir ki&#351;i sisteme girebilir. Ba&#351;ka biri &#351;u anda sistemde. L&#252;tfen ayn zamanda sadece bir kere sisteme giri&#351; yap&#305;n.
-173 Sistemde kalma s&#252;resi bitti.L&#252;tfen sisteme tekrar girin\n
-174 Var olmayan otamatik cevaplay&#305;c&#305; ad&#305;
-175 Bu de&#287;er daha &#246;nceden kullan&#305;lm&#305;&#351;t&#305;r
-176 L&#252;tfen otamatik cevaplayici ismini doldurun
-177 Var olamayan kullan&#305;c&#305; epostas&#305;
-178 L&#252;tfen bir Konu girin
-179 L&#252;tfen g&#246;ndermek i&#231;in birseyler yaz&#305;n
+161 Alias eklenemedi.Pop Hesabý var olan bir hesap olmalý.
+162 Var olmayan Pop Hesabý
+163 Var olmayan Kullanýcý isimi
+164 Var olmayab Alias çeþidi : adddotqmailnow()
+165 Pop hesabýna Alias eklerken hata oluþtu
+166 Pop Hesabý için Alias baþarý ile eklendi.
+167 Pop Hesabý için Alias/Yönlendirme hesabýný silerken hata oluþtu.
+168 Pop Hesabý için Alias/Yönlendirme baþarý ile eklendi. 
+169 Pop Hesabý için TekrarYönlendirme/Yönlendirme hesabýný silerken hata oluþtu 
+170 Pop Hesabý için TekrarYönlendirme/Yönlendirme silindi
+171 Hata : Dizine ulaþýlamýyor  
+172 Sistem postmaster kullanýcýsý olarak bir seferde sadece bir kiþi sisteme girebilir. Baþka biri þu anda sistemde. Lütfen ayn zamanda sadece bir kere sisteme giriþ yapýn.
+173 Sistemde kalma süresi bitti.Lütfen sisteme tekrar girin\n
+174 Var olmayan otamatik cevaplayýcý adý
+175 Bu deðer daha önceden kullanýlmýþtýr
+176 Lütfen otamatik cevaplayici ismini doldurun
+177 Var olamayan kullanýcý epostasý
+178 Lütfen bir Konu girin
+179 Lütfen göndermek için birseyler yazýn
 180 Autoresponder for added successfully
-181 Otamatik cevaplay&#305;c&#305; silinemiyor
-182 Otamatik cevaplay&#305;c&#305; silindi
-183 Otamatik cevaplay&#305;c&#305; &#252;zerinde de&#287;i&#351;iklik ba&#351;ar&#305; ile yap&#305;ld&#305;
-184 Kullan&#305;labilecek mail listesi say&#305;s&#305;na ula&#351;&#305;lm&#305;&#351;t&#305;r
+181 Otamatik cevaplayýcý silinemiyor
+182 Otamatik cevaplayýcý silindi
+183 Otamatik cevaplayýcý üzerinde deðiþiklik baþarý ile yapýldý
+184 Kullanýlabilecek mail listesi sayýsýna ulaþýlmýþtýr
 185 Dosya silinemiyor
-186 Mail List ba&#351;ar&#305; ile silinmi&#351;tir
-187 Mailing List eklenmi&#351;tir
+186 Mail List baþarý ile silinmiþtir
+187 Mailing List eklenmiþtir
 188 Mail Listesinde var olmayan eposta adresi
-189 Mail Liste &#252;ye olan kullan&#305;c&#305;lar&#305;n listesi
+189 Mail Liste üye olan kullanýcýlarýn listesi
 190 Listenin sonu
-191 Mail Listesindeki moderat&#246;rlerin listesi 
-192 Ana Men&#252;ye D&#246;n
-193 Email hesab&#305; mail listesine ba&#351;ar&#305; ile eklendi 
-194 Email hesab&#305; moderat&#246;r olarak mail listesine eklendi
-195 Mail Listesinden kullan&#305;c&#305; sil
-196 Mail Listesinden moderat&#246;r sil
-197 Email adresi moderat&#246;r olarak de&#287;i&#351;tirildi 
-198 Var olmayan kullan&#305;c&#305;/&#351;ifre ikilisi
-199 Kullan&#305;labilecek en &#231;ok kullan&#305;c&#305; hesab&#305;na ula&#351;&#305;ld&#305; 
-200 &#351;ifreler uymu&#351;muyor l&#252;tfen tekrar deneyin
-201 Haf&#305;za dolu
+191 Mail Listesindeki moderatörlerin listesi 
+192 Ana Menüye Dön
+193 Email hesabý mail listesine baþarý ile eklendi 
+194 Email hesabý moderatör olarak mail listesine eklendi
+195 Mail Listesinden kullanýcý sil
+196 Mail Listesinden moderatör sil
+197 Email adresi moderatör olarak deðiþtirildi 
+198 Var olmayan kullanýcý/þifre ikilisi
+199 Kullanýlabilecek en çok kullanýcý hesabýna ulaþýldý 
+200 þifreler uymuþmuyor lütfen tekrar deneyin
+201 Hafýza dolu
 202 Parametreler:
 203 Email adresi mail listesinden silindi
 204 Go User
-205 Tatil mesaj&#305;/Y&#246;nlendirmeleri &#305;ptal et
-206 Uzak Hepsini Yakala Hesab&#305; Tan&#305;mla
-207 Uzak Hepsini Yakala Tan&#305;mla
-208 Uzak Hepsini Yakala Hesab&#305;:
-209 Y&#246;nlendirmeyi Aktive Et
-210 Kaydet Kopyala ve Y&#246;nlendiri aktive et
-211 Postay&#305; Y&#246;nlendir:
-212 Tatil Mesaj&#305;n&#305; Aktive Et:
-213 Tatil Mesaj&#305; Konu:
-214 Tatil Mesaj&#305; &#305;&#231;erik:
-215 Y&#246;nlendirme adresini girmek zorunlu
+205 Tatil mesajý/Yönlendirmeleri ýptal et
+206 Uzak Hepsini Yakala Hesabý Tanýmla
+207 Uzak Hepsini Yakala Tanýmla
+208 Uzak Hepsini Yakala Hesabý:
+209 Yönlendirmeyi Aktive Et
+210 Kaydet Kopyala ve Yönlendiri aktive et
+211 Postayý Yönlendir:
+212 Tatil Mesajýný Aktive Et:
+213 Tatil Mesajý Konu:
+214 Tatil Mesajý ýçerik:
+215 Yönlendirme adresini girmek zorunlu
 216 Konu girmek zorunlu zorunda
-217 Men&#252;y&#252; Tazele
-218 &#199;&#305;k&#305;&#351;
-219 Liste Y&#246;neticileri
-220 Y&#246;netici Adresleri
-221 Listeye Kay&#305;tl&#305;lar
-222 Kay&#305;tl&#305;lar&#305;n Adresleri
-223 Kullan&#305;c&#305; bulunam&#305;yor
-224 (de&#287;i&#351;tirmek i&#231;in t&#305;klay&#305;n)
-225 Mail Listesinde De&#287;i&#351;iklik Yap
-226 Mail listesi de&#287;i&#351;tirildi
-227 &#214;zet
+217 Menüyü Tazele
+218 &#199;ýkýþ
+219 Liste Yöneticileri
+220 Yönetici Adresleri
+221 Listeye Kayýtlýlar
+222 Kayýtlýlarýn Adresleri
+223 Kullanýcý bulunamýyor
+224 (deðiþtirmek için týklayýn)
+225 Mail Listesinde Deðiþiklik Yap
+226 Mail listesi deðiþtirildi
+227 Özet
 228 Toplam:
 229 limitsiz
-230 Toplam &#220;yeler:
-231 G&#246;sterilecek Mail Listesi Yok
-232 G&#246;sterilecek Alias/Forward yok
-233 G&#246;sterilecek mail cevaplay&#305;c&#305;lar&#305; yok
-234 L&#252;tfen &#351;ifre giriniz
+230 Toplam Üyeler:
+231 Gösterilecek Mail Listesi Yok
+232 Gösterilecek Alias/Forward yok
+233 Gösterilecek mail cevaplayýcýlarý yok
+234 Lütfen þifre giriniz
 235 CatchAll'u inaktive et
 236 CatchAll: Silindi
-237 &#214;zete<br>&#220;ye Ekle
-238 &#214;zetten<br>&#220;ye Sil
-239 &#214;zer<br>&#220;yelerini G&#246;ster
-240 Email hesab&#305; mail listesine &#246;zet &#252;yesi olarak eklendi
-241 &#214;zet &#220;yesini mail listesine ekle 
-242 &#246;zet mail listesinden silindi 
-243 &#214;zet &#252;yesini maillistesinden sil
-244 Toplam &#214;zet Listesi &#220;yeleri:
-245 &#214;zet<br>&#220;yesini Sil
-246 &#214;zet &#220;yesi adresi
-247 &#214;zete &#220;yeleri Listele
-248 Maillistesindeki &#246;zet email hesaplar&#305;n&#305;n listesi
+237 Özete<br>Üye Ekle
+238 Özetten<br>Üye Sil
+239 Özer<br>Üyelerini Göster
+240 Email hesabý mail listesine özet üyesi olarak eklendi
+241 Özet Üyesini mail listesine ekle 
+242 özet mail listesinden silindi 
+243 Özet üyesini maillistesinden sil
+244 Toplam Özet Listesi Üyeleri:
+245 Özet<br>Üyesini Sil
+246 Özet Üyesi adresi
+247 Özete Üyeleri Listele
+248 Maillistesindeki özet email hesaplarýnýn listesi
 249 Kota (MB)
-250 Kullan?lan
-251 (Limitsiz hesap i&#231;in NOQUOTA yaz&#305;n&#305;z)
-252 (Limitsiz hesap i&#231;in bo&#351; b&#305;rak&#305;n)
+250 Kullanýlan
+251 (Limitsiz hesap için NOQUOTA yazýnýz)
+252 (Limitsiz hesap için boþ býrakýn)
 253 Limit:
-254 Kullan&#305;lan:
+254 Kullanýlan:
 255 Toplam Hesaplar
-256 &#214;nek
-257 Kullan&#305;c&#305; Rehberi
-258 Y&#246;netici Rehberi
+256 Önek
+257 Kullanýcý Rehberi
+258 Yönetici Rehberi
 259 Help &#304;ndeksi
-260 Y&#246;nlendirme
+260 Yönlendirme
 261 liste adi
 262 Mesaj Postalama
 263 &#304;steyen herkes mail atabilir.
-264 Sadece &#252;yeler mail atabilir. Di&#287;er mailler geri d&#246;ner.
-265 Sadece &#252;yeler mail atabilir, di&#287;er b&#252;t&#252;n mailler moderat&#246;re gider.
-266 Sadece moderat&#246;rler mail atabilir, di&#287;er mailler geri d&#246;ner.
-267 Sadece moderat&#246;r mail atabilir, di&#287;er mailler kabul i&#231;in moderat&#246;re gider.
-268 Liste Se&#231;enekleri
-269 Giden mesalar&#305;n konu k&#305;sm&#305;na <B>[%s]</B> ekle.
-270 Her mesaj&#305;n sonuna yaz&#305; ekle.
-271 Listenin &#246;zet versiyonunu kur.
-272 %s-digest &#351;eklinde.
-273 Servis istekleri %s-request adresine g&#246;nderilir.
-274 %s-subscribe, %s-unsubscribe, vb. adreslerin yan&#305;nda %s-request adresine de komut g&#246;nderilebilir.
-275 Uzaktan Y&#246;netim
-276 Moderat&#246;rlerin uzaktan y&#246;netmesine izin ver.
-277 Listeyi &#246;zel liste yap.
-278 Sadece adminler subscribe, unsubscribe, access index, vb komutlar&#305; &#231;al&#305;&#351;t&#305;r&#305;labilir.
-279 Uzaktan y&#246;neten y&#246;neticiler:
-280 &#220;ye Listesini g&#246;r&#252;p, &#252;zerinde arama yapabilir.
-281 Text dizinindeki dosyalar &#252;zerinde de&#287;i&#351;iklik yapabilir.
-282 mesela mesaj eklentisi, yard&#305;m dosyalar&#305; vb.
-283 &#220;yelik istekleri
-284 Listeye &#252;yelik:
-285 &#220;ye olunan adrese onay maili g&#246;nderek olur.
-286 Moderat&#246;r&#252;n onay&#305; gerekir.
-287 Listeden &#231;&#305;kmak i&#231;in:
-288 Uyar&#305;: E&#287;er g&#246;nderici onay&#305; istemezseniz, istenmeyen mail adresleri ba&#351;kalar&#305; taraf&#305;ndan email adresinin izini olmadan listeye eklenebilir veya listeden &#231;&#305;kar&#305;labilir.
-289 Mesaj Ar&#351;ivleri
-290 Liste mesajlar&#305;n ar&#351;ivle
-291 Ezmlm-cgi ile ar&#351;ivin g&#246;r&#252;nmesi i&#231;in mesajlar&#305; indexle.
-292 Ar&#351;ive bakmak
-293 herkese a&#231;&#305;k
-294 &#252;yelere a&#231;&#305;k
-295 moderat&#246;rlere a&#231;&#305;k
-296 Mail Kutusu bayraklar&#305;
-297 a&#231;&#305;k
-298 kapal&#305;
+264 Sadece üyeler mail atabilir. Diðer mailler geri döner.
+265 Sadece üyeler mail atabilir, diðer bütün mailler moderatöre gider.
+266 Sadece moderatörler mail atabilir, diðer mailler geri döner.
+267 Sadece moderatör mail atabilir, diðer mailler kabul için moderatöre gider.
+268 Liste Seçenekleri
+269 Giden mesalarýn konu kýsmýna <B>[%s]</B> ekle.
+270 Her mesajýn sonuna yazý ekle.
+271 Listenin özet versiyonunu kur.
+272 %s-digest þeklinde.
+273 Servis istekleri %s-request adresine gönderilir.
+274 %s-subscribe, %s-unsubscribe, vb. adreslerin yanýnda %s-request adresine de komut gönderilebilir.
+275 Uzaktan Yönetim
+276 Moderatörlerin uzaktan yönetmesine izin ver.
+277 Listeyi özel liste yap.
+278 Sadece adminler subscribe, unsubscribe, access index, vb komutlarý çalýþtýrýlabilir.
+279 Uzaktan yöneten yöneticiler:
+280 Üye Listesini görüp, üzerinde arama yapabilir.
+281 Text dizinindeki dosyalar üzerinde deðiþiklik yapabilir.
+282 mesela mesaj eklentisi, yardým dosyalarý vb.
+283 Üyelik istekleri
+284 Listeye üyelik:
+285 Üye olunan adrese onay maili gönderek olur.
+286 Moderatörün onayý gerekir.
+287 Listeden çýkmak için:
+288 Uyarý: Eðer gönderici onayý istemezseniz, istenmeyen mail adresleri baþkalarý tarafýndan email adresinin izini olmadan listeye eklenebilir veya listeden çýkarýlabilir.
+289 Mesaj Arþivleri
+290 Liste mesajlarýn arþivle
+291 Ezmlm-cgi ile arþivin görünmesi için mesajlarý indeksle
+292 Arþive bakmak
+293 herkese açýk
+294 üyelere açýk
+295 moderatörlere açýk
+296 Mail Kutusu bayraklarý
+297 açýk
+298 kapalý
 299 Flag0
 300 Flag1
 301 Flag2
 302 Flag3
 303 Silindi.
-304 Spam Kontrolu?  
+304 Spam Kontrolü?
 305 Hedef          
-306 y&#246;nlendirme:
+306 yönlendirme:
+307 Var olmayan kota
+308 Kota kaldýrýldý
+309 Kota %s byte oldu
+310 Cevaplar þu adrese gitmeli
+311 Asýl gönderen
+312 Tüm liste
+313 adres
+314 Kota deðeri yanlýþ
+315 Kullanýcý silindi. Forward adresi '%s' olarak ayarlanamýyor.
+

@@ -1,8 +1,7 @@
-# $Id: Makefile.am,v 1.1.1.1 2003-09-10 21:38:41 tomcollins Exp $
 
 @SET_MAKE@
 
-EXTRA_DIST=BUGS CHANGELOG FAQ TRANSLATORS README.hooks html lang images contrib
+EXTRA_DIST=BUGS FAQ TRANSLATORS README.hooks html lang images contrib
 
 htmllibdir=@htmllibdir@
 htmldir=@htmldir@
@@ -11,6 +10,12 @@ QA_PACKAGE=@QA_PACKAGE@
 QA_VERSION=@QA_VERSION@
 PACKAGE=@QA_PACKAGE@
 VERSION=@QA_VERSION@
+
+#
+# Install qmailadmin setuid to @vpopuser@
+#
+INSTALL_PROGRAM=${INSTALL} -o @vpopuser@ -m 6755 -g @vpopgroup@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_STRIP_PROGRAM=${INSTALL_PROGRAM} -s
 
 bindir=@cgibindir@
 bin_PROGRAMS=@CGIBINTARGETS@
@@ -43,15 +48,6 @@ dotqmail.o: config.h qmailadmin.h qmailadminx.h
 
 DEFS=-I. @auth_incs@ 
 
-#
-# Install qmailadmin setuid to @vpopuser@
-#
-
-install-exec-local:
-	chown @vpopuser@ $(DESTDIR)$(bindir)/@QA_PACKAGE@
-	chgrp @vpopgroup@ $(DESTDIR)$(bindir)/@QA_PACKAGE@
-	chmod u+s,g+s $(DESTDIR)$(bindir)/@QA_PACKAGE@
-
 # Maintainer stuff
 
 dist-rpm:
@@ -65,15 +61,21 @@ dist-rpm:
 
 dist-hook:
 
+# use the [^C]* pattern to skip the CVS directory
 install-data-local:
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@
 	rm -rf                   $(DESTDIR)@htmllibdir@/html
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/html 
-	cp -R $(srcdir)/html/*   $(DESTDIR)@htmllibdir@/html
+	cp $(srcdir)/html/*.html $(DESTDIR)@htmllibdir@/html
+	cp $(srcdir)/html/colortable $(DESTDIR)@htmllibdir@/html
+	chmod 755                $(DESTDIR)@htmllibdir@/html
+	chmod 644                $(DESTDIR)@htmllibdir@/html/*
 	rm -rf                   $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/lang 
-	cp -R $(srcdir)/lang/*   $(DESTDIR)@htmllibdir@/lang
-	chmod -R 755             $(DESTDIR)@htmllibdir@
+	cp $(srcdir)/lang/??     $(DESTDIR)@htmllibdir@/lang
+	cp $(srcdir)/lang/??-??  $(DESTDIR)@htmllibdir@/lang
+	chmod 755                $(DESTDIR)@htmllibdir@/lang
+	chmod 644                $(DESTDIR)@htmllibdir@/lang/*
 	$(mkinstalldirs)         $(DESTDIR)@imagedir@
-	cp -R $(srcdir)/images/* $(DESTDIR)@imagedir@
+	cp $(srcdir)/images/*.png $(DESTDIR)@imagedir@
 

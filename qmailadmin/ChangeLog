@@ -1,10 +1,116 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.2.0 - released 28-Jan-04
+
+	Tom Collins
+	- Changes to Makefile to avoid copying CVS directories on install.
+	  Fixes previous attempt that wasn't compatible with all platforms.
+	- Update all mentions of --with-htmllibdir to --enable-htmllibdir.
+	- undef some macros defined in vpopmail_config.h and later defined
+	  in QmailAdmin's config.h (PACKAGE_*). [883245]
+	- Fix bad quota when adding user with default (blank) quota field.
+
+1.2.0-rc3 - released 19-Jan-04
+
+	Tom Collins
+	- Minor formatting changes to configure.in for consistency.
+	- Make function buffers static when returning pointers to them.
+	- More updates to build files.
+	- Properly format autoresponder names with '.' in them. [872721]
+	- Remove old code and redundant quota setting code from user.c.
+	- Switch to using new pw_flags field in auth.c.
+	- Set permissions on html templates and lang files to 644 (not 755).
+
+	Jussi Siponen
+	- Add Finnish translation. [879032]
+
+1.2.0-rc2 - released 1-Jan-04
+
+	Tom Collins
+	- Added comment and added minor fix to ##z macro in template.c.
+	- Fix Makefile.am to use correct owner/group/perm for 
+	  install-strip. [864310]
+	- Change html/header to use ##D instead of ##H in title.
+
+	Rick Widmer
+	- Remove fclose(NULL) call in alias.c.
+	- Add html/README with information on template macros. [867305]
+
+1.2.0-rc1 - released 21-Dec-03
+
+	Michael Bowe
+	- Update to configure.in for libtools 2.57 compatability. [858201]
+
+	Tom Collins
+	- Use AM_INSTALL_PROGRAM_FLAGS instead of chown/chgrp/chmod in
+	  Makefile. [827196]
+
+	Andrea Riela (reviewed by Davide Guinchi)
+	- Updates to Italian translation.
+
+1.2.0-pre1 - released 9-Dec-03
+
+	Tom Collins
+	- More updates related to build process. [826594]
+	- Fix HTML formatting on display subscribers page.
+	- Convert HTTP_ACCEPT_LANGUAGE entries to lowercase, rename pt-BR
+	  to pt-br. [852963]
+	- Major cleanup of hooks code (fix call to execl, allow blank
+	  lines, don't require entries for all hooks, pass proper 
+	  parameters to hook program, update documentation). [855707]
+	- Use VPOPMAIL_UMASK instead of hardcoded 0077.
+	- Better lstat() error messages in template.c.
+
+1.0.29 - released 20-Nov-03
+
+	Tom Collins
+	- Totally fix enable-htmllibdir option in configure.in. [812535]
+	- Change from seteuid()/setegid() to setuid()/setgid(). [834008,
+	  830695].  This code only gets executed if the cgi is suid root.
+	  Note that we can use these calls since we don't need to get
+	  root privileges back at any point.
+
+	Nikolai V. Ivanyushin
+	- Fix codepage name from koi-8r to koi8-r. [827792]
+	- Updated Russian translation. [831398]
+
+	Nicolas Croiset		- Updated French translation.
+
+1.0.28 - released 17-Oct-03
+
+	Oden Eriksson		- Updated Swedish translation.
+	Tohru Kobayashi		- Updated Japanese translation.
+	Martin Dalum		- Updated Danish translation.
+	Nicolas Croiset		- Updated French translation.
+	Martin Mosny		- Updated Slovak translation.
+	Maurice Snellen		- Updated Dutch translation.
+	Jeremiah Tieman (JT)	- Updated Spanish translation.
+	Vyacheslav Shishakov	- Updated Russian translation.
+	Fabio Erri		- Updated Italian translation.
+	Julian Neytchev		- New Bulgarian translation.
+	Dorneles Tremea		- Updated Brazilian Portuguese translation.
+	Franz Stancl		- Updated German translation.
+	Maciej Budzynski	- Updated Polish translation.
+	Omer Faruk Sen		- Updated Turkish translation.
+	HONTI Miklos		- Updated Hungarian translation.
+	Andreas Tolfsen		- Updated Norwegian translation.
+
+	Tom Collins
+	- Properly handle mailing list prefixes (strip square brackets).
+	- Update configure.in to try htmldir as starting point for 
+	  cgibindir and imagedir.
+	- Update configure.in to use imageurl when building imagedir.
+	- Update configure.in to work without acconfig.h; rm acconfig.h.
+	- Update missing script with version from automake 1.6.
+	- Fix enable-htmllibdir option in configure.in. [812535]
+	- Check result of getenv() so we don't strdup(NULL). [800326]
+	- Add 'Reply-To' to headerremove when setting Reply-To. [810670]
+	- Add depcomp script, now required by automake/autoconf?
+
 1.0.27 - released 9-Sep-03
 
-	Oden Eriksson
-	- Updated Swedish translation.
+	Oden Eriksson		- Updated Swedish translation.
 
 	Tom Collins
 	- Added tracker item numbers to CHANGELOG for all closed trackers.
@@ -384,6 +490,9 @@ patch or information related to the entry.
 1.0.14
 03/22/03    Ken Jones
           - Lost the ability to GET for logins, it's back in
+
+	Switch to using vlimits code from vpopmail.  This release
+	requires vpopmail 5.3.19 or later.
 
 1.0.13
 03/18/03    Tom Collins

@@ -1,14 +1,24 @@
 Install guide 
 
+Please note that any time you reconfigure and install vpopmail
+you will need to rebuild and install QmailAdmin.  QmailAdmin
+statically links libvpopmail, so you need to recompile it
+whenever libvpopmail changes.
+
 qmailadmin must be configured and installed as root.  Why?
 vpopmail protects it's libraries from regular users.
 qmailadmin needs to access those libraries, hence it needs root.
 qmailadmin also needs to install into system directories
-/usr/local/share/qmailadmin, the web servers cgi-bin directory
-and the web servers html directory. Hence root.
+/usr/local/share/qmailadmin, the web server's cgi-bin directory
+and the web server's html directory. Hence root.
+
+Since qmailadmin is a suid binary, make sure it's installed on
+a volume that isn't mounted with the 'nosuid' option in /etc/fstab.
 
 Be root before you follow the rest of the instructions or
 your installation will fail. 
+
+If you have problems using 'make', try using 'gmake' instead.
 
 Note to people who did not read the above paragraph:
 When you give up on your installation, try reading
@@ -40,9 +50,12 @@ the above information then starting from scratch.
 *Use this if your cgi bin is not in a standard location
 	 --enable-cgibindir={dir}   HTTP server's cgi-bin directory.
 
+Since qmailadmin is a suid binary, make sure the cgi-bin directory is
+on a volume that isn't mounted with the 'nosuid' option in /etc/fstab.
+
 *Use this if your don't want the HTML templates to be 
  in /usr/local/share/qmailadmin
-	--with-htmllibdir={dir}    qmailadmin HTML library directory.
+	--enable-htmllibdir={dir}  qmailadmin HTML library directory.
 
 *Use this if your qmail directory is not in /var/qmail  
 	--enable-qmaildir={dir}   directory where qmail is installed.
@@ -77,7 +90,7 @@ the above information then starting from scratch.
 *If you have different domains accessing the same qmailadmin, you 
  may want to automatically fill the domain field with the domain the 
  user accessed the qmailadmin cgi with:
-   --enable-domain-autofill=Y
+   --enable-domain-autofill
 
   With autofill enabled, qmailadmin will search the file
   /var/qmail/control/virtualdomains for an entry that matches the
@@ -168,7 +181,7 @@ users will need to me manually changed via vmoduser.
 7. If you want to modify the "look" of qmail admin:
    
    Edit the html template files in /usr/local/share/qmailadmin/
-   or if you changed the location with the --with-htmllibdir={dir}
+   or if you changed the location with the --enable-htmllibdir={dir}
    then edit the files in that directory. The HTML elements for some
    not-very-often used features are included in comments in the
    template files. Remove the comment tags to see the relevant bits.
@@ -195,4 +208,6 @@ users will need to me manually changed via vmoduser.
 If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
+
+$Id: INSTALL,v 1.5 2004-01-24 15:55:16 tomcollins Exp $
 

@@ -1,4 +1,5 @@
 /* 
+ * $Id: template.c,v 1.7 2004-01-26 00:41:07 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +27,11 @@
 #include <dirent.h>
 #include <vpopmail.h>
 #include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include <vauth.h>
 #include "config.h"
 #include "qmailadmin.h"
@@ -78,11 +84,11 @@ int send_template_now(char *filename)
   snprintf(TmpBuf2, (sizeof(TmpBuf2) - 1), "%s/html/%s", tmpstr, filename);
 
   if (lstat(TmpBuf2, &mystat) == -1) {
-    printf("warning: cannot lstat '%s', check permissions.\n", filename);
+    printf("Warning: cannot lstat '%s', check permissions.<BR>\n", TmpBuf2);
     return(-1);
   }
   if (S_ISLNK(mystat.st_mode)) {
-    printf("warning: '%s' is a symbolic link\n", filename);
+    printf("Warning: '%s' is a symbolic link.<BR>\n", TmpBuf2);
     return(-1);
   }
 
@@ -604,10 +610,13 @@ int send_template_now(char *filename)
             fprintf(actout, "%s", IMAGEURL);
             break;            
 
+          /* display domain on login page (last used, value of dom in URL,
+           * or guess from hostname in URL).
+           */
           case 'z':
             if( strlen(Domain) > 0 ) {
                printf("%s", Domain);
-            } else if(TmpCGI && GetValue(TmpCGI, value," dom=", sizeof(value))==0) {
+            } else if(TmpCGI && GetValue(TmpCGI, value, "dom=", sizeof(value))==0) {
                printf("%s", value);
 #ifdef DOMAIN_AUTOFILL
             } else {
@@ -948,7 +957,7 @@ void get_calling_host() {
 char *get_session_val(char *session_var) {
    /* returns the value of session_var, first checking the .qw file for saved */
    /* value, or the TmpCGI if it's not yet been saved                         */
-   char value[MAX_BUFF];
+   static char value[MAX_BUFF];
    char dir[MAX_BUFF];
    char *retval;
    FILE *fs_qw;

@@ -18,7 +18,7 @@
 017 Listagazda email címe: 
 018 Arhivált
 039 Respond to adminstrative requests and allow archive retrieval.
-053 SQL támogatás bekapcsolása
+053 MySQL támogatás bekapcsolása
 054 Host
 055 Port
 056 Felhasználó
@@ -48,19 +48,19 @@
 080 Levelezõlisták
 081 Lista
 082 Hiba a .qmail-default megnyitása közben!
-083 Új<br>elõfizetõ
-084 Elõfizetõ<br>törlése
-085 Elõfizetõk<br>megtekintése
-086 Új<br>moderátor
+083 Listatag<br>felvétele
+084 Listatag<br>törlése
+085 Listatagok<br>listázása
+086 Moderátor<br>felvétele
 087 Moderátor<br>törlése
-088 Moderátorok<br>megtekintése
+088 Moderátorok<br>listázása
 089 Új levelezõlista
 090 Új Email azonosító
 091 Jelszó (újra):
-092 Valódi név 
+092 Valódi név
 093 Lista neve
-094 Felhasználó elõfizet
-095 Felhasználó elõfizetése az alábbi levelezõlistákra
+094 Felhasználó felíratkozik
+095 Felhasználó felvétele az alábbi levelezõlistákra
 096 Másodlagos cím törlése
 097 Igen, törlés
 098 Mail robot törlése
@@ -108,10 +108,10 @@
 140 Jelszóváltoztatás sikertelen.
 141 felhasználó sikeresen törölve
 142 Nincs jogosultság
-143 directory permission error
-144 file permission error
-145 Invalid User Internal Error
-146 Cannot Do redirect
+143 konyvtár jogosultsági hiba
+144 fájl jogosultsági hiba
+145 Nem létezõ felhasználó - Belsõ Hiba
+146 Nem tudom elkészíteni az átiranyítás
 147 Átirányít most
 148 Érvénytelen email cím
 149 Az utolsó bejegyzés nem törölhetõ
@@ -124,19 +124,19 @@
 156 Másodlagos címek maximális száma elérve
 157 Továbbító címek maximális száma elérve
 158 Mail robotok maximális száma elérve
-159 Invalid DotQmail Type: adddotqmail()
+159 Hibás DotQmail Típus: adddotqmail()
 160 Érvénytelen másdolagos cím
 161 Másodlagos cím hozzáadása sikertelen. Az email azonosítónak léteznie kell.
 162 Érvénytelen email azonosító név
 163 Érvénytelen helyi név
-164 Invalid Alias Type : adddotqmailnow()
+164 Hibás Alias Típus : adddotqmailnow()
 165 Hiba másodlagos cím hozzáadása közben.
 166 Másodlagos cím sikeresen hozzáadva az email azonosítóhoz
 167 Hiba másodlagos cím törláse közben.
 168 Email azonosító másodlagos/továbbító címe sikeresen törölve.
-169 Error deleting redirect/forward for Email Account
+169 Hiba a tovabbítás törlése közben: 
 170 Email azonosító átirányítása/továbbító címe sikeresen törölve.
-171 Error: could not change to directory 
+171 Hiba: nem tudok könyvtárat váltani  
 172 Csak egy személy léphet be mint rendszer postamester egyszerre. Valaki más is belépett. Kérem egyszerre csak egy valaki lépjen be.
 173 belépés lejárt, kérem lépjen be újra!
 174 Érvénytelen mail robot név
@@ -154,21 +154,21 @@
 186 Sikeresen töröltem a levelezõlistát.
 187 Levelezõlista sikeresen hozzáadva
 188 Érvénytelen levelezõlista név
-189 List of email addresses on mailing list
+189 Listatagok listaja
 190 Vége a listának
-191 List of moderator email addresses on mailing list
+191 Moderátorok listaja 
 192 Vissza a fõmenübe
 193 hozzáadva a levelezõlistához
-194 Email address added as a moderator to mailing list
-195 Elõfizetõ törlése a listáról
-196 Moderátor törlése a listáról
-197 removed as a moderator for mailing list
+194 Moderátornak felvéve 
+195 Listatag törlése
+196 Moderátor törlése
+197 Moterátorként törölve
 198 Érvénytelen belépés
 199 Az email azonosítók maximális száma elérve
 200 A jelszavak nem egyeznek. Próbálja meg ismét!
 201 Elfogyott a memória
-202 Where the parameters are:
-203 removed from mailing list 
+202 Ahol a paraméterek a következõk:
+203 Listáról törölve 
 204 Felhasználóhoz ugrás
 205 Továbbítás/vakáció kikapcsolva
 206 Távoli MindentFogadó beállítása
@@ -186,8 +186,8 @@
 218 Kilép
 219 Moderátorok listázása
 220 Moderátor címe
-221 Elõfizetõk listázása
-222 Elõfizetõ címe
+221 Listatagok
+222 Listatag címe
 223 Nem találom a felhasználót
 224 (kattintson a módosításhoz)
 225 Levelezõlista módosítása
@@ -195,25 +195,25 @@
 227 Digest
 228 Összesen:
 229 korlátlan
-230 Összes elõfizetõ:
+230 Listatagok száma:
 231 Nincs megjeleníthetõ levelezõlista
 232 Nincs megjeleníthetõ másodlagos/továbbító cím
 233 Nincs megjeleníthetõ mail robot
 234 Kérem írja be a jelszót
 235 MindentFogadó törlésre allítása
 236 MindentFogadó: Törlés
-237 Digest felhasználó<br>hozzáadása
-238 Digest felhasználó<br>törlése
-239 Digest felhasználók<br>listázása
-240 Emailcím hozzáadva a digest felhasználókhoz
-241 Digest felhasználó<br>hozzáadása
-242 removed from digest mailing list 
-243 Delete digest subscriber from mailing list
-244 Total Digest Subscribers:
-245 Delete<br>Digest Subscriber
-246 Digest Subscriber Address
-247 List Digest Subscribers
-248 Digest felhasználók listája
+237 Digest listatag<br>felvétele
+238 Digest listatag<br>törlése
+239 Digest listatag<br>listázása
+240 Emailcím hozzáadva a digest listatagokhoz
+241 Digest listatag felvétele
+242 Digest listáról törölve 
+243 Digest listatag törlése
+244 Összes digest listatag száma:
+245 Digest listatag törlése
+246 Digest listatag címe
+247 Digest listatagok
+248 Digest listatagok listája
 249 Kvóta (MB)
 250 Felhasznált
 251 (NOQUOTA - korlátlan tárhely)
@@ -225,7 +225,7 @@
 257 Felhasználói segédlet
 258 Adminisztrátori segédlet
 259 Súgó
-260 Routing
+260 Tovabbítás
 261 lista neve
 262 Levélküldési szabalyok:
 263 Bárki küldhet levelet a listára.
@@ -238,15 +238,15 @@
 270 Listainfo  minden kimenõ levél alján.
 271 Legyen digest formátumú (napi egy-két levél) lista is.
 272 Legyen a digest lista címe %s-digest.
-273 Service requests sent to %s-request.
-274 In addition to %s-subscribe, %s-unsubscribe, etc. users can send commands to %s-request.
+273 Lista parancsok a %s-request cimre.
+274 Összevonva %s-subscribe, %s-unsubscribe, stb. címeket a listatagok küldhetnek parancsokat a %s-request címre.
 275 Távoli adminisztráció
 276 Távoli adminisztráció engedélyezése moderátoroknak.
 277 Zárt lista.
 278 Csak az adminok valtoztathatnak bármit a listán (fel- és leíratkozas, stb.)
 279 Távoli adminisztrációval elérhetõ legyen:
 280 Listatagok megtekintése.
-281 Text fájlok modosítása.
+281 Szövegek módosítása.
 282 pl. listainfo, sugó, stb.
 283 Felíratkozas
 284 Felíratkozashoz szükséges:
@@ -269,3 +269,15 @@
 301 Flag2
 302 Flag3
 303 Törlés
+304 Spam szûrés:
+305 Cél
+306 továbbítás
+307 Hibás kvóta!
+308 Kvóta végtelenre allítva.
+309 Kvóta beállítva %s byte-ra. 
+310 Válaszok tovabbítva
+311 eredeti feladó
+312 teljes lista
+313 cím
+314 Hibás a megadott kvóta
+315 Felhasználó törölve.  Nem tudom a továbbítást beállítani ('%s').

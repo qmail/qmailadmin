@@ -1,4 +1,5 @@
 /* 
+ * $Id: mailinglist.c,v 1.5 2003-12-04 15:22:33 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -352,44 +353,35 @@ int delmailinglistnow(void)
 
 }
 
-/* sets the Reply-To header in headeradd file based on form fields
+/* sets the Reply-To header in header* files based on form fields
  * designed to be called by ezmlm_make() (after calling ezmlm-make)
+ * Replaces the "Reply-To" line in <filename> with <newtext>.
  */
-void ezmlm_setreplyto ()
+void ezmlm_setreplyto (char *filename, char *newtext)
 {
-  FILE *headeradd, *temp;
+  FILE *headerfile, *temp;
   char realfn[256];
   char tempfn[256];
   char buf[256];
 
-  sprintf (realfn, "%s/%s/headeradd", RealDir, ActionUser);
+  sprintf (realfn, "%s/%s/%s", RealDir, ActionUser, filename);
   sprintf (tempfn, "%s.tmp", realfn);
 
-  headeradd = fopen(realfn, "r");
-  if (!headeradd) return;
+  headerfile = fopen(realfn, "r");
+  if (!headerfile) return;
   temp = fopen(tempfn, "w");
-  if (!temp) { fclose (headeradd); return; }
+  if (!temp) { fclose (headerfile); return; }
 
   /* copy contents to new file, except for Reply-To header */
-  while (fgets (buf, sizeof(buf), headeradd) != NULL) {
-    if (strncasecmp ("Reply-To: ", buf, 10) != 0) {
+  while (fgets (buf, sizeof(buf), headerfile) != NULL) {
+    if (strncasecmp ("Reply-To", buf, 8) != 0) {
       fputs (buf, temp);
     }
   }
 
-  /* add Reply-To header if not set to SENDER */
-  GetValue (TmpCGI, buf, "replyto=", sizeof(buf));
-  replyto = atoi(buf);
-  if (replyto == REPLYTO_LIST) {
-    strcpy (buf, "Reply-To: <#l#>@<#h#>\n");
-    fputs (buf, temp);
-  } else if (replyto == REPLYTO_ADDRESS) {
-    GetValue (TmpCGI, replyto_addr, "replyaddr=", sizeof(replyto_addr));
-    sprintf (buf, "Reply-To: %s\n", replyto_addr);
-    fputs (buf, temp);
-  }
+  fputs (newtext, temp);
 
-  fclose (headeradd);
+  fclose (headerfile);
   fclose (temp);
   unlink (realfn);
   rename (tempfn, realfn);
@@ -548,6 +540,12 @@ ezmlm_make (int newlist)
   /* Check for prefix setting */
   GetValue(TmpCGI, tmp, "prefix=", sizeof(tmp));
   
+  /* strip leading '[' and trailing ']' from tmp */
+  tmpstr = strchr (tmp, ']');
+  if (tmpstr != NULL) *tmpstr = '\0';
+  tmpstr = tmp;
+  while (*tmpstr == '[') tmpstr++;
+
   /* Create (or delete) the file as appropriate */
   sprintf(TmpBuf, "%s/%s/prefix", RealDir, ActionUser);
   if (strlen(tmp) > 0)
@@ -555,7 +553,7 @@ ezmlm_make (int newlist)
     file=fopen(TmpBuf , "w");
     if (file)
     {
-      fprintf(file, "[%s]", tmp);
+      fprintf(file, "[%s]", tmpstr);
       fclose(file);
     }
   }
@@ -565,7 +563,22 @@ ezmlm_make (int newlist)
   }
 
   /* set Reply-To header */
-  ezmlm_setreplyto();
+  GetValue (TmpCGI, TmpBuf, "replyto=", sizeof(TmpBuf));
+  replyto = atoi(TmpBuf);
+  if (replyto == REPLYTO_SENDER) {
+    /* ezmlm shouldn't remove/add Reply-To header */
+    ezmlm_setreplyto ("headeradd", "");
+    ezmlm_setreplyto ("headerremove", "");
+  } else {
+    if (replyto == REPLYTO_ADDRESS) {
+      GetValue (TmpCGI, replyto_addr, "replyaddr=", sizeof(replyto_addr));
+      sprintf (TmpBuf, "Reply-To: %s\n", replyto_addr);
+    } else {  /* REPLYTO_LIST */
+      strcpy (TmpBuf, "Reply-To: <#l#>@<#h#>\n");
+    }
+    ezmlm_setreplyto ("headeradd", TmpBuf);
+    ezmlm_setreplyto ("headerremove", "Reply-To");
+  }
 
   /* update inlocal file */
   sprintf(TmpBuf, "%s/%s/inlocal", RealDir, ActionUser);
@@ -663,11 +676,11 @@ int show_list_group_now(int mod)
     fprintf(actout," <TR>\n");
     fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(TmpBuf), subuser_count);
     fprintf(actout," </TR>\n");
-    fprintf(actout," <TR align=middle bgcolor=%s>\n", get_color_text("002"));
-    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
-    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
-    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
-    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
+    fprintf(actout," <TR align=center bgcolor=%s>\n", get_color_text("002"));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
     fprintf(actout," </TR>\n");
 
     if(mod == 1) {
@@ -678,13 +691,13 @@ int show_list_group_now(int mod)
         strcpy(TmpBuf, "dellistusernow");
     }
     for(z = 0; addr = sort_get_entry(z); ++z) {
-      fprintf(actout," <TR align=middle>");
-      fprintf(actout,"  <TD align=right><A href=%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d><IMG src=%s/trash.png border=0></A></TD>\n",
+      fprintf(actout," <TR align=center>");
+      fprintf(actout,"  <TD align=right><A href=\"%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
         CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       fprintf(actout,"  <TD align=left>%s</TD>\n", addr);
       ++z;
       if(addr = sort_get_entry(z)) {
-        fprintf(actout,"  <TD align=right><A href=%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d><IMG src=%s/trash.png border=0></A></TD>\n",
+        fprintf(actout,"  <TD align=right><A href=\"%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
           CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       fprintf(actout,"  <TD align=left>%s</TD>\n", addr);
       } else {
@@ -1446,6 +1459,7 @@ show_current_list_values() {
 int get_mailinglist_prefix(char* prefix)
 {
   char buffer[MAX_BUFF];
+  char *b, *p;
   FILE* file;
 
   sprintf(buffer, "%s/%s/prefix", RealDir, ActionUser);
@@ -1454,8 +1468,13 @@ int get_mailinglist_prefix(char* prefix)
   if (file)
   {
     fgets(buffer, sizeof(buffer), file);
-    strncpy(prefix, strstr(buffer, "[") + 1, strstr(buffer, "]") - strstr(buffer, "[") - 1);
     fclose(file);
+
+    b = buffer;
+    p = prefix;
+    while (*b == '[') b++;
+    while ((*b != ']') && (*b != '\n') && (*b != '\0')) *p++ = *b++;
+    *p++ = '\0';
   }
   else
   {

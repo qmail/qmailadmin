@@ -1,6 +1,11 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.2.0 - unreleased
+
+	Tom Collins
+	- Added comment and added minor fix to ##z macro in template.c.
+
 1.2.0-rc1 - released 21-Dec-03
 
 	Michael Bowe

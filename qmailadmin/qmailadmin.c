@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.3 2003-10-10 16:36:24 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,15 +25,10 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <dirent.h>
-#include <vpopmail_config.h>
-/* undef some macros that get redefined in config.h below */
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
 #include "config.h"
 #include "qmailadmin.h"
 #include <vpopmail.h>
+#include <vpopmail_config.h>
 #include <vauth.h>
 #include <vlimits.h>
 
@@ -145,8 +140,8 @@ main(argc,argv)
     /* get the real uid and gid and change to that user */
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
     if ( geteuid() == 0 ) {
-      if ( setgid(Gid) != 0 ) perror("setgid");
-      if ( setuid(Uid) != 0 ) perror("setuid");
+      if ( setegid(Gid) != 0 ) perror("setgid");
+      if ( seteuid(Uid) != 0 ) perror("setuid");
     }
 
     if ( chdir(RealDir) < 0 ) {
@@ -184,8 +179,8 @@ main(argc,argv)
 
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
     if ( geteuid() == 0 ) {
-      if ( setgid(Gid) != 0 ) perror("setgid");
-      if ( setuid(Uid) != 0 ) perror("setuid");
+      if ( setegid(Gid) != 0 ) perror("setgid");
+      if ( seteuid(Uid) != 0 ) perror("setuid");
     }
     vclose();
     exit(0);
@@ -214,8 +209,8 @@ main(argc,argv)
 
        vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
        if ( geteuid() == 0 ) {
-         if ( setgid(Gid) != 0 ) perror("setgid");
-         if ( setuid(Uid) != 0 ) perror("setuid");
+         if ( setegid(Gid) != 0 ) perror("setgid");
+         if ( seteuid(Uid) != 0 ) perror("setuid");
        }
 
        /* Authenticate a user and domain admin */
@@ -383,7 +378,7 @@ init_globals()
   /* open the color table */
   open_colortable();
 
-  umask(VPOPMAIL_UMASK);
+  umask(0077);
 
   fprintf(actout,"Content-Type: text/html\n");
 #ifdef NO_CACHE

@@ -232,7 +232,7 @@
 264 Seulement les abonn&eacute;s peuvent poster, tous les autres sont rejet&eacute;s.
 265 Seulement les abonn&eacute;s peuvent poster, tous les autres vont aux mod&eacute;rateurs pour approbation.
 266 Seulement les mod&eacute;rateurs peuvent poster, tous les autres sont rejet&eacute;s.
-267 Seulement les mod&eacute;rateurs peuvent poster, tous les autres passent par les mod&eacute;rateurs pour approbation.
+267 Seulement les mod&eactue;rateurs peuvent poster, tous les autres passent par les mod&eactue;rateurs pour approbation.
 268 Liste des options
 269 En-t&ecirc;tes sujet des mails sortants pr&eacute;fix&eacute;s avec <B>[%s]</B>.
 270 Inclure un pied de page ‡ la fin de chaque message.
@@ -275,7 +275,7 @@
 307 Quota incorrect
 308 Plus de quota fix&eacute;
 309 qutoa fix&eacute; &agrave; %s octets
-310 Les r&eacute;ponses sont envoy&eacute;es vers
+310 Les ré&eacute;ponses sont envoy&eacute;es vers
 311 L'exp&eacute;diteur d'origine
 312 la liste enti&egrave;re
 313 l'adresse

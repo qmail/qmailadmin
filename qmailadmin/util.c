@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4 2004-01-07 15:36:26 tomcollins Exp $
+ * $Id: util.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -260,9 +260,6 @@ int open_lang(char *lang)
   /* do not read lang files with path control characters */
   if ( strstr(lang,".")!=NULL || strstr(lang,"/")!=NULL ) return(-1);
 
-  /* convert to lower case (using lowerit() from libvpopmail) */
-  lowerit(lang);
-
   /* close previous language if still open */
   if (lang_fs != NULL) fclose (lang_fs);
 
@@ -281,9 +278,6 @@ int open_lang(char *lang)
   return(0);
 }
 
-/* It's a good thing qmailadmin is a cgi script, because this
-   function leaks memory.  That's OK though, Tom has plans
-   for rewriting the html_text stuff soon. */
 char *get_html_text( char *index )
 {
  char *tmpbuf;
@@ -319,7 +313,7 @@ int open_colortable()
 
 char *get_color_text( char *index )
 {
- static char tmpbuf[400];
+ char tmpbuf[400];
  char *tmpstr;
 
   if (color_table == NULL) return("");
@@ -336,7 +330,8 @@ char *get_color_text( char *index )
 }
 /* bk - use maildir++ quotas now
 char *get_quota_used(char *dir) {
-    static char tmpbuff[40];
+    char *tmpstr;
+    char tmpbuff[MAX_BUFF];
     double size;
 
     size = get_du(dir);
@@ -344,7 +339,8 @@ char *get_quota_used(char *dir) {
         size = size / 1048576; 
     }
     sprintf(tmpbuff, "%.2lf", size);
-    return tmpbuff;
+    tmpstr = tmpbuff;
+    return tmpstr;
 }
 */
 /* quota_to_bytes: used to convert user entered quota (given in MB)

@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11 2004-01-26 18:16:40 tomcollins Exp $
+ * $Id: user.c,v 1.4 2003-10-13 22:31:10 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,33 +26,27 @@
 #include <pwd.h>
 #include <dirent.h>
 #include <errno.h>
-#include <vpopmail_config.h>
-/* undef some macros that get redefined in config.h below */
-#undef PACKAGE_NAME  
-#undef PACKAGE_STRING 
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 #include "vpopmail.h"
+#include "vpopmail_config.h"
 #include "vauth.h"
 
 
 #define HOOKS 1
 
 #ifdef HOOKS
-/* note that as of December 2003, only the first three hooks are 
-implemented */
-#define HOOK_ADDUSER     "adduser"
-#define HOOK_DELUSER     "deluser"
-#define HOOK_MODUSER     "moduser"
-#define HOOK_ADDMAILLIST "addmaillist"
-#define HOOK_DELMAILLIST "delmaillist"
-#define HOOK_MODMAILLIST "modmaillist"
-#define HOOK_LISTADDUSER "addlistuser"
-#define HOOK_LISTDELUSER "dellistuser"
+#define HOOK_ADDUSER 0
+#define HOOK_DELUSER 1
+#define HOOK_MODUSER 2
+#define HOOK_ADDMAILLIST 3
+#define HOOK_DELMAILLIST 4
+#define HOOK_MODMAILLIST 5
+#define HOOK_LISTADDUSER 6
+#define HOOK_LISTDELUSER 7
 #endif
+
 
 int show_users(char *Username, char *Domain, time_t Mytime)
 {
@@ -161,12 +155,10 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
             (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)) {
           long diskquota = 0, maxmsg = 0;
 
-          /* display account name and user name */
           fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
           fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_name);
           fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_gecos);
 
-          /* display user's quota */
 	  snprintf(path, sizeof(path), "%s/Maildir", pw->pw_dir);
           readuserquota(path, &diskquota, &maxmsg);
           fprintf(actout, "<td align=\"right\">%-2.2lf&nbsp;/&nbsp;</td>", ((double)diskquota)/1048576.0);  /* Convert to MB */
@@ -178,7 +170,6 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           }
           else { fprintf(actout, "<td align=\"left\">%s</td>", get_html_text("229")); }
 
-          /* display button to modify user */
           fprintf(actout, "<td align=\"center\">");
           fprintf(actout, "<a href=\"%s/com/moduser?user=%s&dom=%s&time=%d&moduser=%s\">",
             CGIPATH,user,dom,mytime,pw->pw_name);
@@ -198,7 +189,6 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
             allowdelete = 0;
           }
 
-          /* display trashcan for delete, or nothing if delete not allowed */
           fprintf(actout, "<td align=\"center\">");
           if (allowdelete) {
             fprintf(actout, "<a href=\"%s/com/deluser?user=%s&dom=%s&time=%d&deluser=%s\">",
@@ -209,21 +199,24 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           }
           fprintf(actout, "</td>");
 
-          /* display button in the 'set catchall' column */
-          fprintf(actout, "<td align=\"center\">");
           if (bounced==0 && strncmp(pw->pw_name,TmpBuf3,sizeof(TmpBuf3)) == 0) {
+            fprintf(actout, "<td align=\"center\">");
             fprintf(actout, "<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
               IMAGEURL);
+            fprintf(actout, "</td>");
           } else if (AdminType==DOMAIN_ADMIN) {
+            fprintf(actout, "<td align=\"center\">");
             fprintf(actout, "<a href=\"%s/com/setdefault?user=%s&dom=%s&time=%d&deluser=%s&page=%s\">",
               CGIPATH,user,dom,mytime,pw->pw_name,Pagenumber);
             fprintf(actout, "<img src=\"%s/radio-off.png\" border=\"0\"></a>",
               IMAGEURL);
+            fprintf(actout, "</td>");
           } else {
+            fprintf(actout, "<td align=\"center\">");
             fprintf(actout, "<img src=\"%s/disabled.png\" border=\"0\">",
               IMAGEURL);
+            fprintf(actout, "</td>");
           }
-          fprintf(actout, "</td>");
 
           fprintf(actout, "</tr>\n");
         }        
@@ -474,22 +467,43 @@ addusernow()
 #endif
     (mypw = vauth_getpw( Newu, Domain )) != NULL ) {
 
-    /* vadduser() in vpopmail 5.3.29 and later sets the default
-     * quota, so we only need to change it if the user enters
-     * something in the Quota field.
-     */
+    /* from the load_limits() function, set user flags */
+    /* These aren't default limits, they're domain limits.
+       They should not be applied to new accounts.
+    if( DisablePOP > 0 )     mypw->pw_gid |= NO_POP; 
+    if( DisableIMAP > 0 )    mypw->pw_gid |= NO_IMAP; 
+    if( DisableDialup > 0 )  mypw->pw_gid |= NO_DIALUP; 
+    if( DisablePasswordChanging > 0 ) mypw->pw_gid |= NO_PASSWD_CHNG; 
+    if( DisableWebmail > 0 ) mypw->pw_gid |= NO_WEBMAIL; 
+    if( DisableRelay > 0 )  mypw->pw_gid |= NO_RELAY; 
+    */
 
+    /* Once we're sure people are using vpopmail 5.3.29 or later,
+     * we can switch back to old code (that only sets quota if
+     * there's something in the field).
+     */
+    if (Limits.defaultquota > 0) {
+      if (Limits.defaultmaxmsgcount > 0)
+        snprintf(pw_shell, sizeof(pw_shell), "%dS,%dC", Limits.defaultquota, Limits.defaultmaxmsgcount);
+      else
+        snprintf(pw_shell, sizeof(pw_shell), "%dS", Limits.defaultquota);
+    } else {
+      strcpy(pw_shell, "NOQUOTA");
+    }
+
+    // Code added by jhopper
 #ifdef MODIFY_QUOTA
     if (strcmp (Quota, "NOQUOTA") == 0) {
-      vsetuserquota (Newu, Domain, "NOQUOTA");
+      strcpy (pw_shell, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
         sprintf(StatusMessage, get_html_text("314"));
       } else {
-        vsetuserquota (Newu, Domain, qconvert);
+        strcpy (pw_shell, qconvert);
       }
     }
 #endif
+    mypw->pw_shell = pw_shell;
 
 #ifdef MODIFY_SPAM
     GetValue(TmpCGI, spamvalue, "spamcheck=", sizeof(spamvalue));
@@ -501,18 +515,29 @@ addusernow()
     }
 #endif
 
-    /* report success */
-    sprintf(StatusMessage, "%s %s@%s (%s) %s",
-      get_html_text("002"), Newu, Domain, Gecos,
-      get_html_text("119"));
+    /* update the user information */
+    if ( vauth_setpw( mypw, Domain ) != VA_SUCCESS ) {
 
-  } else {
+      /* report error */
+      sprintf(StatusMessage, "%s %s@%s (%s) %s",
+        get_html_text("002"), Newu, Domain, Gecos,
+        get_html_text("120"));
+
+    } else {
+
+      /* report success */
+      sprintf(StatusMessage, "%s %s@%s (%s) %s",
+        get_html_text("002"), Newu, Domain, Gecos,
+        get_html_text("119"));
+      }
+
     /* otherwise, report error */
+  } else {
     sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }
 
-  call_hooks(HOOK_ADDUSER, Newu, Domain, Password1, Gecos);
+  call_hooks( HOOK_ADDUSER );
 
   /* After we add the user, show the user page
    * people like to visually verify the results
@@ -521,14 +546,24 @@ addusernow()
 
 }
 
-int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
+int call_hooks( int hook_type )
 {
  FILE *fs = NULL;
  int pid;
  char *hooks_path;
- char *cmd = NULL;
+ char *cmd;
  char *tmpstr;
+ int len = 0;
  int error;
+ static char *hooks[15] = {
+   "adduser",
+   "deluser",
+   "moduser",
+   "addmaillist",
+   "delmaillist",
+   "modmaillist",
+   "listadduser",
+   "listdeluser"};
     
   hooks_path = malloc(MAX_BUFF);
 
@@ -543,35 +578,35 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
   }
 
   while(fgets(TmpBuf, sizeof(TmpBuf), fs) != NULL) {
-    if ( (*TmpBuf == '#') || (*TmpBuf == '\0')) continue;
     tmpstr = strtok(TmpBuf, " :\t\n");
-    if (tmpstr == NULL) continue;
+    if ( (tmpstr[0] == '#') || (tmpstr == NULL)) continue;
 
-    if ( strcmp(tmpstr, hook_type) == 0) {
+    if ( strncmp(tmpstr, hooks[hook_type], strlen(hooks[hook_type])) == 0) {
       tmpstr = strtok(NULL, " :\t\n");
 
-      if ((tmpstr == NULL) || (*tmpstr == '\0')) continue;
+      if ( tmpstr == NULL) continue;
+        
+       len = strlen(tmpstr);
+       if (!(cmd = malloc(len + 1))) {
+         return (0);
+       } else {
+         snprintf(cmd, len + 1, "%s", tmpstr);
+       }
 
-      cmd = strdup(tmpstr);        
-
-      break;
-    }
+       break;
+     }
   }
 
   fclose(fs);
-
-  if (cmd == NULL) return 0;   /* don't have a hook for this type */
     
   pid = fork();
 
   if (pid == 0) {
-    /* Second param to execl should actually be just the program name,
-       without the path information.  Add a pointer to point into cmd
-       at the start of the program name only.    BUG 2003-12 */
-    error = execl(cmd, cmd, p1, p2, p3, p4, NULL);
-    fprintf(actout, "Error %d %s \"%s\", %s, %s, %s, %s, %s\n",
-      errno, get_html_text("202"), cmd, hook_type, p1, p2, p3, p4);
-    /* if (error == -1) return (-1); */
+    error =    execl(cmd, Newu, Domain, Password1, Gecos, NULL);
+    sprintf(StatusMessage, "%s, \"%s\", %s, %s, %s, %s\n",
+      get_html_text("202"), cmd, hooks[hook_type], 
+      Newu, Domain, Password1, Gecos);
+    if (error == -1) return (-1);
     exit(127);
   } else {
     wait(&pid);
@@ -587,8 +622,8 @@ deluser()
 
 delusergo()
 {
- static char forward[200] = "";
- static char forwardto[200] = "";
+ static char forward[200];
+ static char forwardto[200];
  FILE *fs;
  int i;
  struct vqpasswd *pw;
@@ -616,7 +651,7 @@ delusergo()
     }
   } 
 
-  call_hooks(HOOK_DELUSER, ActionUser, Domain, forwardto, "");
+  call_hooks(HOOK_DELUSER);
   show_users(Username, Domain, Mytime);
 }
 
@@ -1006,6 +1041,6 @@ ActionUser, Domain ); */
     printf("nothing\n");
   }
 
-  call_hooks(HOOK_MODUSER, ActionUser, Domain, Password1, Gecos);
+  call_hooks(HOOK_MODUSER);
   moduser();
 }

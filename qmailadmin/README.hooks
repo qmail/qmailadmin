@@ -22,17 +22,10 @@ listdeluser	/path/to/hook/software
 
 The following parameters will be passed to the specified program:
 
-adduser/moduser:
 $1: username
 $2: domain name
 $3: password
 $4: GECOS (user's full name)
-
-deluser:
-$1: username
-$2: domain name
-$3: "forwardto" email address
-$4: empty string
 
 So, this is a very nice way for the system owner to track down
 what is happening for billing purposes or whatever.

@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.12 2005-01-23 05:11:45 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.13 2005-01-23 17:35:12 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,7 @@ int send_template_now(char *filename)
   /* open the template */
   fs = fopen( TmpBuf2, "r" );
   if (fs == NULL) {
-    printf ("%s %s<br>\n", get_html_text("144"), TmpBuf2);
+    printf ("%s %s<br>\n", html_text[144], TmpBuf2);
     return 0;
   }
 
@@ -153,7 +153,7 @@ int send_template_now(char *filename)
             if(MaxPopAccounts > -1) {
               printf("%d/%d", CurPopAccounts, MaxPopAccounts);
             } else {
-              printf("%d/%s", CurPopAccounts, get_html_text("229"));
+              printf("%d/%s", CurPopAccounts, html_text[229]);
             }
             break;
 
@@ -231,7 +231,7 @@ int send_template_now(char *filename)
               printf ("         <td>&nbsp;</td>\n");
               printf ("         </tr>\n");
               printf ("         <tr>\n");
-              printf ("         <td align=right><b>%s</b></td>\n", get_html_text("006"));
+              printf ("         <td align=right><b>%s</b></td>\n", html_text[6]);
 
               /* take off newline */
               i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;
@@ -303,7 +303,7 @@ int send_template_now(char *filename)
             if(MaxMailingLists > -1) {
               printf("%d/%d", CurMailingLists, MaxMailingLists);
             } else {
-              printf("%d/%s", CurMailingLists, get_html_text("229"));
+              printf("%d/%s", CurMailingLists, html_text[229]);
             }
             break;
 
@@ -315,7 +315,7 @@ int send_template_now(char *filename)
             if(MaxForwards > -1) {
               printf("%d/%d", CurForwards, MaxForwards);
             } else {
-              printf("%d/%s", CurForwards, get_html_text("229"));
+              printf("%d/%s", CurForwards, html_text[229]);
             }
             break;
 
@@ -327,7 +327,7 @@ int send_template_now(char *filename)
             if(MaxAutoResponders > -1) {
               printf("%d/%d", CurAutoResponders, MaxAutoResponders);
             } else {
-              printf("%d/%s", CurAutoResponders, get_html_text("229"));
+              printf("%d/%s", CurAutoResponders, html_text[229]);
             }
             break;
 
@@ -367,14 +367,14 @@ int send_template_now(char *filename)
             i=0; 
             TmpBuf[i]=fgetc(fs);
             if (TmpBuf[i] == '/') {
-              printf ("%s", get_html_text("144"));
+              printf ("%s", html_text[144]);
             } else {
               for(;TmpBuf[i] != '\0' && TmpBuf[i] != '#' && i < sizeof(TmpBuf)-1;) {
                 TmpBuf[++i] = fgetc(fs);
               }
               TmpBuf[i] = '\0';
               if ((strstr(TmpBuf, "../")) != NULL) {
-                printf ("%s: %s", get_html_text("144"), TmpBuf);
+                printf ("%s: %s", html_text[144], TmpBuf);
               } else if((strcmp(TmpBuf, filename)) != 0) {
                 send_template_now(TmpBuf);
               }
@@ -432,7 +432,7 @@ int send_template_now(char *filename)
                if(AdminType == DOMAIN_ADMIN) 
                   printf("NOQUOTA");
                else
-                  printf(get_html_text("229"));
+                  printf(html_text[229]);
             }
             break; 
 
@@ -497,7 +497,7 @@ int send_template_now(char *filename)
               Domain);
             printf (
        "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>", 
-              get_html_text("001"));
+              html_text[1]);
             if (AdminType==DOMAIN_ADMIN){
 
               if (MaxPopAccounts != 0) {
@@ -506,7 +506,7 @@ int send_template_now(char *filename)
                   CGIPATH,Username,Mytime,Domain); 
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                  get_html_text("061"));
+                  html_text[61]);
               }
 
               if (MaxForwards != 0 || MaxAliases != 0) {
@@ -515,7 +515,7 @@ int send_template_now(char *filename)
                   CGIPATH,Username,Mytime,Domain);
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                  get_html_text("122"));
+                  html_text[122]);
               }
 
               if (MaxAutoResponders != 0) {
@@ -524,7 +524,7 @@ int send_template_now(char *filename)
                   CGIPATH,Username,Mytime,Domain);
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
-                  get_html_text("077"));
+                  html_text[77]);
               }
 
               if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
@@ -533,7 +533,7 @@ int send_template_now(char *filename)
                   CGIPATH, Username,Mytime,Domain);
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                  get_html_text("080"));
+                  html_text[80]);
               }
             } else {
               /* the quota code in here is kinda screwy and could use review
@@ -550,15 +550,15 @@ int send_template_now(char *filename)
                  CGIPATH,Username,Mytime,Domain,Username);
                printh (
        "<font size=\"2\" color=\"#000000\"><b>%s %H</b></font></a><br><br>",
-                 get_html_text("111"), Username);
+                 html_text[111], Username);
               if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
                 quota_to_megabytes(qconvert, vpw->pw_shell);
               } else {
-                sprintf(qconvert, get_html_text("229")); qnote = "";
+                sprintf(qconvert, html_text[229]); qnote = "";
               }
               printf ("<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
-                get_html_text("249"), get_html_text("253"), qconvert, qnote);
-              printf ("<br>%s ", get_html_text("254"));
+                html_text[249], html_text[253], qconvert, qnote);
+              printf ("<br>%s ", html_text[254]);
 	      snprintf(path, sizeof(path), "%s/" MAILDIR, vpw->pw_dir);
               readuserquota(path, &diskquota, &maxmsg);
               printf ("%-2.2lf MB</font><br>", ((double)diskquota)/1048576.0);  /* Convert to MB */
@@ -573,7 +573,7 @@ int send_template_now(char *filename)
                    CGIPATH,Username,Mytime,Domain);
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                   get_html_text("125"));
+                   html_text[125]);
                }
 
                if (MaxForwards != 0) {
@@ -582,7 +582,7 @@ int send_template_now(char *filename)
                    CGIPATH, Username,Mytime,Domain);
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                   get_html_text("127"));
+                   html_text[127]);
                }
 
                if (MaxAutoResponders != 0) {
@@ -591,7 +591,7 @@ int send_template_now(char *filename)
                    CGIPATH, Username,Mytime,Domain);
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
-                   get_html_text("128"));
+                   html_text[128]);
                }
 
                if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
@@ -600,7 +600,7 @@ int send_template_now(char *filename)
                    CGIPATH, Username,Mytime,Domain);
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
-                   get_html_text("129"));
+                   html_text[129]);
                }
              }
              break;
@@ -610,11 +610,13 @@ int send_template_now(char *filename)
             printh ("%H", Password);
             break;
 
-          /* dictionary line, we three more chars for the line */
+          /* dictionary entry, followed by three more chars for the entry # */
           case 'X':
             for(i=0;i<3;++i) dchar[i] = fgetc(fs);
             dchar[i] = 0;
-            printf("%s", get_html_text(dchar));
+            i = atoi(dchar);
+            if ((i >= 0) && (i <= MAX_LANG_STR))
+              printf("%s", html_text[atoi(dchar)]);
             break;
 
           /* exit / logout link/text */
@@ -626,7 +628,7 @@ int send_template_now(char *filename)
                       get_session_val("returnhttp="), value);
             } else {
                printh("%s/com/logout?user=%C&dom=%C&time=%d&\">%s",
-                      CGIPATH, Username, Domain, Mytime, get_html_text("218"));
+                      CGIPATH, Username, Domain, Mytime, html_text[218]);
             }
             printf("</a>\n");
             break;

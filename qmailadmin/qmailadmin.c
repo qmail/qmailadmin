@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.7 2005-01-23 05:11:45 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.8 2005-01-23 17:35:12 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,7 @@ int Compressed;
 FILE *actout;
 FILE *lang_fs;
 FILE *color_table;
+char *html_text[MAX_LANG_STR+1];
 
 struct vlimits Limits;
 int AdminType;
@@ -154,7 +155,7 @@ int main(argc,argv)
     }
 
     if ( chdir(RealDir) < 0 ) {
-      fprintf(stderr, "<h2>%s %s</h2>\n", get_html_text("171"), RealDir );
+      fprintf(stderr, "<h2>%s %s</h2>\n", html_text[171], RealDir );
     }
     load_limits();
 
@@ -179,7 +180,7 @@ int main(argc,argv)
 
     if (*Username && (*Password == '\0') && (*Password1 || *Password2)) {
       /* username entered, but no password */
-      snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("198"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[198]);
     } else if (*Username && *Password) {
       /* attempt to authenticate user */
       vget_assign (Domain, RealDir, sizeof(RealDir), &Uid, &Gid);
@@ -195,25 +196,25 @@ int main(argc,argv)
       }
 
       if ( *Domain == '\0' ) {
-        snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("198"));
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[198]);
       } else {
         chdir(RealDir);
         load_limits();
 
         pw = vauth_user( User, Domain, Password, "" );
         if ( pw == NULL ) {
-          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("198"));
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[198]);
         } else if (pw->pw_flags & NO_PASSWD_CHNG) {
           strcpy (StatusMessage, "You don't have permission to change your password.");
         } else if (strcmp (Password1, Password2) != 0) {
-          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("200"));
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[200]);
         } else if (*Password1 == '\0') {
-          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("234"));
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[234]);
         } else if (vpasswd (User, Domain, Password1, USE_POP) != VA_SUCCESS) {
-          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("140"));
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[140]);
         } else {
           /* success */
-          snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("139"));
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[139]);
           *Password = '\0';
           send_template ("change_password_success.html");
 
@@ -250,7 +251,7 @@ int main(argc,argv)
 
          pw = vauth_user( Username, Domain, Password, "" );
          if ( pw == NULL ) { 
-           snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("198"));
+           snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[198]);
            show_login();
            vclose();
            exit(0);
@@ -263,7 +264,7 @@ int main(argc,argv)
          snprintf (TmpBuf, sizeof(TmpBuf), "%s/" MAILDIR "/%u.qw", pw->pw_dir, (unsigned int) Mytime);
          fs = fopen(TmpBuf, "w");
          if ( fs == NULL ) {
-           printf ("%s %s<br>\n", get_html_text("144"), TmpBuf);
+           printf ("%s %s<br>\n", html_text[144], TmpBuf);
            vclose();
            exit(0);
          }
@@ -297,12 +298,40 @@ int main(argc,argv)
   return 0;
 }
 
+void load_lang (char *lang)
+{
+  long lang_size;
+  size_t bytes_read;
+  char *lang_entries;
+  char *id;
+
+  open_lang (lang);
+  fseek (lang_fs, 0, SEEK_END);
+  lang_size = ftell (lang_fs);
+  lang_entries = malloc (lang_size);
+
+  if (lang_entries == NULL) return;
+  rewind (lang_fs);
+  
+  bytes_read = fread (lang_entries, 1, lang_size, lang_fs);
+  /* error handling for incomplete reads? */
+
+  id = strtok (lang_entries, " \t");
+  while (id) {
+    html_text[atoi(id)] = strtok (NULL, "\n");
+    id = strtok (NULL, " \t");
+  }
+
+  /* Do not free lang_entries!  html_text points into it! */
+}
+
 void init_globals()
 {
   char *accept_lang;
   char *langptr, *qptr;
   char *charset;
   int lang_err;
+  int i;
   float maxq, thisq;
 
   memset(CGIValues, 0, sizeof(CGIValues));
@@ -402,15 +431,23 @@ void init_globals()
     free(accept_lang);
   }
 
-  /* open the best language choice */
-  open_lang (Lang);
+  /* best language choice is now in 'Lang' */
+
+  /* build table of html_text entries */
+  for (i = 0; i <= MAX_LANG_STR; i++) html_text[i] = "";
+
+  /* read English first as defaults for incomplete language files */
+  if (strcmp (Lang, "en") != 0) load_lang ("en");
+
+  /* load the preferred language */
+  load_lang (Lang);
 
   /* open the color table */
   open_colortable();
 
   umask(VPOPMAIL_UMASK);
 
-  charset = get_html_text("000");
+  charset = html_text[0];
   printf ("Content-Type: text/html; charset=%s\n",
     *charset == '\0' ? "iso-8859-1" : charset);
 #ifdef NO_CACHE
@@ -494,7 +531,7 @@ void quickAction (char *username, int action)
     } else {
       /* user does not exist */
       snprinth (StatusMessage, sizeof(StatusMessage), "%s (%H@%H)", 
-        get_html_text("153"), username, Domain);
+        html_text[153], username, Domain);
       show_menu(Username, Domain, Mytime);
       vclose();
     }

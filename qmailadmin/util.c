@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4.2.4 2004-12-17 17:45:38 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.5 2005-01-23 17:35:12 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,10 +152,10 @@ void show_counts()
   count_autoresponders();
   count_mailinglists();
 
-  printf ("%s = %d<BR>\n", get_html_text("061"), CurPopAccounts);
-  printf ("%s = %d<BR>\n", get_html_text("074"), CurForwards);
-  printf ("%s = %d<BR>\n", get_html_text("077"), CurAutoResponders);
-  printf ("%s = %d<BR>\n", get_html_text("080"), CurMailingLists);
+  printf ("%s = %d<BR>\n", html_text[61], CurPopAccounts);
+  printf ("%s = %d<BR>\n", html_text[74], CurForwards);
+  printf ("%s = %d<BR>\n", html_text[77], CurAutoResponders);
+  printf ("%s = %d<BR>\n", html_text[80], CurMailingLists);
 }
 
 /* check_email_addr( char *addr )
@@ -297,27 +297,9 @@ int open_lang(char *lang)
   return(0);
 }
 
-/* It's a good thing qmailadmin is a cgi script, because this
-   function leaks memory.  That's OK though, Tom has plans
-   for rewriting the html_text stuff soon. */
 char *get_html_text( char *index )
 {
- char *tmpbuf;
- char *tmpstr;
-
-  tmpbuf = malloc(400);
-
-  if (lang_fs == NULL) return("");
-
-  rewind(lang_fs);
-  while(fgets(tmpbuf,400,lang_fs)!=NULL){
-    tmpstr = strtok(tmpbuf, " ");
-    if (strcmp(tmpstr, index) == 0 ) {
-      tmpstr = strtok(NULL, "\n");
-      return(tmpstr);
-    }    
-  }
-  return("");
+  return html_text[atoi(index)];
 }
 
 int open_colortable()

@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: auth.c,v 1.3.2.5 2005-01-23 17:35:11 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ void auth_system(ip_addr, pw)
  char ip_value[MAX_BUFF];
  
   if( chdir(RealDir) < 0 ){
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", get_html_text("171"), RealDir);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", html_text[171], RealDir);
     show_login();
     vclose();
     exit(0);
@@ -56,14 +56,14 @@ void auth_system(ip_addr, pw)
 
   fs = fopen(TmpBuf1, "r");
   if ( fs == NULL ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("172"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[172]);
     show_login();
     vclose();
     exit(0);
   } 
 
   if ( fgets(TmpBuf, sizeof(TmpBuf), fs) == NULL ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 4);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[150], 4);
     vclose();
     exit(0);
   }
@@ -83,7 +83,7 @@ void auth_system(ip_addr, pw)
   time1 = atoi(Time); time2 = time(NULL);
   if ( time2 > time1 + 7200 ) {
     unlink(TmpBuf1);
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("173"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[173]);
     show_login();
     vclose();
     exit(0);
@@ -100,7 +100,7 @@ void auth_user_domain(ip_addr,pw)
  char ip_value[MAX_BUFF];
 
   if ( chdir(RealDir) < 0 ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", get_html_text("171"), RealDir );
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", html_text[171], RealDir );
     show_login();
     vclose();
     exit(0);
@@ -110,14 +110,14 @@ void auth_user_domain(ip_addr,pw)
 
   fs = fopen(TmpBuf1, "r");
   if ( fs == NULL ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("172"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[172]);
     show_login();
     vclose();
     exit(0);
   } 
 
   if ( fgets(TmpBuf, sizeof(TmpBuf), fs) == NULL ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 5);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[150], 5);
     vclose();
     exit(0);
   }
@@ -128,7 +128,7 @@ void auth_user_domain(ip_addr,pw)
   if ( strcmp(ip_addr, ip_value) != 0 ) {
     unlink(TmpBuf1);
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d (%s != %s)\n",
-      get_html_text("150"), 6, ip_addr, ip_value);
+      html_text[150], 6, ip_addr, ip_value);
     show_login();
     vclose();
     exit(0);
@@ -138,7 +138,7 @@ void auth_user_domain(ip_addr,pw)
   time1 = atoi(Time); time2 = time(NULL);
   if ( time2 > time1 + 7200 ) {
     unlink(TmpBuf1);
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("173"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[173]);
     show_login();
     vclose();
     exit(0);

@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.11 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.12 2005-01-23 17:35:11 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,7 @@ int bkscandir(const char *dirname,
 int show_aliases(void)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    snprintf(StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf(StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -121,7 +121,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
  struct stat sbuf;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    snprintf(StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf(StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -180,7 +180,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
    */
   if ( (mydir = opendir(".")) == NULL ) {
     printf ("<tr><td colspan=\"4\">");
-    printf ("%s %d</td></tr>", get_html_text("143"), 1);
+    printf ("%s %d</td></tr>", html_text[143], 1);
     return;
   }
 
@@ -199,7 +199,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
 
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         printf ("<tr><td colspan=4>");
-        printf ("%s %s", get_html_text("144"), mydirent->d_name);
+        printf ("%s %s", html_text[144], mydirent->d_name);
         printf ("</td></tr>\n");
         continue;
       }
@@ -275,7 +275,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
     stop=0;
     if (*curalias->alias_command == '#') {
       /* this is a blackhole account */
-      printf ("<I>%s</I>", get_html_text("303"));
+      printf ("<I>%s</I>", html_text[303]);
       stop = 1;
     }
     
@@ -325,15 +325,15 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
     printf ("[&nbsp;");
     if(page > 1 ) {
       printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,page - 1,get_html_text("135"));
+        CGIPATH,user,dom,mytime,page - 1, html_text[135]);
       printf ("&nbsp;|&nbsp;");
     }
     printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-      CGIPATH,user,dom,mytime,page,get_html_text("136"));
+      CGIPATH,user,dom,mytime,page, html_text[136]);
     printf ("&nbsp;|&nbsp;");
     if (moreusers) {
       printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,page+1,get_html_text("137"));    
+        CGIPATH,user,dom,mytime,page+1, html_text[137]);    
       printf ("&nbsp;]");
     }
     printf ("</td></tr>");                                    
@@ -354,7 +354,7 @@ void show_dotqmail_file(char *user)
  int j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -439,7 +439,7 @@ int onevalidonly(char *user) {
 void moddotqmail()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -449,26 +449,26 @@ void moddotqmail()
 void moddotqmailnow() 
 {
   if ( strcmp(ActionUser,"default")==0) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
 
   if (strcmp(Action,"delentry")==0) {
     if (onevalidonly(ActionUser) ) {
-      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("149"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[149]);
       moddotqmail();
       vclose();
       exit(0);
     }
         
     if (dotqmail_del_line(ActionUser,LineData) ) {
-      snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 1);
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[150], 1);
       moddotqmail();
       vclose();
       exit(0);
     }
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("151") );
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[151] );
     moddotqmail();
     vclose();
     exit(0);
@@ -479,13 +479,13 @@ void moddotqmailnow()
       vclose();
       exit(0);
     } else {
-      snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("152"), Newu);
+      snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[152], Newu);
       moddotqmail();
       vclose();
       exit(0);
     }
   } else {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("155"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[155]);
     vclose();
     exit(0);
   }
@@ -497,7 +497,7 @@ void adddotqmail()
   load_limits();
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", 
-      get_html_text("157"), MaxForwards);
+      html_text[157], MaxForwards);
     show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
@@ -510,7 +510,7 @@ void adddotqmailnow()
 {
   if (AdminType!=DOMAIN_ADMIN && 
       !(AdminType==USER_ADMIN && strcmp(ActionUser, Username)==0)) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -518,7 +518,7 @@ void adddotqmailnow()
   count_forwards();
   load_limits();
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("157"), MaxForwards);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[157], MaxForwards);
     send_template( "add_forward.html" );
     vclose();
     exit(0);
@@ -532,7 +532,7 @@ void adddotqmailnow()
     exit(0);
   } else {
 
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("152"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[152]);
     show_forwards(Username,Domain,Mytime);
   }
 }
@@ -545,23 +545,23 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
    /* jeff.hedlund@matrixsi.com                               */
 
   if (strlen(forwardname)<=0) {
-    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("163"), forwardname);
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[163], forwardname);
     return(-1);
     
   /* make sure forwardname is valid */
   } else if (fixup_local_name(forwardname)) {
-    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("163"), forwardname);
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[163], forwardname);
     return(-1);
     
   /* check to see if we already have a user with this name (only for create) */
   } else if (create != 0 && check_local_user(forwardname)) {
-    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("175"), forwardname);
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[175], forwardname);
     return(-1);
   }
 
   if (strcmp (dest, "#") == 0) {
     if (dotqmail_add_line(forwardname, "#")) {
-       snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 2);
+       snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[150], 2);
        return(-1);
     }
     return 0;
@@ -570,7 +570,7 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
   /* see if forwarding to a local user */
   if (strstr(dest, "@") == NULL) {
     if (check_local_user(dest) == 0) {
-       snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("161"));
+       snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[161]);
        return(-1);
     } else {
        /* make it an email address */
@@ -580,13 +580,13 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
   
   /* check that it's a valid email address */
   if (check_email_addr(dest)) {
-     snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("162"), dest);
+     snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[162], dest);
      return(-1);
   }
 
   snprintf (TmpBuf2, sizeof(TmpBuf2), "&%s", dest);
   if (dotqmail_add_line(forwardname, TmpBuf2)) {
-     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 2);
+     snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[150], 2);
      return(-1);
   }
 
@@ -597,7 +597,7 @@ void deldotqmail()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -610,7 +610,7 @@ void deldotqmailnow()
 
   if (AdminType!=DOMAIN_ADMIN && 
        !(AdminType==USER_ADMIN && !strcmp(ActionUser, Username))) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);
@@ -619,17 +619,17 @@ void deldotqmailnow()
 
   /* check to see if we already have a user with this name */
   if (fixup_local_name(ActionUser)) {
-    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("160"), Alias);
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[160], Alias);
     deldotqmail();
     vclose();
     exit(0);
   }
 
   if (!(dotqmail_delete_files(ActionUser))) {
-    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H %H\n", get_html_text("167"), 
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H %H\n", html_text[167], 
       Alias, ActionUser);
   } else {
-    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H %H\n", get_html_text("168"), 
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H %H\n", html_text[168], 
       Alias, ActionUser);
   }
 

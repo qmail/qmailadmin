@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadminx.h,v 1.2.2.2 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: qmailadminx.h,v 1.2.2.3 2005-01-23 17:35:12 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,6 +51,7 @@ extern char TmpBuf3[MAX_BUFF];
 extern char TempBuf[MAX_BUFF];
 extern int Compressed;
 extern FILE *actout;
+extern char *html_text[MAX_LANG_STR+1];
 
 extern struct vlimits Limits;
 extern int num_of_mailinglist;

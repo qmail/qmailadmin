@@ -24,6 +24,8 @@ patch or information related to the entry.
 	- Update config.guess and config.sub scripts.
 	- Include charset in HTTP Content-Type header. [1098891]
 	- Added single page for changing password. [775208]
+	- Switch to improved method of handling strings in language files,
+	  resulting in reduced disk access and faster rendering of pages.
 
 1.2.6 - released 24-Dec-04
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.2.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: forward.c,v 1.2.2.5 2005-01-23 17:35:11 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@
 int show_forwards(char *user, char *dom, time_t mytime)
 {
   if (AdminType != DOMAIN_ADMIN) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
     vclose();
     exit(0);
   }
@@ -47,7 +47,7 @@ int show_forwards(char *user, char *dom, time_t mytime)
   count_forwards();
 
   if(CurForwards == 0 && CurBlackholes == 0) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("232"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[232]);
     show_menu(Username, Domain, Mytime);
     vclose();
     exit(0);

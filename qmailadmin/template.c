@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.7 2004-11-27 17:18:06 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.8 2004-12-02 00:07:43 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,8 +54,6 @@ void transmit_block(FILE *fs);
 void ignore_to_end_tag(FILE *fs);
 void get_calling_host();
 char *get_session_val(char *session_var);
-
-static char NTmpBuf[500];
 
 /*
  * send an html template to the browser 

@@ -411,6 +411,9 @@ patch or information related to the entry.
 03/22/03    Ken Jones
           - Lost the ability to GET for logins, it's back in
 
+	Switch to using vlimits code from vpopmail.  This release
+	requires vpopmail 5.3.19 or later.
+
 1.0.13
 03/18/03    Tom Collins
           - Makefile.am fixes (@imagedir@ and @QA_PACKAGE@)

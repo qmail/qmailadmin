@@ -10,6 +10,8 @@ patch or information related to the entry.
 	- mailinglists: Update settings screen to show that archive 
 	  retrieval limitations don't apply to ezmlm-cgi.
 	- mailinglist.c: Fix compile error with non-idx ezmlm installs.
+	- lang/en: More descriptive entry for "Standard" email delivery on 
+	  Modify User page.
 
 	L4nce1ot/honeymak
 	- mailinglist.c: Fix Tom's fix for non-idx ezmlm installs. [1123809]

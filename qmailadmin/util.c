@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: util.c,v 1.3 2003-12-08 17:52:12 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -259,6 +259,9 @@ int open_lang(char *lang)
 
   /* do not read lang files with path control characters */
   if ( strstr(lang,".")!=NULL || strstr(lang,"/")!=NULL ) return(-1);
+
+  /* convert to lower case (using lowerit() from libvpopmail) */
+  lowerit(lang);
 
   /* close previous language if still open */
   if (lang_fs != NULL) fclose (lang_fs);

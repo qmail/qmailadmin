@@ -1,7 +1,14 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.7 - unreleased
+1.2.8 - unreleased
+
+	Tom Collins
+	- Added single page for changing password. [775208]
+	- Switch to improved method of handling strings in language files,
+	  resulting in reduced disk access and faster rendering of pages.
+
+1.2.7 - released 23-Jan-05
 
 	Tomas Kuliavas
 	- Added Lithuanian translation.
@@ -23,9 +30,6 @@ patch or information related to the entry.
 	- INSTALL: Add note about running `libtoolize --force` on x86_64.
 	- Update config.guess and config.sub scripts.
 	- Include charset in HTTP Content-Type header. [1098891]
-	- Added single page for changing password. [775208]
-	- Switch to improved method of handling strings in language files,
-	  resulting in reduced disk access and faster rendering of pages.
 
 1.2.6 - released 24-Dec-04
 

@@ -1,5 +1,5 @@
 /*
- * $Id: mailinglist.h,v 1.1.2.1 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: mailinglist.h,v 1.1.2.2 2004-11-22 16:04:11 tomcollins Exp $
  */
 
 #include <time.h>
@@ -13,6 +13,7 @@ void dellistgroup(char *template);
 void dellistgroupnow(int mod);
 void delmailinglist();
 void delmailinglistnow();
+int ezmlm_sub (char *dir, char *email);
 void modmailinglist();
 void modmailinglistnow();
 void show_list_group(char *template);

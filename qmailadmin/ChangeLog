@@ -5,6 +5,8 @@ patch or information related to the entry.
 
 	Tom Collins
 	- Remove unnecessary name attributes in SUBMIT buttons. [869292]
+	- When adding a mailing list, automatically subscribe the
+	  list owner and make them a moderator/remote admin. [892489]
 	- configure.in: Compile with all warnings on.
 	- Add header files: alias.h auth.h autorespond.h cgi.h command.h 
 	  dotqmail.h forward.h limits.h mailinglist.h show.h template.h 

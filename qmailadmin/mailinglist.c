@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.2 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.3 2004-11-22 16:04:10 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -596,6 +596,15 @@ void ezmlm_make (int newlist)
     fprintf(file, "%s-%s", Domain, ActionUser);
     fclose(file);
   }
+
+  /* if this is a new list, add owner as subscriber */
+  if (newlist && (*list_owner != '\0')) {
+    ezmlm_sub ("", list_owner);
+#ifdef EZMLMIDX
+    /* add owner as moderator/remote admin as well */
+    ezmlm_sub ("mod", list_owner);
+#endif
+  }
 }
 
 void addmailinglistnow()
@@ -756,11 +765,30 @@ void addlistuser() { addlistgroup( "add_listuser.html" ); }
 void addlistmod() { addlistgroup( "add_listmod.html" ); }
 void addlistdig() { addlistgroup( "add_listdig.html" ); }
 
+/* returns 0 for success */
+int ezmlm_sub (char *dir, char *email)
+{
+ int pid;
+ char subpath[MAX_BUFF];
+ char listpath[MAX_BUFF];
+
+  pid=fork();
+  if (pid==0) {
+    snprintf(subpath, sizeof(subpath), "%s/ezmlm-sub", EZMLMDIR);
+    snprintf(listpath, sizeof(listpath), "%s/%s/%s",
+      RealDir, ActionUser, dir);
+    execl(subpath, "ezmlm-sub", listpath, email, NULL);
+    exit(127);
+  } else wait(&pid);
+
+  /* need to check exit code for failure somehow */
+
+  return 0;
+}
+
 void addlistgroupnow (int mod)
 {
   // mod = 0 for subscribers, 1 for moderators, 2 for digest subscribers
-
- int pid;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
@@ -783,29 +811,18 @@ void addlistgroupnow (int mod)
     exit(0);
   }
 
-  pid=fork();
-  if (pid==0) {
-    sprintf(TmpBuf1, "%s/ezmlm-sub", EZMLMDIR);
-    if(mod == 1) {
-        sprintf(TmpBuf2, "%s/%s/mod", RealDir, ActionUser);
-    } else if(mod == 2) {
-        sprintf(TmpBuf2, "%s/%s/digest", RealDir, ActionUser);
-    } else {
-        sprintf(TmpBuf2, "%s/%s/", RealDir, ActionUser);
-    }
-    execl(TmpBuf1, "ezmlm-sub", TmpBuf2, Newu, NULL);
-    exit(127);
-  } else wait(&pid);
-
   if(mod == 1 ) {
+    ezmlm_sub ("mod", Newu);
     snprinth (StatusMessage, sizeof(StatusMessage), "%H %s %H@%H\n", Newu, 
         get_html_text("194"), ActionUser, Domain);
     send_template( "add_listmod.html" );
   } else if(mod == 2) {
+    ezmlm_sub ("digest", Newu);
     snprinth (StatusMessage, sizeof(StatusMessage), "%H %s %H@%H\n", Newu, 
         get_html_text("240"), ActionUser, Domain);
     send_template( "add_listdig.html" );
   } else {
+    ezmlm_sub ("", Newu);
     snprinth (StatusMessage, sizeof(StatusMessage), "%H %s %H@%H\n", Newu, 
         get_html_text("193"), ActionUser, Domain);
     send_template( "add_listuser.html" );

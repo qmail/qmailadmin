@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.7 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: mailinglist.c,v 1.8 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,18 +47,17 @@ void default_options();
 int show_mailing_lists(char *user, char *dom, time_t mytime)
 {
 
+ fprintf(stderr, "show_mailing_lists was called\n");
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   /* see if there's anything to display */
    if ( CurMailingLists == 0 ) {
     sprintf(StatusMessage,"%s", get_html_text("231"));
     show_menu();
-    vclose();
-    exit(0);
+    return(231);
   }
 
    if ( MaxMailingLists == 0 ) {
@@ -79,8 +78,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
    if ( MaxMailingLists == 0 ) {
     return(0);
@@ -104,7 +102,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
         strcpy(uBufA, "5");
 #endif
         sprintf(uBufB, "SMLL %s %s\n", get_html_text("144"), mydirent->d_name);
-        send_template_now("show_error_line.html");
+        send_template("show_error_line.html");
         continue;
       }
       fgets(Buffer, sizeof(Buffer), fs);
@@ -149,7 +147,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
       fclose(fs);
     }
 #endif
-  send_template_now("show_mailinglist_line.html");
+  send_template("show_mailinglist_line.html");
   }
   sort_cleanup();
 }
@@ -180,8 +178,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if (*EZMLMDIR == 'n' || MaxMailingLists == 0 ) {
@@ -227,7 +224,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
     sprintf(uBufA,"%d", i);
     sprintf(uBufB,"%s", addr);
     sprintf(uBufC,"%s@%s", addr, Domain);
-    send_template_now("show_mailinglist_line2.html");
+    send_template("show_mailinglist_line2.html");
   }
 
   sort_cleanup();
@@ -239,16 +236,14 @@ int addmailinglist(void)
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if ( MaxMailingLists != -1 && CurMailingLists >= MaxMailingLists ) {
     fprintf(actout, "%s %d\n", get_html_text("184"), 
       MaxMailingLists);
     show_menu();
-    vclose();
-    exit(0);
+    return(184);
   }
   
   /* set up default options for new list */
@@ -266,8 +261,7 @@ int delmailinglist(void)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   send_template( "del_mailinglist_confirm.html" );
@@ -283,8 +277,7 @@ int delmailinglistnow(void)
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if ( (mydir = opendir(".")) == NULL ) {
@@ -321,6 +314,8 @@ int delmailinglistnow(void)
 
   sprintf(Buffer2, "%s/%s", RealDir, ActionUser);
   vdelfiles(Buffer2);
+
+  CurMailingLists--;
 
   sprintf(StatusMessage, "%s %s\n", get_html_text("186"), ActionUser);
     if ( CurMailingLists == 0 ) {
@@ -397,15 +392,13 @@ ezmlm_make (int newlist)
   
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if ( fixup_local_name(ActionUser) ) {
     sprintf(StatusMessage, "%s %s\n", get_html_text("188"), ActionUser);
     addmailinglist();
-    vclose();
-    exit(0);
+    return(188);
   }
 
   /* update listopt based on user selections */
@@ -577,18 +570,17 @@ int addmailinglistnow(void)
     fprintf(actout, "%s %d\n", get_html_text("184"),
       MaxMailingLists);
     show_menu();
-    vclose();
-    exit(0);
+    return(184);
   }
 
   if ( check_local_user(ActionUser) ) {
     sprintf(StatusMessage, "%s %s\n", get_html_text("175"), ActionUser);
     addmailinglist();
-    vclose();
-    exit(0);
+    return(175);
   }
 
   ezmlm_make(1);
+  CurMailingLists++;
 
   sprintf(StatusMessage, "%s %s@%s\n", get_html_text("187"),
           ActionUser, Domain);
@@ -610,8 +602,7 @@ int show_list_group_now(int mod)
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   lowerit(ActionUser);
@@ -712,8 +703,7 @@ int show_list_group(char *template)
 {
   if (AdminType != DOMAIN_ADMIN) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
   
   if (MaxMailingLists == 0) {
@@ -733,8 +723,7 @@ addlistgroup (char *template)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   send_template(template);
@@ -756,8 +745,7 @@ char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   lowerit(ActionUser);
@@ -771,8 +759,7 @@ char Buffer2[MAX_BUFF];
     } else {
       addlistuser();
     }
-    vclose();
-    exit(0);
+    return(148);
   }
 
   pid=fork();
@@ -802,8 +789,7 @@ char Buffer2[MAX_BUFF];
         get_html_text("193"), ActionUser, Domain);
     send_template( "add_listuser.html" );
   }
-  vclose();
-  exit(0);
+  return(999);
 }
 
 /*
@@ -816,8 +802,7 @@ dellistgroup(char *template)
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   send_template(template);
@@ -837,8 +822,7 @@ dellistgroupnow(int mod)
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   lowerit(Newu);
@@ -868,8 +852,7 @@ dellistgroupnow(int mod)
         ActionUser, Domain);
   }
   show_mailing_lists(Username, Domain, Mytime);
-  vclose();
-  exit(0);
+  return(999);
 }
 
 /*
@@ -889,8 +872,7 @@ modmailinglist()
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   strcpy (Alias, "");  /* initialize Alias (list owner) to empty string */

@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.7 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: alias.c,v 1.8 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,9 +61,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  struct dirent **namelist;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if (atoi(Pagenumber)==0) {
@@ -76,7 +74,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
   if ( (mydir = opendir(".")) == NULL ) {
     strcpy(uBufA, "4");
     sprintf(uBufB, "%s %d", get_html_text("143"), 1);
-    send_template_now("show_error_line.html");
+    send_template("show_error_line.html");
     return(0);
   }
 
@@ -105,7 +103,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         strcpy(uBufA, "4");
         sprintf(uBufB, "SDQL %s %s", get_html_text("144"), mydirent->d_name);
-        send_template_now("show_error_line.html");
+        send_template("show_error_line.html");
         continue;
       }
       for(i=7,j=0;j<MAX_FILE_NAME-1&&mydirent->d_name[i]!=0;++i,++j) {
@@ -184,7 +182,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
         }
         strcpy(uBufD, Buffer1);    
         strcpy(Buffer1, "");   
-        send_template_now("show_forwards_line.html");
+        send_template("show_forwards_line.html");
       }
       fclose(fs);
       k++;
@@ -215,9 +213,7 @@ int show_dotqmail_file(char *user)
  int l,j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
     
   l = strlen(user);
@@ -281,10 +277,7 @@ int onevalidonly(char *user) {
   }
 
   if ( (fs=fopen(dot_file,"r"))==NULL) {
-    sprintf(StatusMessage,"%s %s<br>\n", get_html_text("144"),
-    dot_file);
-    vclose();
-    exit(0);
+    return(144);
   }
             
   j=0;
@@ -304,79 +297,67 @@ int onevalidonly(char *user) {
 
 
 
-void moddotqmail()
+int moddotqmail()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   send_template("mod_dotqmail.html");
 }
 
-void moddotqmailnow() 
+int moddotqmailnow() 
 {
  struct vqpasswd *pw;
 
   if ( strcmp(ActionUser,"default")==0) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if (strcmp(Action,"delentry")==0) {
     if (onevalidonly(ActionUser) ) {
       sprintf(StatusMessage, "%s\n", get_html_text("149"));
       moddotqmail();
-      vclose();
-      exit(0);
+      return(0);
     }
         
     if (dotqmail_del_line(ActionUser,LineData) ) {
       sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 1);
       moddotqmail();
-      vclose();
-      exit(0);
+      return(150);
     }
     sprintf(StatusMessage, "%s\n", get_html_text("151") );
     moddotqmail();
-    vclose();
-    exit(0);
+    return(151);
     
   } else if (strcmp(Action,"add")==0) {
     if( adddotqmail_shared(ActionUser, Newu, 0)) {
       moddotqmail();
-      vclose();
-      exit(0);
+      return(0);
     } else {
       sprintf(StatusMessage,"%s %s\n", get_html_text("152"), Newu);
       moddotqmail();
-      vclose();
-      exit(0);
+      return(0);
     }
   } else {
     sprintf(StatusMessage, "%s\n", get_html_text("155"));
-    vclose();
-    exit(0);
+    return(0);
   }
 }
 
-adddotqmail()
+int adddotqmail()
 {
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
-    sprintf(StatusMessage, "%s %d\n", 
-    get_html_text("157"), MaxForwards);
+    sprintf(StatusMessage, "%s %d\n", get_html_text("157"), MaxForwards);
     show_menu();
-    vclose();
-    exit(0);
+    return(157);
   }
   send_template( "add_forward.html" );
 }
 
 
-adddotqmailnow()
+int adddotqmailnow()
 {
  char Buffer[MAX_BUFF];
  struct vqpasswd *pw;
@@ -384,23 +365,20 @@ adddotqmailnow()
   if (AdminType!=DOMAIN_ADMIN && 
       !(AdminType==USER_ADMIN && strcmp(ActionUser, Username)==0)) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
 
   if ( MaxForwards != -1 && CurForwards >= MaxForwards ) {
     sprintf(StatusMessage, "%s %d\n", get_html_text("157"), MaxForwards);
     send_template( "add_forward.html" );
-    vclose();
-    exit(0);
+    return(0);
   }
 
 
 
   if (adddotqmail_shared(Alias, ActionUser, -1)) {
     adddotqmail();
-    vclose();
-    exit(0);
+    return(0);
   } else {
 
     sprintf(StatusMessage, "%s\n", get_html_text("152"));
@@ -458,27 +436,25 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
   return(0);
 }
 
-deldotqmail()
+int deldotqmail()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    return(142);
   }
   send_template( "del_forward_confirm.html" );
 
 }
 
-deldotqmailnow()
+int deldotqmailnow()
 {
 
   if (AdminType!=DOMAIN_ADMIN && 
        !(AdminType==USER_ADMIN && !strcmp(ActionUser, Username))) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
     show_menu(Username, Domain, Mytime);
-    vclose();
-    exit(0);
+    return(142);
   }
 
 
@@ -486,8 +462,7 @@ deldotqmailnow()
   if (fixup_local_name(ActionUser)) {
     sprintf(StatusMessage,"%s %s\n", get_html_text("160"), Alias);
     deldotqmail();
-    vclose();
-    exit(0);
+    return(160);
   }
 
   if (!(dotqmail_delete_files(ActionUser))) {

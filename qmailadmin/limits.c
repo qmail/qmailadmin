@@ -1,5 +1,5 @@
 /* 
- * $Id: limits.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: limits.c,v 1.3 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,9 @@
 
 load_limits()
 {
+
+  fprintf( stderr, "load_limits\n" );
+
   vget_limits(Domain, &Limits);
   MaxPopAccounts = Limits.maxpopaccounts;
   MaxAliases = Limits.maxaliases;
@@ -48,4 +51,5 @@ load_limits()
   DisablePasswordChanging = Limits.disable_passwordchanging;
   DisableWebmail = Limits.disable_webmail;
   DisableRelay = Limits.disable_relay;
+
 }

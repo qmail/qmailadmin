@@ -24,6 +24,7 @@ extern char Password[MAX_BUFF];
 extern char Gecos[MAX_BUFF];
 extern char Quota[MAX_BUFF];
 extern char Time[MAX_BUFF];
+extern char Action[MAX_BUFF];
 extern char ActionUser[MAX_BUFF];
 extern char Newu[MAX_BUFF];
 extern char Password1[MAX_BUFF];
@@ -86,7 +87,7 @@ extern char uBufK[MAX_BUFF];
 extern char uBufL[MAX_BUFF];
 
 void del_id_files( char *);
-int open_lang( char *lang);
+int open_lang();
 
 extern char *strstart();
 extern char *safe_getenv();

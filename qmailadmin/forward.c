@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.5 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: forward.c,v 1.6 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,19 +36,21 @@ char* dotqmail_alias_command(char* command);
 int show_forwards(char *user, char *dom, time_t mytime, char *dir)
 {
 
+  fprintf( stderr, "show_forwards\n" );
+
   if (AdminType != DOMAIN_ADMIN) {
-    fprintf(stderr, "%s", get_html_text("142"));
-    vclose();
-    exit(0);
+    fprintf( stderr, "Not an admin\n" );
+    sprintf(StatusMessage,"%s", get_html_text("142"));
+    return(142);
   }
 
   if(CurForwards == 0) {
-    fprintf(stderr, "%s", get_html_text("232"));
+    fprintf( stderr, "show_forwards - aint none\n" );
     sprintf(StatusMessage,"%s", get_html_text("232"));
     show_menu(Username, Domain, Mytime);
-    vclose();
-    exit(0);
+    return(232);
   } else {
+    fprintf( stderr, "show_forwards - send template\n" );
     send_template("show_forwards.html");
   }
 

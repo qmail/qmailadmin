@@ -1,3 +1,70 @@
+***************************************************
+***************************************************
+
+Rick's todo list:
+
+Add jump to first field javascript to templates.
+
+TMDA checkbox.
+
+CSS support in templates.
+
+Look through archives for other todo items, and add them
+to this list.
+
+Verify we are actually using the latest build system, and that
+all patches have been added.  Check for patches between RC1 and
+final, and verify they exist in new code.
+
+Eliminate as many global variables as possible.
+
+Move session handling from time based to a MD5 hash of some
+random data.  Move the session files into a single directory
+and store login credentials of the current user in the
+session file.
+
+Restructure form handling so each edit page uses the following
+structure, and put it in its own file named for the .html file
+it displays, and the menu choice that calls it.
+
+--------------------------------------------------------------
+
+if( button not clicked ) {
+
+  Get data from mail system
+  Set 'error' - 
+
+} else {
+
+  Get data from form            //  GetValue()s  
+
+  Check for errors
+}
+
+
+if( no errors ) {
+
+    update mail system
+    send Location: header to next screen
+    
+} else {
+
+   Paint template
+
+}
+    
+
+--------------------------------------------------------------
+
+Consider list instead of menu on first page.
+
+
+
+***************************************************
+***************************************************
+
+Original TODO list follows
+
 * Convert Alias/Forward code to use valias functions
 
 Heather L Sherman <heather@idealab.com>

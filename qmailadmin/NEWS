@@ -8,6 +8,36 @@ that Rick Widmer added right before the final release of 1.2.0.
 I built up a large number of changes and will commit them in 
 batches, in the same order they were created.
 
+#################################################################
+
+Changes from  040116 :
+
+Replace  vclose(); exit(0); with return() so everything returns
+to the caller and passes back a status value.  DO NOT exit before
+painting the footer.html file.  The return value is often the
+index into the lang/ file to retrieve the status message.
+
+Changes to the auth code, including moving session file handling
+from qmailadmin.c to auth.c.
+
+Move the GetValues from command.c to qmailadmin.c so they are 
+only done once.
+
+Change ADMIN type values so they can be used with < and > rather
+than checking ==  or != on each.
+
+Move processing header.html and footer.html to qmailadmin.c
+instead of having send_template() and send_template_now().
+Remove send_template, rename send_template_now to send_template,
+and change all calls to send_template_now() to send_template().
+Remember... we ALWAYS return on failure, and header.html and 
+footer.html will ALWAYS be processed.
+
+
+
+
+
+
 
 #################################################################
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: show.c,v 1.3 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: show.c,v 1.4 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ show_menu(user, dom, mytime)
  char *dom;
  time_t mytime;
 {
-  send_template( "menu_main.html" );
+  send_template( "main_menu.html" );
 }
 
 show_login()

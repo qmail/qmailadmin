@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.7 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: util.c,v 1.8 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -145,6 +145,8 @@ int count_stuff(void)
     fgets( Buffer, sizeof(Buffer), fs);
     fclose(fs);
 
+    fprintf( stderr, ".qmail-default: %s\n", Buffer);
+
     if (strstr(Buffer, " bounce-no-mailbox\n") != NULL) {
       sprintf(CurCatchall,"%s", get_html_text("130"));
 
@@ -168,7 +170,6 @@ int count_stuff(void)
       for(j=0,++i;Buffer[i]!=0;++j,++i) CurCatchall[j] = Buffer[i];
       CurCatchall[j]=0;
     }
-
   }
 
   fprintf( stderr, "Blackholes: %d Lists; %d Robots: %d Forwards: %d Users %d Catchall: %s\n", CurBlackholes, CurMailingLists, CurAutoResponders, CurForwards, CurPopAccounts, CurCatchall);
@@ -401,7 +402,7 @@ char *strstart(sstr, tstr)
 
 }
 
-int open_lang(char *lang)
+int open_lang_file(char *lang)
 {
   char langfile[200];
   static char *langpath = NULL;
@@ -429,6 +430,73 @@ int open_lang(char *lang)
   if ( (lang_fs=fopen(langfile, "r"))==NULL) return(-1);
 
   return(0);
+}
+
+int open_lang()
+{
+  char langfile[200];
+  static char *langpath = NULL;
+  struct stat mystat;
+
+  int i,j;
+  struct vqpasswd *pw;
+  char *accept_lang;
+  char *langptr, *qptr;
+  int lang_err;
+  float maxq, thisq;
+
+  lang_fs = NULL;
+
+  /* Parse HTTP_ACCEPT_LANGUAGE to find highest preferred language
+   * that we have a translation for.  Example setting:
+   * de-de, ja;q=0.25, en;q=0.50, de;q=0.75
+   * The q= lines determine which is most preferred, defaults to 1.
+   * Our routine starts with en at 0.0, and then would try de-de (1.00),
+   * de (1.00), ja (0.25), en (0.50), and then de (0.75).
+   */
+
+  /* default to English at 0.00 preference */
+  maxq = 0.0;
+  strcpy (Lang, "en");
+
+  /* read in preferred languages */
+  langptr = getenv("HTTP_ACCEPT_LANGUAGE");
+  if (langptr != NULL) {
+    accept_lang = malloc (strlen(langptr));
+    strcpy (accept_lang, langptr);
+    langptr = strtok(accept_lang, " ,\n");
+    while (langptr != NULL) {
+      qptr = strstr (langptr, ";q=");
+      if (qptr != NULL) {
+        *qptr = '\0';  /* convert semicolon to NULL */
+        thisq = (float) atof (qptr+3);
+      } else {
+        thisq = 1.0;
+      }
+
+      /* if this is a better match than our previous best, try it */
+      if (thisq > maxq) {
+        lang_err = open_lang_file(langptr);
+
+        /* Remove this next section for strict interpretation of
+         * HTTP_ACCEPT_LANGUAGE.  It will try language xx (with the
+         * same q value) if xx-yy fails.
+         */
+        if ((lang_err == -1) && (langptr[2] == '-')) {
+          langptr[2] = '\0';
+          lang_err = open_lang_file(langptr);
+        }
+
+        if (lang_err == 0) {
+          maxq = thisq;
+          strcpy (Lang, langptr);
+        }
+      }
+      langptr = strtok (NULL, " ,\n");
+    }
+
+    free(accept_lang);
+  }
 }
 
 char *get_html_text( char *index )

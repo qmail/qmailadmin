@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.5 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: command.c,v 1.6 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,227 +36,212 @@
 process_commands(char *command)
 {
  int pid;
+ int rv=0;   // return value
  char Buffer[MAX_BUFF];
 
-  if (strcmp(command, "showmenu") == 0 ) {
-    show_menu(Username, Domain, Mytime);
+  fprintf( stderr, "Process_commands: %s\n", command );
 
-  } else if (strcmp(command, "showusers") == 0) {
-    GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
-    show_users(Username, Domain, Mytime, command);
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                            No rights                          */ 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  } else if (strcmp(command, "showforwards") == 0) {
-    GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    show_forwards(Username, Domain, Mytime, command);
-
-  } else if (strcmp(command, "showmailinglists") == 0) {
-    show_mailing_lists(Username, Domain, Mytime, command);
-
-  } else if (strcmp(command, "showautoresponders") == 0) {
-    show_autoresponders(Username, Domain, Mytime, command);
-
-  } else if (strcmp(command, "adduser") == 0 ) {
-    adduser();
-
-  } else if (strcmp(command, "addusernow") == 0 ) {
-    addusernow();
-
-  } else if (strcmp(command, "bounceall") == 0 ) {
-    bounceall();
-
-  } else if (strcmp(command, "deleteall") == 0 ) {
-    deleteall();
-
-  } else if (strcmp(command, "setremotecatchall") == 0 ) {
-    setremotecatchall();
-
-  } else if (strcmp(command, "setremotecatchallnow") == 0 ) {
-    setremotecatchallnow();
-
-  } else if (strcmp(command, "addlistmodnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    addlistgroupnow(1);
-
-  } else if (strcmp(command, "dellistmod") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    dellistgroup("del_listmod.html");
-
-  } else if (strcmp(command, "dellistmodnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    dellistgroupnow(1);
-
-  } else if (strcmp(command, "addlistmod") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    addlistgroup("add_listmod.html");
-
-  } else if (strcmp(command, "showlistmod") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    show_list_group("show_moderators.html");
-
-  } else if (strcmp(command, "addlistdig") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    addlistgroup("add_listdig.html");
-
-  } else if (strcmp(command, "addlistdignow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    addlistgroupnow(2);
-
-  } else if (strcmp(command, "dellistdig") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    dellistgroup("del_listdig.html");
-
-  } else if (strcmp(command, "dellistdignow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    dellistgroupnow(2);
-
-  } else if (strcmp(command, "showlistdig") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    show_list_group("show_digest_subscribers.html");
-
-  } else if (strcmp(command, "moduser") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    moduser();
-
-  } else if (strcmp(command, "modusernow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Password1, "password1=", sizeof(Password1));
-    GetValue(TmpCGI, Password2, "password2=", sizeof(Password2));
-    GetValue(TmpCGI, Gecos, "gecos=", sizeof(Gecos));
-    modusergo();
-
-  } else if (strcmp(command, "deluser") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
-    deluser();
-
-  } else if (strcmp(command, "delusernow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
-    delusergo();
-
-  } else if (strcmp(command, "moddotqmail") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
-    moddotqmail();
-
-  } else if (strcmp(command, "moddotqmailnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
-    GetValue(TmpCGI, LineData, "linedata=", sizeof(LineData));
-    GetValue(TmpCGI, Action, "action=", sizeof(Action));
-    moddotqmailnow();
-
-  } else if (strcmp(command, "deldotqmail") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
-    deldotqmail();
-
-  } else if (strcmp(command, "deldotqmailnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
-    deldotqmailnow();
-
-  } else if (strcmp(command, "adddotqmail") == 0 ) {
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
-    adddotqmail();
-
-  } else if (strcmp(command, "adddotqmailnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Alias, "alias=", sizeof(Alias));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
-    adddotqmailnow();
-
-  } else if (strcmp(command, "addmailinglist") == 0 ) {
-    addmailinglist();
-
-  } else if (strcmp(command, "delmailinglist") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    delmailinglist();
-
-  } else if (strcmp(command, "delmailinglistnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    delmailinglistnow();
-
-  } else if (strcmp(command, "addlistusernow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    addlistgroupnow(0);
-
-  } else if (strcmp(command, "dellistuser") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    dellistgroup("del_listuser.html");
-
-  } else if (strcmp(command, "dellistusernow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    dellistgroupnow(0);
-
-  } else if (strcmp(command, "addlistuser") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    addlistgroup("add_listuser.html");
-
-  } else if (strcmp(command, "addmailinglistnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
-    addmailinglistnow();
-
-  } else if (strcmp(command, "modmailinglist") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    modmailinglist();
-
-  } else if (strcmp(command, "modmailinglistnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
-    modmailinglistnow();
-
-  } else if (strcmp(command, "modautorespond") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    modautorespond();
-
-  } else if (strcmp(command, "addautorespond") == 0 ) {
-    addautorespond();
-
-  } else if (strcmp(command, "addautorespondnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Alias, "alias=", sizeof(Alias));
-    GetValue(TmpCGI, Message, "message=", sizeof(Message));
-    GetValue(TmpCGI, Newu, "owner=", sizeof(Newu));
-    addautorespondnow();
-
-  } else if (strcmp(command, "modautorespondnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Alias, "alias=", sizeof(Alias));
-    GetValue(TmpCGI, Message, "message=", sizeof(Message));
-    GetValue(TmpCGI, Newu, "owner=", sizeof(Newu));
-    modautorespondnow();
-
-  } else if (strcmp(command, "showlistusers") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    show_list_group("show_subscribers.html");
-
-  } else if (strcmp(command, "setdefault") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    setdefaultaccount();
-
-  } else if (strcmp(command, "delautorespond") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    delautorespond();
-
-  } else if (strcmp(command, "delautorespondnow") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    delautorespondnow();
-
-  } else if (strcmp(command, "logout") == 0 ) {
+  if (strcmp(command, "logout") == 0 ) {
     sprintf(Buffer, "%s/%s/Maildir", RealDir, Username );
     del_id_files(Buffer);
     show_login();
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                           User  rights                        */ 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  } else if (AdminType < USER_ADMIN ) {
+    rv = show_login();
+
+  } else if (strcmp(command, "showmenu") == 0 ) {
+    rv = show_menu(Username, Domain, Mytime);
+
+  } else if (strcmp(command, "adddotqmail") == 0 ) {
+    rv = adddotqmail();
+
+  } else if (strcmp(command, "adddotqmailnow") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
+    rv = adddotqmailnow();
+
+  } else if (strcmp(command, "deldotqmail") == 0 ) {
+    rv = deldotqmail();
+
+  } else if (strcmp(command, "deldotqmailnow") == 0 ) {
+    rv = deldotqmailnow();
+
+  } else if (strcmp(command, "moddotqmail") == 0 ) {
+    rv = moddotqmail();
+
+  } else if (strcmp(command, "moddotqmailnow") == 0 ) {
+    GetValue(TmpCGI, Action, "action=", sizeof(Action));
+    rv = moddotqmailnow();
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                        Domain rights                          */ 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  } else if (AdminType < DOMAIN_ADMIN ) {
+    rv = show_menu(Username, Domain, Mytime);
+
+/*                A U T O R E S P O N D E R S                     */ 
+
+  } else if (strcmp(command, "showautoresponders") == 0) {
+    rv = show_autoresponders(Username, Domain, Mytime, command);
+
+  } else if (strcmp(command, "addautorespond") == 0 ) {
+    rv = addautorespond();
+
+  } else if (strcmp(command, "addautorespondnow") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
+    GetValue(TmpCGI, Newu, "owner=", sizeof(Newu));
+    rv = addautorespondnow();
+
+  } else if (strcmp(command, "delautorespond") == 0 ) {
+    rv = delautorespond();
+
+  } else if (strcmp(command, "delautorespondnow") == 0 ) {
+    rv = delautorespondnow();
+
+  } else if (strcmp(command, "modautorespond") == 0 ) {
+    rv = modautorespond();
+
+  } else if (strcmp(command, "modautorespondnow") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
+    GetValue(TmpCGI, Newu, "owner=", sizeof(Newu));
+    rv = modautorespondnow();
+
+/*                       F O R W A R D S                          */
+
+  } else if (strcmp(command, "showforwards") == 0) {
+    rv = show_forwards(Username, Domain, Mytime, command);
+
+/*                     M A I L I N G   L I S T S                  */ 
+
+  } else if (strcmp(command, "showmailinglists") == 0) {
+    rv = show_mailing_lists(Username, Domain, Mytime, command);
+
+  } else if (strcmp(command, "addlistmodnow") == 0 ) {
+    rv = addlistgroupnow(1);
+
+  } else if (strcmp(command, "dellistmod") == 0 ) {
+    rv = dellistgroup("del_listmod.html");
+
+  } else if (strcmp(command, "dellistmodnow") == 0 ) {
+    rv = dellistgroupnow(1);
+
+  } else if (strcmp(command, "addlistmod") == 0 ) {
+    rv = addlistgroup("add_listmod.html");
+
+  } else if (strcmp(command, "showlistmod") == 0 ) {
+    rv = show_list_group("show_moderators.html");
+
+  } else if (strcmp(command, "addlistdig") == 0 ) {
+    rv = addlistgroup("add_listdig.html");
+
+  } else if (strcmp(command, "addlistdignow") == 0 ) {
+    rv = addlistgroupnow(2);
+
+  } else if (strcmp(command, "dellistdig") == 0 ) {
+    rv = dellistgroup("del_listdig.html");
+
+  } else if (strcmp(command, "dellistdignow") == 0 ) {
+    rv = dellistgroupnow(2);
+
+  } else if (strcmp(command, "showlistdig") == 0 ) {
+    rv = show_list_group("show_digest_subscribers.html");
+
+  } else if (strcmp(command, "addmailinglist") == 0 ) {
+    rv = addmailinglist();
+
+  } else if (strcmp(command, "delmailinglist") == 0 ) {
+    rv = delmailinglist();
+
+  } else if (strcmp(command, "delmailinglistnow") == 0 ) {
+    rv = delmailinglistnow();
+
+  } else if (strcmp(command, "addlistusernow") == 0 ) {
+    rv = addlistgroupnow(0);
+
+  } else if (strcmp(command, "dellistuser") == 0 ) {
+    rv = dellistgroup("del_listuser.html");
+
+  } else if (strcmp(command, "dellistusernow") == 0 ) {
+    rv = dellistgroupnow(0);
+
+  } else if (strcmp(command, "addlistuser") == 0 ) {
+    rv = addlistgroup("add_listuser.html");
+
+  } else if (strcmp(command, "addmailinglistnow") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
+    rv = addmailinglistnow();
+
+  } else if (strcmp(command, "modmailinglist") == 0 ) {
+    rv = modmailinglist();
+
+  } else if (strcmp(command, "modmailinglistnow") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
+    rv = modmailinglistnow();
+
+  } else if (strcmp(command, "showlistusers") == 0 ) {
+    rv = show_list_group("show_subscribers.html");
+
+  } else if (strcmp(command, "setdefault") == 0 ) {
+    rv = setdefaultaccount();
+
+/*                            U S E R S                           */ 
+
+  } else if (strcmp(command, "showusers") == 0) {
+    rv = show_users(Username, Domain, Mytime, command);
+
+  } else if (strcmp(command, "adduser") == 0 ) {
+    rv = adduser();
+
+  } else if (strcmp(command, "addusernow") == 0 ) {
+    rv = addusernow();
+
+  } else if (strcmp(command, "deluser") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
+    rv = deluser();
+
+  } else if (strcmp(command, "delusernow") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
+    rv = delusergo();
+
+  } else if (strcmp(command, "moduser") == 0 ) {
+    rv = moduser();
+
+  } else if (strcmp(command, "modusernow") == 0 ) {
+    rv = modusergo();
+
+  } else if (strcmp(command, "bounceall") == 0 ) {
+    rv = bounceall();
+
+  } else if (strcmp(command, "deleteall") == 0 ) {
+    rv = deleteall();
+
+  } else if (strcmp(command, "setremotecatchall") == 0 ) {
+    rv = setremotecatchall();
+
+  } else if (strcmp(command, "setremotecatchallnow") == 0 ) {
+    rv = setremotecatchallnow();
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                        System rights                          */ 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+  } else {
+    fprintf(stderr, "Invalid command: %s\n", command);
+
   }
 
-  vclose();
-  exit(0);
+  if( rv > -1 ) {
+    printf( "Return Value: %d<BR>\n", rv );
+    fprintf(stderr, "Return Value: %d<BR>\n", rv );
+  }
 }
 
 setdefaultaccount()

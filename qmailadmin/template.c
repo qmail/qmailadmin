@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.9 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: template.c,v 1.10 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,15 +48,7 @@ char *get_session_val(char *session_var);
 /*
  * send an html template to the browser 
  */
-int send_template(char *actualfile)
-{
-  send_template_now("header.html");
-  send_template_now(actualfile);
-  send_template_now("footer.html");
-  return 0;
-}
-
-int send_template_now(char *filename)
+int send_template(char *filename)
 {
  FILE *fs;
  FILE *fs_qw;
@@ -103,7 +95,7 @@ int send_template_now(char *filename)
   /* open the template */
   fs = fopen( fqfn, "r" );
   if (fs == NULL) {
-    fprintf(stderr,"%s %s\n", get_html_text("144"), fqfn);
+    fprintf(stderr,"STN1 %s %s\n", get_html_text("144"), fqfn);
     return 144;
   }
 
@@ -267,7 +259,7 @@ int send_template_now(char *filename)
               if ((strstr(Buffer, "../")) != NULL) {
                 fprintf(actout, "STN3 %s: %s", get_html_text("144"), Buffer);
               } else if((strcmp(Buffer, filename)) != 0) {
-                send_template_now(Buffer);
+                send_template(Buffer);
               }
             }
             break;
@@ -390,7 +382,7 @@ int send_template_now(char *filename)
             sprintf( uBufB, "%s", QA_VERSION );
             sprintf( uBufC, "%s", PACKAGE );
             sprintf( uBufD, "%s", VERSION );
-            send_template_now("version.html");
+            send_template("version.html");
             break;
 
           /* send the common URL parms */
@@ -406,7 +398,7 @@ int send_template_now(char *filename)
             printf("%s", get_html_text(dchar));
             break;
 
-          /* exit / logout link/text */
+          /* logout link/text */
           case 'x':
             printf("<a href=\"");
             strcpy (value, get_session_val("returntext="));
@@ -463,7 +455,6 @@ int send_template_now(char *filename)
       }
     } 
   }
-/*  fprintf(stderr, "Qmailadmin: below while\n");  */
 
   fclose(fs);
   fflush(actout);
@@ -585,43 +576,34 @@ void check_user_forward_vacation(char newchar)
 
     } else if (fgets(Buffer,sizeof(Buffer),fs1)!=NULL) {
       /*  Parse the first line of the .qmail file  */
-
+                           
       if( '&'==Buffer[0] ) {  
         /*   It is a forward   */
-        fprintf( stderr, "Forward\n" );
         strcpy(IsForward, "checked ");
         strcpy(ForwardAddr, strtok(&Buffer[1], "\n"));
 
       } else if (strstr(Buffer, "autorespond")!=NULL ) {
         /* It is a mail robot */
-        fprintf( stderr, "Vacation\n" );
         strcpy(IsVacation, "checked ");
  
       } else if (strstr(Buffer, "|/bin/true delete")!=NULL ) {
         /*  It is a black hole  */
-        fprintf( stderr, "Black Hole\n" );
         strcpy(IsBlackHole, "checked ");
 
       } else if (strstr(Buffer, "#")!=NULL ) {
         /*  It is a better black hole */
-        fprintf( stderr, "Better Black Hole\n" );
         strcpy(IsBlackHole, "checked ");
 
       } else if (strstr(Buffer, "preline")!=NULL ) {
         /*  It is a spam checked simple delivery  */
-        fprintf( stderr, "Spam Checked\n" );
         strcpy(IsSpamCheck, "checked ");
  
       } else {
         /*  Nothing identified from first line  */
-        fprintf( stderr, "Not Identified\n" );
       }
-
-      fprintf( stderr, "Before checking Second Line\n" );
 
       if (fgets(Buffer,sizeof(Buffer),fs1)!=NULL) {
         /*  Parse the second line (if any) */
-        fprintf( stderr, "Second Line %s\n", Buffer );
 
         if (strstr(IsForward, "checked ")!=NULL ) {
           /*  It is a forward with a saved copy */
@@ -629,7 +611,6 @@ void check_user_forward_vacation(char newchar)
 
           if(strstr(Buffer, SPAM_COMMAND)!=NULL) {
             /*  It is spam checked  */
-            fprintf( stderr, "Spam Checked\n" );
             strcpy(IsSpamCheck, "checked ");
           }
         }
@@ -638,23 +619,18 @@ void check_user_forward_vacation(char newchar)
           /*  It is a Vacation  check for spam */
           if(strstr(Buffer, SPAM_COMMAND)!=NULL) {
             /*  It is spam checked  */
-            fprintf( stderr, "Spam Checked\n" );
             strcpy(IsSpamCheck, "checked ");
           }
         }
 
       } else { /*  There is no second line  */
-        fprintf( stderr, "No Second Line\n" );
         if (strstr(IsSpamCheck, "checked ")!=NULL ) {
           /*  One line, spam checked is Standard  */
           strcpy(IsStandard, "checked ");
         }
       }
 
-      fprintf( stderr, "Before checking vacation second file\n" );
-
       if (strstr(IsVacation, "checked ")!=NULL ) {
-        fprintf( stderr, "IsVacation - check second file\n" );
         snprintf(Buffer, sizeof(Buffer), "%s/vacation/message", vpw->pw_dir);
         fs2 = fopen(Buffer,"r");
         /* Eat first line */
@@ -667,7 +643,6 @@ void check_user_forward_vacation(char newchar)
       }
 
     } else {  /*  There are no lines in the .qmail file  */
-      fprintf( stderr, "No lines in the .qmail file\n" );
       strcpy(IsStandard, "checked ");
     }
 

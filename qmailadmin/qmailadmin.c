@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.9 2004-01-30 08:30:58 rwidmer Exp $
+ * $Id: qmailadmin.c,v 1.10 2004-01-31 11:08:00 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@ char Password[MAX_BUFF];
 char Gecos[MAX_BUFF];
 char Quota[MAX_BUFF];
 char Time[MAX_BUFF];
+char Action[MAX_BUFF];
 char ActionUser[MAX_BUFF];
 char Newu[MAX_BUFF];
 char Password1[MAX_BUFF];
@@ -109,172 +110,218 @@ FILE *lang_fs;
 FILE *color_table;
 
 void del_id_files( char *);
+int create_session_file( char *ip_addr, char *domaindir);
+
+get_parms()
+{
+ char *rm;
+
+/* Get the REQUEST_METHOD  */
+  rm = getenv("REQUEST_METHOD");
+  rm = (rm == NULL ? "" : strdup(rm));
+
+/*  Decide how to retrieve the data   */
+  if ( strncmp(rm , "POST", 4) == 0 ) {
+    get_cgi();
+  } else {
+    TmpCGI = getenv("QUERY_STRING");
+    TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
+  }
+
+/*   Now get common values out of TmpCGI   */
+  GetValue(TmpCGI, Username, "user=", sizeof(Username));
+  GetValue(TmpCGI, Domain, "dom=", sizeof(Domain));
+  GetValue(TmpCGI, Time, "time=", sizeof(Time));
+  GetValue(TmpCGI, Action, "action=", sizeof(Time));
+  GetValue(TmpCGI, Password, "password=", sizeof(Password));
+
+  Mytime = atoi(Time);
+
+  GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
+  GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
+  GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
+  GetValue(TmpCGI, Password1, "password1=", sizeof(Password1));
+  GetValue(TmpCGI, Password2, "password2=", sizeof(Password2));
+  GetValue(TmpCGI, Gecos, "gecos=", sizeof(Gecos));
+  GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
+  GetValue(TmpCGI, Alias, "alias=", sizeof(Alias));
+  GetValue(TmpCGI, LineData, "linedata=", sizeof(LineData));
+  GetValue(TmpCGI, Message, "message=", sizeof(Message));
+  GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
+
+  fprintf(stderr, "GetParms: Username: %s  Password: %s  Domain: %s\n", 
+          Username, Password, Domain);
+
+}
+
+setuidgid(char *Domain)
+{
+  /* get the real uid and gid and change to that user */
+  vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
+
+  if ( geteuid() == 0 ) {
+    if ( setgid(Gid) != 0 ) perror("setgid");
+    if ( setuid(Uid) != 0 ) perror("setuid");
+  }
+
+  if ( chdir(RealDir) < 0 ) {
+    fprintf(stderr, "MAIN %s %s\n", get_html_text("171"), RealDir );
+  }
+}
+
+int get_command_parms( char *commandparms, int parmsize )
+{
+ char *pi;
+ int i,j;
+
+  fprintf(stderr, "get_command_parms started\n" );
+
+  pi=getenv("PATH_INFO");
+  if ( pi )  pi = strdup(pi);
+
+  fprintf(stderr, "get_command_parms pi: %s\n", pi );
+
+  memset(commandparms, 0, parmsize);
+  fprintf(stderr, "sizeof commandparms: %d", parmsize);
+
+  /*  Cut off the first five characters...  '/com/'   */
+  if (pi && strncmp(pi, "/com/", 5) == 0) {
+    for(j=0,i=5;pi[i]!=0&&j<99;++i,++j) commandparms[j] = pi[i];
+    fprintf(stderr, "get command parms - found it: %s\n", commandparms );
+    return( 0 );
+  }
+
+  fprintf(stderr, "get command parms - nothing\n" );
+  return(1);
+}
+
+get_my_ip( char *ip_address )
+{
+
+ const char *ip_addr=getenv("REMOTE_ADDR");
+ const char *x_forward=getenv("HTTP_X_FORWARDED_FOR");
+
+  if (x_forward) ip_addr = x_forward;
+  if (!ip_addr) ip_addr = "127.0.0.1";
+
+  strcpy(ip_address, ip_addr);
+}
+
+serious_error_abort( int errors )
+{
+fprintf(stderr, "Serious internal error: %d\n", errors);
+
+printf("<HTML><BODY><H1>%s - %d</H1></BODY></HTML>", 
+       "Serious internal error", errors );
+vclose();
+exit(0);
+}
+
+get_pathinfo()
+{
+
+
+}
 
 main(argc,argv)
  int argc;
  char *argv[];
 {
- const char *u;
- const char *p;
- const char *ip_addr=getenv("REMOTE_ADDR");
- const char *x_forward=getenv("HTTP_X_FORWARDED_FOR");
- char *pi;
- int i,j;
- char *rm;
- time_t time1; 
- time_t time2;
- FILE *fs;
- int pid;
- char returnhttp[MAX_BUFF];
- char returntext[MAX_BUFF];
+ char CommandParms[MAX_BUFF];
+ char ip_addr[MAX_BUFF];
+ struct vqpasswd *pw;
+ int errors = 0;
+ char err_code[4];
 
- char TmpBuf[MAX_BIG_BUFF];
- char TmpBuf1[MAX_BUFF];
- char TmpBuf2[MAX_BUFF];
- char TmpBuf3[MAX_BUFF];
+  umask(VPOPMAIL_UMASK);
 
   init_globals();
+  if( open_lang()) errors += 1;
+  if( open_colortable()) errors += 2;
+  get_parms();  
+  get_my_ip( ip_addr );
 
-  if (x_forward) ip_addr = x_forward;
-  if (!ip_addr) ip_addr = "127.0.0.1";
-  pi=getenv("PATH_INFO");
-  if ( pi )  pi = strdup(pi);
+  paint_headers();
 
-  if (pi && strncmp(pi, "/com/", 5) == 0) {
-    /*  /com/ found in URL so there is something to do   */
+  /*  If there are errors starting up, report them and exit  */
+  if( errors > 0 ) serious_error_abort( errors );
+
+  send_template("header.html");  
+
+  if (!get_command_parms(CommandParms, sizeof(CommandParms))) {
+
+    /*  Have command - prepare to execute it  */
     fprintf( stderr, "\nMystery if case #1\n" );
-    struct vqpasswd *pw;
-
-    memset(TmpBuf2, 0, sizeof(TmpBuf2));
-    for(j=0,i=5;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
-    rm = getenv("REQUEST_METHOD");
-    rm = (rm == NULL ? "" : strdup(rm));
-
-    if ( strncmp(rm , "POST", 4) == 0 ) {
-      get_cgi();
-    } else {
-      TmpCGI = getenv("QUERY_STRING");
-      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
-    }
-
-    GetValue(TmpCGI, Username, "user=", sizeof(Username));
-    GetValue(TmpCGI, Domain, "dom=", sizeof(Domain));
-    GetValue(TmpCGI, Time, "time=", sizeof(Time));
-    Mytime = atoi(Time);
-    pw = vauth_getpw( Username, Domain );
-
-    /* get the real uid and gid and change to that user */
-    vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
-    if ( geteuid() == 0 ) {
-      if ( setgid(Gid) != 0 ) perror("setgid");
-      if ( setuid(Uid) != 0 ) perror("setuid");
-    }
-
-    if ( chdir(RealDir) < 0 ) {
-      fprintf(stderr, "MAIN %s %s\n", get_html_text("171"), RealDir );
-    }
+    setuidgid( Domain );
     set_admin_type();
     count_stuff();
 
-    if ( AdminType == USER_ADMIN || AdminType == DOMAIN_ADMIN ) {
-      auth_user_domain(ip_addr, pw);
+    if( errors = get_session_data( Username, Domain, ip_addr )) {
+ 
+      /*  Error with session data - need to login  */
+      sprintf(err_code, "%3d\n", errors );
+      fprintf( stderr, "Error code returned: %s", err_code);
+      sprintf(StatusMessage, "%s\n", get_html_text( err_code ));
+      show_login();
+
     } else {
-      auth_system(ip_addr, pw);
+
+      /*  Command requested, and session valid - do it  */
+      process_commands(CommandParms);
+
     }
 
-    process_commands(TmpBuf2);
+
+  } else if ( strlen(Action) == 0) {    
+
+    /*  No button pressed...   Show login page   */
+    show_login();
+
+  } else if (0 == strlen(Username) || 0==strlen(Password)) {
+
+    /*  If they left anything blank, don't bother to authenticate  */
+    sprintf(StatusMessage, "%s\n", get_html_text("316"));
+    show_login();
+
+  } else if (NULL == (pw = vauth_user( Username, Domain, Password, "" ))) { 
+
+    /*  Invalid user/domain/password - show error message */
+    sprintf(StatusMessage, "%s\n", get_html_text("198"));
+    show_login();
 
   } else {
-   char *rm;
-   struct vqpasswd *pw;
-   FILE *fs;
 
-    fprintf( stderr, "\nMystery if case #3\n" );
+    /*  Just logged in   */
+    setuidgid( Domain );
+    if( create_session_file( ip_addr, pw->pw_dir )) {
 
-     /*  Just logged in   */
-     rm = getenv("REQUEST_METHOD");
-     if ( rm ) rm = strdup(rm);
+      printf( "Unable to create session file" );
 
-     if ( rm && ( strncmp(rm,"POST",4)==0 || strncmp(rm,"GET",3)==0)) {
-       if ( strncmp(rm , "POST", 4) == 0 ) {
-         get_cgi();
-       } else {
-         TmpCGI = getenv("QUERY_STRING");
-         TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
-       }
+    } else {
 
-       GetValue(TmpCGI, Username, "username=", sizeof(Username));
-       GetValue(TmpCGI, Domain, "domain=", sizeof(Domain));
-       GetValue(TmpCGI, Password, "password=", sizeof(Password));
+      load_limits();
 
-       vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
-       if ( geteuid() == 0 ) {
-         if ( setgid(Gid) != 0 ) perror("setgid");
-         if ( setuid(Uid) != 0 ) perror("setuid");
-       }
+      if (AdminType == DOMAIN_ADMIN) {
 
-       /* Authenticate a user and domain admin */
-       if ( strlen(Domain) > 0 ) {
-         chdir(RealDir);
-         load_limits();
+        /* show the main menu for domain admins  */
+        show_menu(Username, Domain, Mytime);
 
-         pw = vauth_user( Username, Domain, Password, "" );
-         if ( pw == NULL ) { 
-           sprintf(StatusMessage, "%s\n", get_html_text("198"));
-           show_login();
-           vclose();
-           exit(0);
-         }
+      } else {
 
-         sprintf(TmpBuf, "%s/Maildir", pw->pw_dir);
-         del_id_files( TmpBuf);
+        /*  show the modify user page for regular users  */
+        strcpy (ActionUser, Username);
+        moduser();
 
-         Mytime = time(NULL);
-         sprintf(TmpBuf, "%s/Maildir/%d.qw", pw->pw_dir, Mytime);
-         fs = fopen(TmpBuf, "w");
-         if ( fs == NULL ) {
-           fprintf(actout,"MAIN %s %s\n", get_html_text("144"), TmpBuf);
-           fprintf(stderr,"MAIN %s %s\n", get_html_text("144"), TmpBuf);
-           vclose();
-           exit(0);
-         }
-         memset(TmpBuf, 0, sizeof(TmpBuf)); 
-         /* set session vars */
-         GetValue(TmpCGI, returntext, "returntext=", sizeof(returntext));
-         GetValue(TmpCGI, returnhttp, "returnhttp=", sizeof(returnhttp));
-         sprintf(TmpBuf, "ip_addr=%s&returntext=%s&returnhttp=%s\n",
-                 ip_addr, returntext, returnhttp); 
-         fputs(TmpBuf,fs); 
-        // fputs(ip_addr, fs);
-         fclose(fs);
-         vget_assign(Domain, TmpBuf1, sizeof(TmpBuf1), &Uid, &Gid);
-         set_admin_type();
-
-         /* show the main menu for domain admins, modify user page
-            for regular users */
-         if (AdminType == DOMAIN_ADMIN) {
-           show_menu(Username, Domain, Mytime);
-         } else {
-           strcpy (ActionUser, Username);
-           moduser();
-         }
-         vclose();
-         exit(0);
-       }
-     }
+      }
+    }
   }
-  show_login();
+
+  send_template("footer.html");
   vclose();
 }
 
 init_globals()
 {
-  int i,j;
-  struct vqpasswd *pw;
-  char *accept_lang;
-  char *langptr, *qptr;
-  int lang_err;
-  float maxq, thisq;
 
   memset(CGIValues, 0, sizeof(CGIValues));
   CGIValues['0'] = 0;
@@ -306,6 +353,7 @@ init_globals()
   memset(Password, 0, sizeof(Password));
   memset(Quota, 0, sizeof(Quota));
   memset(Time, 0, sizeof(Time));
+  memset(Action, 0, sizeof(Action));
   memset(ActionUser, 0, sizeof(ActionUser));
   memset(Newu, 0, sizeof(Newu));
   memset(Password1, 0, sizeof(Password1));
@@ -315,68 +363,11 @@ init_globals()
   memset(Message, 0, sizeof(Message));
 
   AdminType = NO_ADMIN;
+}
 
-  lang_fs = NULL;
 
-  /* Parse HTTP_ACCEPT_LANGUAGE to find highest preferred language
-   * that we have a translation for.  Example setting:
-   * de-de, ja;q=0.25, en;q=0.50, de;q=0.75
-   * The q= lines determine which is most preferred, defaults to 1.
-   * Our routine starts with en at 0.0, and then would try de-de (1.00),
-   * de (1.00), ja (0.25), en (0.50), and then de (0.75).
-   */
-
-  /* default to English at 0.00 preference */
-  maxq = 0.0;
-  strcpy (Lang, "en");
-
-  /* read in preferred languages */
-  langptr = getenv("HTTP_ACCEPT_LANGUAGE");
-  if (langptr != NULL) {
-    accept_lang = malloc (strlen(langptr));
-    strcpy (accept_lang, langptr);
-    langptr = strtok(accept_lang, " ,\n");
-    while (langptr != NULL) {
-      qptr = strstr (langptr, ";q=");
-      if (qptr != NULL) {
-        *qptr = '\0';  /* convert semicolon to NULL */
-        thisq = (float) atof (qptr+3);
-      } else {
-        thisq = 1.0;
-      }
-
-      /* if this is a better match than our previous best, try it */
-      if (thisq > maxq) {
-        lang_err = open_lang (langptr);
-
-        /* Remove this next section for strict interpretation of
-         * HTTP_ACCEPT_LANGUAGE.  It will try language xx (with the
-         * same q value) if xx-yy fails.
-         */
-        if ((lang_err == -1) && (langptr[2] == '-')) {
-          langptr[2] = '\0';
-          lang_err = open_lang (langptr);
-        }
-
-        if (lang_err == 0) {
-          maxq = thisq;
-          strcpy (Lang, langptr);
-        }
-      }
-      langptr = strtok (NULL, " ,\n");
-    }
-
-    free(accept_lang);
-  }
-
-  /* open the best language choice */
-  open_lang (Lang);
-
-  /* open the color table */
-  open_colortable();
-
-  umask(VPOPMAIL_UMASK);
-
+paint_headers()
+{
   fprintf(actout,"Content-Type: text/html\n");
 #ifdef NO_CACHE
   fprintf(actout,"Cache-Control: no-cache\n"); 
@@ -387,21 +378,3 @@ init_globals()
   fprintf(actout,"\n"); 
 }
 
-void del_id_files( char *dirname )
-{
- DIR *mydir;
- struct dirent *mydirent;
- struct stat statbuf;
- char Buffer[MAX_BUFF];
-
-  mydir = opendir(dirname);
-  if ( mydir == NULL ) return;
-
-  while((mydirent=readdir(mydir))!=NULL){
-    if ( strstr(mydirent->d_name,".qw")!=0 ) {
-      sprintf(Buffer, "%s/%s", dirname, mydirent->d_name);
-      unlink(Buffer);
-    }
-  }
-  closedir(mydir);
-}

@@ -28,16 +28,16 @@
 
 #define QMAILADMIN_UNLIMITED -1
 
-#define NO_ADMIN		0
-
-#define DOMAIN_ADMIN	2
-#define USER_ADMIN		3
+#define NO_ADMIN 	0	//  Just show the login page again
+#define USER_ADMIN	1	//  Access only own address
+#define DOMAIN_ADMIN	2	//  Access entire domain
+#define SYSTEM_ADMIN	3	//  Access all domains
 
 
 #define NUM_SQL_OPTIONS	  6
 
 char *get_html_text( char *index );
-int open_lang( char *lang);
+int open_lang();
 
 int quota_to_bytes(char[], char*);     //jhopper prototype
 int quota_to_megabytes(char[], char*); //jhopper prototype

@@ -1,54 +1,6 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.0 - released 28-Jan-04
-
-	Tom Collins
-	- Changes to Makefile to avoid copying CVS directories on install.
-	  Fixes previous attempt that wasn't compatible with all platforms.
-	- Update all mentions of --with-htmllibdir to --enable-htmllibdir.
-	- undef some macros defined in vpopmail_config.h and later defined
-	  in QmailAdmin's config.h (PACKAGE_*). [883245]
-	- Fix bad quota when adding user with default (blank) quota field.
-
-1.2.0-rc3 - released 19-Jan-04
-
-	Tom Collins
-	- Minor formatting changes to configure.in for consistency.
-	- Make function buffers static when returning pointers to them.
-	- More updates to build files.
-	- Properly format autoresponder names with '.' in them. [872721]
-	- Remove old code and redundant quota setting code from user.c.
-	- Switch to using new pw_flags field in auth.c.
-	- Set permissions on html templates and lang files to 644 (not 755).
-
-	Jussi Siponen
-	- Add Finnish translation. [879032]
-
-1.2.0-rc2 - released 1-Jan-04
-
-	Tom Collins
-	- Added comment and added minor fix to ##z macro in template.c.
-	- Fix Makefile.am to use correct owner/group/perm for 
-	  install-strip. [864310]
-	- Change html/header to use ##D instead of ##H in title.
-
-	Rick Widmer
-	- Remove fclose(NULL) call in alias.c.
-	- Add html/README with information on template macros. [867305]
-
-1.2.0-rc1 - released 21-Dec-03
-
-	Michael Bowe
-	- Update to configure.in for libtools 2.57 compatability. [858201]
-
-	Tom Collins
-	- Use AM_INSTALL_PROGRAM_FLAGS instead of chown/chgrp/chmod in
-	  Makefile. [827196]
-
-	Andrea Riela (reviewed by Davide Guinchi)
-	- Updates to Italian translation.
-
 1.2.0-pre1 - released 9-Dec-03
 
 	Tom Collins

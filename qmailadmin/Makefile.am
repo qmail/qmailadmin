@@ -14,7 +14,7 @@ VERSION=@QA_VERSION@
 #
 # Install qmailadmin setuid to @vpopuser@
 #
-INSTALL=@INSTALL@ -o @vpopuser@ -m 6755 -g @vpopgroup@
+INSTALL_PROGRAM=${INSTALL} -o @vpopuser@ -m 6755 -g @vpopgroup@
 
 bindir=@cgibindir@
 bin_PROGRAMS=@CGIBINTARGETS@

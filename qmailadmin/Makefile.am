@@ -1,7 +1,7 @@
 
 @SET_MAKE@
 
-EXTRA_DIST=BUGS FAQ TRANSLATORS README.hooks html lang images contrib
+EXTRA_DIST=BUGS CHANGELOG FAQ TRANSLATORS README.hooks html lang images contrib
 
 htmllibdir=@htmllibdir@
 htmldir=@htmldir@
@@ -14,8 +14,7 @@ VERSION=@QA_VERSION@
 #
 # Install qmailadmin setuid to @vpopuser@
 #
-INSTALL_PROGRAM=${INSTALL} -o @vpopuser@ -m 6755 -g @vpopgroup@ $(AM_INSTALL_PROGRAM_FLAGS)
-INSTALL_STRIP_PROGRAM=${INSTALL_PROGRAM} -s
+AM_INSTALL_PROGRAM_FLAGS= -o @vpopuser@ -m 6755  -g @vpopgroup@
 
 bindir=@cgibindir@
 bin_PROGRAMS=@CGIBINTARGETS@
@@ -61,21 +60,16 @@ dist-rpm:
 
 dist-hook:
 
-# use the [^C]* pattern to skip the CVS directory
 install-data-local:
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@
 	rm -rf                   $(DESTDIR)@htmllibdir@/html
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/html 
-	cp $(srcdir)/html/*.html $(DESTDIR)@htmllibdir@/html
-	cp $(srcdir)/html/colortable $(DESTDIR)@htmllibdir@/html
-	chmod 755                $(DESTDIR)@htmllibdir@/html
-	chmod 644                $(DESTDIR)@htmllibdir@/html/*
+	cp -R $(srcdir)/html/*   $(DESTDIR)@htmllibdir@/html
+	chmod -R 755             $(DESTDIR)@htmllibdir@/html
 	rm -rf                   $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/lang 
-	cp $(srcdir)/lang/??     $(DESTDIR)@htmllibdir@/lang
-	cp $(srcdir)/lang/??-??  $(DESTDIR)@htmllibdir@/lang
-	chmod 755                $(DESTDIR)@htmllibdir@/lang
-	chmod 644                $(DESTDIR)@htmllibdir@/lang/*
+	cp -R $(srcdir)/lang/*   $(DESTDIR)@htmllibdir@/lang
+	chmod -R 755             $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@imagedir@
-	cp $(srcdir)/images/*.png $(DESTDIR)@imagedir@
+	cp -R $(srcdir)/images/* $(DESTDIR)@imagedir@
 

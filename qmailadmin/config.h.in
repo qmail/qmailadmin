@@ -154,9 +154,6 @@
 #undef STDC_HEADERS
 
 /* "" */
-#undef TRUE_PATH
-
-/* "" */
 #undef USER_INDEX
 
 /* "" */

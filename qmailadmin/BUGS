@@ -1,2 +1,4 @@
-* Qmailadmin does yet not understand mysql valias data, only dot-qmail 
-  aliases/forwards
+* QmailAdmin rewrites a users .qmail file whenver changes are made on the 
+  modify user screen.  The code currently doesn't handle .qmail files that
+  were hand modified or generated elsewhere (e.g., TMDA).
+

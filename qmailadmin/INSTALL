@@ -1,5 +1,7 @@
 Install guide 
 
+QmailAdmin 1.2.0 and later requires Vpopmail 5.4.0 or later.
+
 Please note that any time you reconfigure and install vpopmail
 you will need to rebuild and install QmailAdmin.  QmailAdmin
 statically links libvpopmail, so you need to recompile it
@@ -209,5 +211,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.5 2004-01-24 15:55:16 tomcollins Exp $
+$Id: INSTALL,v 1.6 2004-02-01 00:50:28 rwidmer Exp $
 

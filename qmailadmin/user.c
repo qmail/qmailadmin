@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.14 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: user.c,v 1.15 2004-02-01 00:50:28 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -352,43 +352,22 @@ int addusernow()
 #endif
     (mypw = vauth_getpw( Newu, Domain )) != NULL ) {
 
-    /* from the load_limits() function, set user flags */
-    /* These aren't default limits, they're domain limits.
-       They should not be applied to new accounts.
-    if( DisablePOP > 0 )     mypw->pw_gid |= NO_POP; 
-    if( DisableIMAP > 0 )    mypw->pw_gid |= NO_IMAP; 
-    if( DisableDialup > 0 )  mypw->pw_gid |= NO_DIALUP; 
-    if( DisablePasswordChanging > 0 ) mypw->pw_gid |= NO_PASSWD_CHNG; 
-    if( DisableWebmail > 0 ) mypw->pw_gid |= NO_WEBMAIL; 
-    if( DisableRelay > 0 )  mypw->pw_gid |= NO_RELAY; 
-    */
-
-    /* Once we're sure people are using vpopmail 5.3.29 or later,
-     * we can switch back to old code (that only sets quota if
-     * there's something in the field).
+    /* vadduser() in vpopmail 5.3.29 and later sets the default
+     * quota, so we only need to change it if the user enters
+     * something in the Quota field.
      */
-    if (Limits.defaultquota > 0) {
-      if (Limits.defaultmaxmsgcount > 0)
-        snprintf(pw_shell, sizeof(pw_shell), "%dS,%dC", Limits.defaultquota, Limits.defaultmaxmsgcount);
-      else
-        snprintf(pw_shell, sizeof(pw_shell), "%dS", Limits.defaultquota);
-    } else {
-      strcpy(pw_shell, "NOQUOTA");
-    }
 
-    // Code added by jhopper
 #ifdef MODIFY_QUOTA
     if (strcmp (Quota, "NOQUOTA") == 0) {
-      strcpy (pw_shell, "NOQUOTA");
+      vsetuserquota (Newu, Domain, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
         sprintf(StatusMessage, get_html_text("314"));
       } else {
-        strcpy (pw_shell, qconvert);
+        vsetuserquota (Newu, Domain, qconvert);
       }
     }
 #endif
-    mypw->pw_shell = pw_shell;
 
 #ifdef MODIFY_SPAM
     GetValue(TmpCGI, spamvalue, "spamcheck=", sizeof(spamvalue));
@@ -400,24 +379,13 @@ int addusernow()
     }
 #endif
 
-    /* update the user information */
-    if ( vauth_setpw( mypw, Domain ) != VA_SUCCESS ) {
+    /* report success */
+    sprintf(StatusMessage, "%s %s@%s (%s) %s",
+      get_html_text("002"), Newu, Domain, Gecos,
+      get_html_text("119"));
 
-      /* report error */
-      sprintf(StatusMessage, "%s %s@%s (%s) %s",
-        get_html_text("002"), Newu, Domain, Gecos,
-        get_html_text("120"));
-
-    } else {
-
-      /* report success */
-      sprintf(StatusMessage, "%s %s@%s (%s) %s",
-        get_html_text("002"), Newu, Domain, Gecos,
-        get_html_text("119"));
-      }
-
-    /* otherwise, report error */
   } else {
+    /* otherwise, report error */
     sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.6 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: auth.c,v 1.7 2004-02-01 00:50:28 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,11 @@ set_admin_type()
   if ( strlen(Domain) > 0 ) {
     if ( strcmp(Username,"postmaster")==0 ) {
       AdminType = DOMAIN_ADMIN;
+#ifdef VQPASSWD_HAS_PW_FLAGS
+    } else if ( vpw->pw_flags & QA_ADMIN ) {
+#else
     } else if ( vpw->pw_gid & QA_ADMIN ) {
+#endif
       AdminType = DOMAIN_ADMIN;
     } else {
       AdminType = USER_ADMIN;

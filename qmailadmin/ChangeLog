@@ -1,6 +1,11 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.2.1-pre1 - unreleased
+
+	Tom Collins
+	- Add note to INSTALL about requiring vpopmail 5.4.0 or later.
+
 1.2.0 - released 28-Jan-04
 
 	Tom Collins

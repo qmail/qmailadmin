@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.8 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: util.c,v 1.9 2004-02-01 00:50:28 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -499,6 +499,9 @@ int open_lang()
   }
 }
 
+/* It's a good thing qmailadmin is a cgi script, because this
+   function leaks memory.  That's OK though, Tom has plans
+   for rewriting the html_text stuff soon. */
 char *get_html_text( char *index )
 {
  static char *tmpbuf;

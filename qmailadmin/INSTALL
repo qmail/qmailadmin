@@ -18,6 +18,8 @@ a volume that isn't mounted with the 'nosuid' option in /etc/fstab.
 Be root before you follow the rest of the instructions or
 your installation will fail. 
 
+If you have problems using 'make', try using 'gmake' instead.
+
 Note to people who did not read the above paragraph:
 When you give up on your installation, try reading
 the above information then starting from scratch.
@@ -207,5 +209,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.3 2003-12-10 05:48:08 tomcollins Exp $
+$Id: INSTALL,v 1.4 2004-01-08 05:13:08 tomcollins Exp $
 

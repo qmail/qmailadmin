@@ -9,8 +9,11 @@ qmailadmin must be configured and installed as root.  Why?
 vpopmail protects it's libraries from regular users.
 qmailadmin needs to access those libraries, hence it needs root.
 qmailadmin also needs to install into system directories
-/usr/local/share/qmailadmin, the web servers cgi-bin directory
-and the web servers html directory. Hence root.
+/usr/local/share/qmailadmin, the web server's cgi-bin directory
+and the web server's html directory. Hence root.
+
+Since qmailadmin is a suid binary, make sure it's installed on
+a volume that isn't mounted with the 'nosuid' option in /etc/fstab.
 
 Be root before you follow the rest of the instructions or
 your installation will fail. 
@@ -44,6 +47,9 @@ the above information then starting from scratch.
 
 *Use this if your cgi bin is not in a standard location
 	 --enable-cgibindir={dir}   HTTP server's cgi-bin directory.
+
+Since qmailadmin is a suid binary, make sure the cgi-bin directory is
+on a volume that isn't mounted with the 'nosuid' option in /etc/fstab.
 
 *Use this if your don't want the HTML templates to be 
  in /usr/local/share/qmailadmin
@@ -82,7 +88,7 @@ the above information then starting from scratch.
 *If you have different domains accessing the same qmailadmin, you 
  may want to automatically fill the domain field with the domain the 
  user accessed the qmailadmin cgi with:
-   --enable-domain-autofill=Y
+   --enable-domain-autofill
 
   With autofill enabled, qmailadmin will search the file
   /var/qmail/control/virtualdomains for an entry that matches the
@@ -201,5 +207,5 @@ If you have any questions or comments please email
 support@inter7.com or join the mailing list at
 http://www.inter7.com/qmailadmin/
 
-$Id: INSTALL,v 1.2 2003-10-10 16:43:19 tomcollins Exp $
+$Id: INSTALL,v 1.3 2003-12-10 05:48:08 tomcollins Exp $
 

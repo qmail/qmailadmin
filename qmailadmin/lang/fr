@@ -227,9 +227,9 @@
 259 Aide
 260 Routage
 261 Nom de la liste 
-262 Messages de Signalisation
+262 Messages de signalisation
 263 Tout le monde peut poster.
-264 Seulement les abonn&eacute;s peuvent poster, tous les autres ont rejet&eacute;s.
+264 Seulement les abonn&eacute;s peuvent poster, tous les autres sont rejet&eacute;s.
 265 Seulement les abonn&eacute;s peuvent poster, tous les autres vont aux mod&eacute;rateurs pour approbation.
 266 Seulement les mod&eacute;rateurs peuvent poster, tous les autres sont rejet&eacute;s.
 267 Seulement les mod&eactue;rateurs peuvent poster, tous les autres passent par les mod&eactue;rateurs pour approbation.
@@ -241,10 +241,10 @@
 273 Demandes de services envoyés à %s-request.
 274 En plus de %s-subscribe, %s-unsubscribe, etc. les utilisateurs peuvent envoyer des commandes &agrave; %s-request.
 275 Administration à distance
-276 Permettez l'administration à distance par des modérateurs. 
+276 Permettre l'administration à distance par des modérateurs. 
 277 Faire une liste privée.
 278 Seulement les admins peuvent abonner, d&eacute;sabonner, acc&eacute;der &agrave; l'index, etc...
-279 Les admins à distance peuvent:
+279 Les admins à distance peuvent :
 280 Regarder et r&eacute;cup&eacute;rer la liste des abonn&eacute;s.
 281 &Eacute;diter les fichiers du r&eacute;pertoire texte.
 282 par exemple, le pied de page, les fichiers d'aide, etc...

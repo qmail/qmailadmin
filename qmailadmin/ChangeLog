@@ -14,6 +14,10 @@ patch or information related to the entry.
 	L4nce1ot/honeymak
 	- mailinglist.c: Fix Tom's fix for non-idx ezmlm installs. [1123809]
 
+	sunezapa
+	- Fix entry 303 in Danish translation ("Delete Mail" instead of
+	  "None"). [1152997]
+
 1.2.7 - released 23-Jan-05
 
 	Tomas Kuliavas

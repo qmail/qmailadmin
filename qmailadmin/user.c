@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.8 2004-12-17 05:50:56 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.9 2004-12-23 18:39:48 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -727,13 +727,51 @@ int get_catchall()
   return 0;
 }
 
+int makevacation (FILE *d, char *dir)
+{
+ char subject[80];
+ FILE *f;
+ char fn[156];
+  
+  GetValue(TmpCGI, subject, "vsubject=", sizeof(subject));
+
+  /* if no subject, error */
+  if ( (subject == NULL) || (*subject == '\0') ) {
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("216"));
+    return 1;
+  }
+    
+  /* make the vacation directory */
+  snprintf (fn, sizeof(fn), "%s/vacation", dir);
+  mkdir (fn, 0750);
+
+  fprintf (d, "| %s/autorespond 86400 3 %s/vacation/message %s/vacation\n",
+    AUTORESPOND_PATH, dir, dir );
+      
+  /* set up the message file */
+  snprintf(fn, sizeof(fn), "%s/vacation/message", dir);
+  GetValue(TmpCGI, Message, "vmessage=", sizeof(Message));
+
+  if ( (f = fopen(fn, "w")) == NULL ) {
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", get_html_text("150"), fn);
+    return 1;
+  }
+  fprintf(f, "From: %s@%s\n", ActionUser, Domain);
+  fprintf(f, "Subject: %s\n\n%s", subject, Message);
+  fclose(f);
+
+  return 0;
+}
+
 void modusergo()
 {
  char *tmpstr;
  int ret_code;
  struct vqpasswd *vpw=NULL;
  static char box[500];
+ char cforward[50];
  static char NewBuf[156];
+ char dotqmailfn[156];
 #ifdef MODIFY_QUOTA
  char *quotaptr;
  char qconvert[11];
@@ -741,6 +779,18 @@ void modusergo()
  int count;
  FILE *fs;
  int spam_check = 0;
+ int vacation = 0;
+ int saveacopy = 0;
+ int emptydotqmail;
+ char *olddotqmail = NULL;
+ char *dotqmailline;
+ struct stat sb;
+ int err;
+
+ const char *flagfields[] = { "zeroflag=", "oneflag=", "twoflag=", "threeflag=" };
+ const gid_t gidflags[] = { V_USER0, V_USER1, V_USER2, V_USER3 };
+ gid_t orig_gid;
+ int i;
 
   if (!( AdminType==DOMAIN_ADMIN ||
          (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
@@ -800,213 +850,158 @@ ActionUser, Domain ); */
 #endif
 
   GetValue(TmpCGI,Gecos, "gecos=", sizeof(Gecos));
-  if ( strlen( Gecos ) != 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gecos = Gecos;
-    vauth_setpw(vpw, Domain);
-  }
+
+  vpw = vauth_getpw (ActionUser, Domain);
 
   /* check for the V_USERx flags and set accordingly */
-  /* James Raftery <james@now.ie>, 12 Dec. 2002 */
-  GetValue(TmpCGI,box, "zeroflag=", sizeof(box));
-  if ( strcmp(box,"on") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid |= V_USER0;
-    vauth_setpw(vpw, Domain);
-  } else if ( strcmp(box,"off") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid &= ~V_USER0;
-    vauth_setpw(vpw, Domain);
+  /* new code by Tom Collins <tom@tomlogic.com>, Dec 2004 */
+  /* replaces code by James Raftery <james@now.ie>, 12 Dec. 2002 */
+
+  orig_gid = vpw->pw_gid;
+  for (i = 0; i < 4; i++) {
+    GetValue (TmpCGI, box, (char *) flagfields[i], sizeof (box));
+    if (strcmp (box, "on") == 0)
+      vpw->pw_gid |= gidflags[i];
+    else if (strcmp (box, "off") == 0)
+      vpw->pw_gid &= ~gidflags[i];
   }
-  GetValue(TmpCGI,box, "oneflag=", sizeof(box));
-  if ( strcmp(box,"on") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid |= V_USER1;
-    vauth_setpw(vpw, Domain);
-  } else if ( strcmp(box,"off") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid &= ~V_USER1;
-    vauth_setpw(vpw, Domain);
-  }
-  GetValue(TmpCGI,box, "twoflag=", sizeof(box));
-  if ( strcmp(box,"on") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid |= V_USER2;
-    vauth_setpw(vpw, Domain);
-  } else if ( strcmp(box,"off") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid &= ~V_USER2;
-    vauth_setpw(vpw, Domain);
-  }
-  GetValue(TmpCGI,box, "threeflag=", sizeof(box));
-  if ( strcmp(box,"on") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid |= V_USER3;
-    vauth_setpw(vpw, Domain);
-  } else if ( strcmp(box,"off") == 0 ) {
-    vpw = vauth_getpw(ActionUser, Domain); 
-    vpw->pw_gid &= ~V_USER3;
-    vauth_setpw(vpw, Domain);
-  }
+
+  /* we're trying to cut down on unnecessary updates to the password entry
+   * we accomplish this by only updating if the pw_gid or gecos changed
+   */
+
+  if ((*Gecos != '\0') && (strcmp (Gecos, vpw->pw_gecos) != 0)) {
+    vpw->pw_gecos = Gecos;
+    vauth_setpw(vpw, Domain);  
+  } else if (vpw->pw_gid != orig_gid) vauth_setpw (vpw, Domain);
 
   /* get value of the spam filter box */
-  GetValue(TmpCGI,box, "spamcheck=", sizeof(box));
-  if ( strcmp(box,"on") == 0 ) spam_check = 1;
+  GetValue(TmpCGI, box, "spamcheck=", sizeof(box));
+  if ( strcmp(box, "on") == 0 ) spam_check = 1;
+
+  /* get the value of the vacation checkbox */
+  GetValue(TmpCGI, box, "vacation=", sizeof(box));
+  if ( strcmp(box, "on") == 0 ) vacation = 1;
+    
+  /* if they want to save a copy */
+  GetValue(TmpCGI, box, "fsaved=", sizeof(box));
+  if ( strcmp(box,"on") == 0 ) saveacopy = 1;
 
   /* get the value of the cforward radio button */
-  GetValue(TmpCGI,box, "cforward=", sizeof(box));
+  GetValue(TmpCGI, cforward, "cforward=", sizeof(cforward));
+  if ( strcmp(cforward, "vacation") == 0 ) vacation = 1;
   
-  /* if they want to disable everything */
-  if ( strcmp(box,"disable") == 0 ) {
-
-    /* unlink the .qmail file */
-    if ( vpw == NULL ) vpw = vauth_getpw(ActionUser, Domain); 
-    snprintf(NewBuf,sizeof(NewBuf),"%s/.qmail", vpw->pw_dir);
-    unlink(NewBuf);
-
-    /* if the mail is to be checked for spam, rewrite the file with command */
-    if( spam_check == 1 ) {
-       fs = fopen(NewBuf, "w+");
-       fprintf(fs, "%s\n", SPAM_COMMAND);
-       fclose(fs);
+  /* open old .qmail file if it exists and load it into memory */
+  snprintf (dotqmailfn, sizeof(dotqmailfn), "%s/.qmail", vpw->pw_dir);
+  err = stat (dotqmailfn, &sb);
+  if (err == 0) {
+    olddotqmail = malloc (sb.st_size);
+    if (olddotqmail != NULL) {
+      fs = fopen (dotqmailfn, "r");
+      if (fs != NULL) {
+        fread (olddotqmail, sb.st_size, 1, fs);
+        fclose (fs);
+      }
     }
+  }
+  if (olddotqmail == NULL) {
+    olddotqmail = "";
+  }
+  
+  fs = fopen (dotqmailfn, "w");
+  
+  /* Scan through old .qmail and write out any unrecognized program delivery
+   * lines to the new .qmail file.
+   */
+  emptydotqmail = 1;
+  dotqmailline = strtok (olddotqmail, "\n");
+  while (dotqmailline) {
+    if ( (*dotqmailline == '|') &&
+        (strstr (dotqmailline, "/true delete") == NULL) &&
+        (strstr (dotqmailline, "/autorespond ") == NULL) &&
+        (strstr (dotqmailline, SPAM_COMMAND) == NULL) ) {
+      fprintf (fs, "%s\n", dotqmailline);
+      emptydotqmail = 0;
+    }
+    dotqmailline = strtok (NULL, "\n");
+  }
+  if (olddotqmail != NULL) free (olddotqmail);
 
-    /* delete any vacation directory */
-    snprintf(NewBuf,sizeof(NewBuf),"%s/vacation", vpw->pw_dir);
-    vdelfiles(NewBuf);
+  /* Decide on what to write to the new .qmail file after any old program
+   * delivery lines are written.
+   */
 
+  err = 0;
+  
+  /* note that we consider a .qmail file with just Maildir delivery to be empty
+   * since it can be removed.
+   */
+   
   /* if they want to forward */
-  } else if (strcmp(box,"forward") == 0 ) {
+  if (strcmp (cforward, "forward") == 0 ) {
 
     /* get the value of the foward */
-    GetValue(TmpCGI,box, "nforward=", sizeof(box));
+    GetValue(TmpCGI, box, "nforward=", sizeof(box));
 
     /* If nothing was entered, error */
     if ( box[0] == 0 ) {
       snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("215"));
-      moduser();
-      vclose();
-      exit(0);
+      err = 1;
+    } else {
 
-    /* check it for a valid email address
-    } else if ( check_email_addr( box ) == 1 )  {
-      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("148"));
-      moduser();
-    */
-    }
+      tmpstr = strtok(box," ,;\n");
 
-    /* everything looks good, open the file */
-    if ( vpw == NULL ) {
-      vpw = vauth_getpw(ActionUser, Domain); 
-    }
-    snprintf(NewBuf,sizeof(NewBuf),"%s/.qmail", vpw->pw_dir);
+      /* tmpstr points to first non-token */
 
-    fs = fopen(NewBuf,"w+");
-    tmpstr = strtok(box," ,;\n");
-
-    /* tmpstr points to first non-token */
-
-    count=0;
-    while( tmpstr != NULL && count < MAX_FORWARD_PER_USER) {
-      if ((*tmpstr != '|') && (*tmpstr != '/')) {
-        fprintf(fs,"&%s\n", tmpstr);
-        ++count;
+      count=0;
+      while( tmpstr != NULL && count < MAX_FORWARD_PER_USER) {
+        if ((*tmpstr != '|') && (*tmpstr != '/')) {
+          fprintf(fs, "&%s\n", tmpstr);
+          emptydotqmail = 0;
+          ++count;
+        }
+        tmpstr = strtok(NULL," ,;\n");
       }
-      tmpstr = strtok(NULL," ,;\n");
+
     }
-
-    /* if they want to save a copy */
-    GetValue(TmpCGI,box, "fsaved=", sizeof(box));
-    if ( strcmp(box,"on") == 0 ) {
-      if( spam_check == 1 ) {
-        /* if spam check is enabled, that will save the message*/
-        fprintf(fs, "%s\n", SPAM_COMMAND);
-      } else {
-        fprintf(fs,"%s/" MAILDIR "/\n", vpw->pw_dir);
-      }
-    } 
-    fclose(fs);
-
-  /* they want vacation */
-  } else if (strcmp(box,"vacation") == 0 ) {
-
-    /* get the subject */
-    GetValue(TmpCGI,box, "vsubject=", sizeof(box));
-
-    /* if no subject, error */
-    if ( box[0] == 0 ) {
-      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("216"));
-      moduser();
-      vclose();
-      exit(0);
-    }
- 
-    /* make the vacation directory */
-    if ( vpw == NULL ) vpw = vauth_getpw(ActionUser, Domain); 
-    snprintf(NewBuf,sizeof(NewBuf),"%s/vacation", vpw->pw_dir);
-    mkdir(NewBuf, 0750);
-
-    /* open the .qmail file */
-    snprintf(NewBuf,sizeof(NewBuf),"%s/.qmail", vpw->pw_dir);
-    fs = fopen(NewBuf,"w+");
-
-    /* save a copy for the user (if checking for spam, it will keep a copy)*/
-    if(spam_check==1)
-       fprintf(fs, "%s\n", SPAM_COMMAND);
-    else
-      fprintf(fs,"%s/" MAILDIR "/\n", vpw->pw_dir);
-
-    fprintf(fs, "| %s/autorespond 86400 3 %s/vacation/message %s/vacation\n",
-      AUTORESPOND_PATH, vpw->pw_dir, vpw->pw_dir );
-
-    fclose(fs);
-
-    /* set up the message file */
-    snprintf(NewBuf,sizeof(NewBuf),"%s/vacation/message", vpw->pw_dir);
-    GetValue(TmpCGI,Message, "vmessage=",sizeof(Message));
-
-    if ( (fs = fopen(NewBuf, "w")) == NULL ) ack("150", NewBuf);
-    fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
-    fprintf(fs, "Subject: %s\n\n", box);
-    fprintf(fs, "%s", Message);
-    fclose(fs);
-
-    /* save the forward for vacation too */
-    GetValue(TmpCGI,box,"nforward=", sizeof(box));
-    snprintf(NewBuf, sizeof(NewBuf), "%s/.qmail", vpw->pw_dir);
-    fs = fopen(NewBuf, "a+");
-    tmpstr = strtok(box, " ,;\n");
-    count = 0;
-    while( tmpstr != NULL && count < 2 ) {
-      fprintf(fs, "&%s\n", tmpstr);
-      tmpstr = strtok(NULL, " ,;\n");
-      ++count;
-    }
-    fclose(fs);
-
-  /* they want to blackhole */
-  /* James Raftery <james@now.ie>, 21 May 2003 */
-  } else if (strcmp(box,"blackhole") == 0 ) {
-
-    /* open the .qmail file */
-    snprintf(NewBuf,sizeof(NewBuf),"%s/.qmail", vpw->pw_dir);
-    fs = fopen(NewBuf,"w");
-
-    /* we use '# delete' since comments are ignored in vdelivermail, 
-     * but qmailadmin looks for ' delete' to know that it's a
-     * blackhole account. */
-    fprintf(fs, "# delete\n");
-
-    fclose(fs);
-
-  } else {
-    /* is this an error conditition? none of radios selected? */
-    printf("nothing\n");
   }
 
+  if ( (strcmp (cforward, "forward") != 0) || saveacopy ) {
+
+    if (strcmp (cforward, "blackhole") == 0) {
+      fprintf (fs, "# delete\n");
+      emptydotqmail = 0;
+    } else if (spam_check == 1) {
+      fprintf (fs, "%s\n", SPAM_COMMAND);
+      emptydotqmail = 0;
+    } else {
+      fprintf (fs, "%s/" MAILDIR "/\n", vpw->pw_dir);
+      /* this isn't enough to consider the .qmail file non-empty */
+    }
+  }
+
+  if (vacation) {
+    err = makevacation (fs, vpw->pw_dir);
+    emptydotqmail = 0;
+  } else {
+    /* delete old vacation directory */
+    snprintf (NewBuf, sizeof(NewBuf), "%s/vacation", vpw->pw_dir);
+    vdelfiles (NewBuf);
+  }
+
+  fclose (fs);
+  if (emptydotqmail) unlink (dotqmailfn);
+
+  if (err) {
+    moduser();
+    vclose();
+    exit(0);
+  }
+  
   call_hooks(HOOK_MODUSER, ActionUser, Domain, Password1, Gecos);
   moduser();
 }
+
 
 /* display ##i0 - ##i9 macros */
 void parse_users_dotqmail (char newchar)
@@ -1049,6 +1044,7 @@ void parse_users_dotqmail (char newchar)
           case '\0':	/* blank line, ignore */
             break;
             
+          case '.':
           case '/':	/* maildir delivery */
             /* see if it's the user's maildir */
             if (1)
@@ -1090,32 +1086,29 @@ void parse_users_dotqmail (char newchar)
       }
 
       /* if other flags were set, in addition to blackhole, clear blackhole flag */
-      if (dotqmail_flags & ~DOTQMAIL_BLACKHOLE)
+      if ( dotqmail_flags & (DOTQMAIL_FORWARD | DOTQMAIL_SAVECOPY) )
         dotqmail_flags &= ~DOTQMAIL_BLACKHOLE;
       
       /* if no flags were set (.qmail file without delivery), it's a blackhole */	
       if (dotqmail_flags == 0)
         dotqmail_flags = DOTQMAIL_BLACKHOLE;
 
-      /* if unrecognized programs were all that was set, consider it standard */
-      if (dotqmail_flags == DOTQMAIL_OTHERPGM)
-        dotqmail_flags = DOTQMAIL_STANDARD;
-        
       /* clear OTHERPGM flag, as it tells us nothing at this point */
       dotqmail_flags &= ~DOTQMAIL_OTHERPGM;
       
-      /* if forward and save-a-copy are set, it will actually set the spam flag? */
+      /* if forward and save-a-copy are set, it will actually set the spam flag */
       if ((dotqmail_flags & DOTQMAIL_FORWARD) && (dotqmail_flags & DOTQMAIL_SPAMCHECK))
         dotqmail_flags |= DOTQMAIL_SAVECOPY;
 
-      /* if vacation is set, it will set save a copy as well, so we clear it */
-      if (dotqmail_flags & DOTQMAIL_VACATION)
+      /* if forward is not set, clear save-a-copy */
+      if (! (dotqmail_flags & DOTQMAIL_FORWARD))
         dotqmail_flags &= ~DOTQMAIL_SAVECOPY;
+
     }
     
-    /* if only spam detection was set, it's standard delivery */        
+    /* if deleted and forward aren't set, */        
     /* default to standard delivery */
-    if (! (dotqmail_flags & ~DOTQMAIL_SPAMCHECK))
+    if (! (dotqmail_flags & (DOTQMAIL_BLACKHOLE | DOTQMAIL_FORWARD)) )
       dotqmail_flags |= DOTQMAIL_STANDARD;	
   }  
 

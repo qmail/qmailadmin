@@ -18,40 +18,24 @@ function enablefields(txt)
   {
     document.forms[0].nforward.disabled=true;
     document.forms[0].fsaved.disabled=true;
-    document.forms[0].vsubject.disabled=true;
-    document.forms[0].vmessage.disabled=true;
 ##ts document.forms[0].spamcheck.disabled=false; ##tt
   }
   else if (txt=="forward")
   {
     document.forms[0].nforward.disabled=false;
     document.forms[0].fsaved.disabled=false;
-    document.forms[0].vsubject.disabled=true;
-    document.forms[0].vmessage.disabled=true;
-##ts document.forms[0].spamcheck.disabled=false; ##tt
-  }
-  else if (txt=="vacation")
-  {
-    document.forms[0].nforward.disabled=true;
-    document.forms[0].fsaved.disabled=true;
-    document.forms[0].vsubject.disabled=false;
-    document.forms[0].vmessage.disabled=false;
 ##ts document.forms[0].spamcheck.disabled=false; ##tt
   }
   else if (txt=="blackhole")
   {
     document.forms[0].nforward.disabled=true;
     document.forms[0].fsaved.disabled=true;
-    document.forms[0].vsubject.disabled=true;
-    document.forms[0].vmessage.disabled=true;
 ##ts document.forms[0].spamcheck.disabled=true; ##tt
   }
   else
   {
     document.forms[0].nforward.disabled=false;
     document.forms[0].fsaved.disabled=false;
-    document.forms[0].vsubject.disabled=false;
-    document.forms[0].vmessage.disabled=false;
 ##ts document.forms[0].spamcheck.disabled=false; ##tt
   }
 }
@@ -125,16 +109,12 @@ function GetSelected()
           <input type="radio" name="cforward"
 onClick="document.forms[0].nforward.disabled=true;
 document.forms[0].fsaved.disabled=true;
-document.forms[0].vsubject.disabled=true;
-document.forms[0].vmessage.disabled=true;
 ##ts document.forms[0].spamcheck.disabled=false; ##tt"
 value="disable" ##i0> ##X205
 <HR>
           <input type="radio" name="cforward"
 onClick="document.forms[0].nforward.disabled=true;
 document.forms[0].fsaved.disabled=true;
-document.forms[0].vsubject.disabled=true;
-document.forms[0].vmessage.disabled=true;
 ##ts document.forms[0].spamcheck.disabled=true; ##tt"
 value="blackhole" ##i8> ##X303
 <HR>
@@ -143,28 +123,21 @@ onClick="document.forms[0].nforward.disabled=false;
 document.forms[0].fsaved.disabled=false;
 document.forms[0].nforward.select()
 document.forms[0].nforward.focus()
-document.forms[0].vsubject.disabled=true;
-document.forms[0].vmessage.disabled=true;
 ##ts document.forms[0].spamcheck.disabled=false; ##tt"
 value="forward" ##i1>&nbsp;##X211&nbsp;<input type="text" size="35" name="nforward" 
 value="##i2"><BR>
 &nbsp; &nbsp; <input type="checkbox" name="fsaved" ##i3> ##X210&nbsp;
-<HR>
-        <input type="radio" name="cforward"
-onClick="document.forms[0].vsubject.disabled=false;
-document.forms[0].vmessage.disabled=false;
-document.forms[0].vsubject.select()
-document.forms[0].vsubject.focus()
-document.forms[0].fsaved.disabled=true;
-document.forms[0].nforward.disabled=true;
-##ts document.forms[0].spamcheck.disabled=false; ##tt"
-value="vacation" ##i4> ##X212<BR>
-        ##X213&nbsp;<input type="text" name="vsubject" size="50" value="##i5">
-<BR>##X214&nbsp;<BR>
-<textarea name="vmessage" rows="10" cols="60">##i6</textarea>
         </td>
       </tr>
       </table><HR>
+        <input type="checkbox" name="vacation"
+onClick="document.forms[0].vsubject.select()
+document.forms[0].vsubject.focus()"
+value="on" ##i4> ##X212<BR>
+        ##X213&nbsp;<input type="text" name="vsubject" size="50" value="##i5">
+<BR>##X214&nbsp;<BR>
+<textarea name="vmessage" rows="10" cols="60">##i6</textarea>
+<HR>
       <table cellpadding="1" cellspacing="1" border="0">
 ##ts
       <tr>

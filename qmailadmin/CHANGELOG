@@ -30,6 +30,7 @@ patch or information related to the entry.
 	- Fix enable-htmllibdir option in configure.in. [812535]
 	- Check result of getenv() so we don't strdup(NULL). [800326]
 	- Add 'Reply-To' to headerremove when setting Reply-To. [810670]
+	- Add depcomp script, now required by automake/autoconf?
 
 1.0.27 - released 9-Sep-03
 

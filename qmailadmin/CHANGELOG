@@ -1,7 +1,7 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.0.30 - unreleased
+1.2.0-pre1 - unreleased
 
 	Tom Collins
 	- More updates related to build process. [826594]
@@ -12,6 +12,7 @@ patch or information related to the entry.
 	  lines, don't require entries for all hooks, pass proper 
 	  parameters to hook program, update documentation). [855707]
 	- Use VPOPMAIL_UMASK instead of hardcoded 0077.
+	- Better lstat() error messages in template.c.
 
 1.0.29 - released 20-Nov-03
 

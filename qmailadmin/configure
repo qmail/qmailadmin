@@ -1016,7 +1016,7 @@ echo "$ac_t""$host" 1>&6
 
 
 QA_PACKAGE="qmailadmin"
-QA_VERSION="1.0.30"
+QA_VERSION="1.2.0-pre1"
 
 cat >> confdefs.h <<EOF
 #define QA_PACKAGE "$QA_PACKAGE"

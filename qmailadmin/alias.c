@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.2 2004-04-24 01:03:07 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.3 2004-04-24 01:06:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -622,7 +622,7 @@ deldotqmailnow()
 
   /* don't display aliases/forwards if we just deleted the last one */
   count_forwards();
-  if(CurForwards == 0) {
+  if(CurForwards == 0 && CurBlackholes == 0) {
     show_menu(Username, Domain, Mytime);
   } else {
     show_forwards(Username,Domain,Mytime,RealDir);

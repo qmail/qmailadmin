@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.1 2004-04-24 01:06:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,7 @@ int DisableRelay;
 
 int CurPopAccounts;
 int CurForwards;
+int CurBlackholes;
 int CurAutoResponders;
 int CurMailingLists;
 uid_t Uid;

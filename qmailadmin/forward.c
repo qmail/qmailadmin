@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.2.2.1 2004-02-02 00:39:47 tomcollins Exp $
+ * $Id: forward.c,v 1.2.2.2 2004-04-24 01:06:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ int show_forwards(char *user, char *dom, time_t mytime, char *dir)
 
   count_forwards();
 
-  if(CurForwards == 0) {
+  if(CurForwards == 0 && CurBlackholes == 0) {
     sprintf(StatusMessage,"%s", get_html_text("232"));
     show_menu(Username, Domain, Mytime);
     vclose();
@@ -64,11 +64,12 @@ int count_forwards()
  int isforward;
 
   CurForwards = 0;
+  CurBlackholes = 0;
 
   alias_line = valias_select_all (alias_name, Domain);
   while (alias_line != NULL) {
     strcpy (this_alias, alias_name);
-    if (*alias_line == '#') { /* blackhole++ */ }
+    if (*alias_line == '#') { CurBlackholes++; }
     else {
       char *p1, *p2;
       int isforward;

@@ -67,6 +67,7 @@ extern int DisableRelay;
 
 extern int CurPopAccounts;
 extern int CurForwards;
+extern int CurBlackholes;
 extern int CurAutoResponders;
 extern int CurMailingLists;
 

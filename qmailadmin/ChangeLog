@@ -12,6 +12,9 @@ patch or information related to the entry.
 	- Switch to using new pw_flags field in auth.c.
 	- Set permissions on html templates and lang files to 644 (not 755).
 
+	Jussi Siponen
+	- Add Finnish translation. [879032]
+
 1.2.0-rc2 - released 1-Jan-04
 
 	Tom Collins

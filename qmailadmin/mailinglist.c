@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.8 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: mailinglist.c,v 1.9 2004-02-01 02:13:56 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -652,7 +652,7 @@ int show_list_group_now(int mod)
     fprintf(actout," <TR>\n");
     fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(Buffer3), subuser_count);
     fprintf(actout," </TR>\n");
-    fprintf(actout," <TR align=center bgcolor=%s>\n", get_color_text("002"));
+    fprintf(actout," <TR align=center bgcolor=\"#cccccc\">\n");
     fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer2));
     fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer1));
     fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer2));
@@ -930,18 +930,6 @@ modmailinglistnow()
   sprintf(StatusMessage, "%s %s@%s\n", get_html_text("226"),
     ActionUser, Domain);
   show_mailing_lists(Username, Domain, Mytime);
-}
-
-build_list_value(char *param, char *color, char *opt1, char *desc1, char *opt2, char *desc2, int checked)
-{
-  fprintf(actout, "<tr bgcolor=%s>\n", get_color_text(color));
-  fprintf(actout, "  <td>\n");
-  fprintf(actout, "    <input type=radio name=%s value=%s%s></td>\n", param, opt1, checked ? "" : " CHECKED");
-  fprintf(actout, "  <td>%s</td>\n", get_html_text(desc1));
-  fprintf(actout, "  <td>\n");
-  fprintf(actout, "    <input type=radio name=%s value=%s%s></td>\n", param, opt2, checked ? " CHECKED" : "");
-  fprintf(actout, "  <td>%s</td>\n", get_html_text(desc2));
-  fprintf(actout, "</tr>\n");
 }
 
 build_option_str (char *type, char *param, char *options, char *description)

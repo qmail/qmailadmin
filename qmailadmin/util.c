@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.9 2004-02-01 00:50:28 rwidmer Exp $
+ * $Id: util.c,v 1.10 2004-02-01 02:13:56 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -522,36 +522,6 @@ char *get_html_text( char *index )
   return("");
 }
 
-int open_colortable()
-{
- static char tmpbuf[200];
- char *tmpstr;
-
-  tmpstr = getenv(QMAILADMIN_TEMPLATEDIR);
-  if (tmpstr == NULL ) tmpstr = HTMLLIBDIR;
-
-  snprintf(tmpbuf, sizeof(tmpbuf), "%s/html/colortable", tmpstr);
-  if ( (color_table=fopen(tmpbuf, "r"))==NULL) return(-1);
-  return(0);
-}
-
-char *get_color_text( char *index )
-{
- static char tmpbuf[400];
- char *tmpstr;
-
-  if (color_table == NULL) return("");
-
-  rewind(color_table);
-  while(fgets(tmpbuf,sizeof(tmpbuf),color_table)!=NULL){
-    tmpstr = strtok(tmpbuf, " ");
-    if (strcmp(tmpstr, index) == 0 ) {
-      tmpstr = strtok(NULL, "\n");
-      return(tmpstr);
-    }    
-  }
-  return("");
-}
 /* bk - use maildir++ quotas now
 char *get_quota_used(char *dir) {
     char *tmpstr;

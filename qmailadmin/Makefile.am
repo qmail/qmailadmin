@@ -67,7 +67,6 @@ install-data-local:
 	rm -rf                   $(DESTDIR)@htmllibdir@/html
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/html 
 	cp $(srcdir)/html/*.html $(DESTDIR)@htmllibdir@/html
-	cp $(srcdir)/html/colortable $(DESTDIR)@htmllibdir@/html
 	chmod 755                $(DESTDIR)@htmllibdir@/html
 	chmod 644                $(DESTDIR)@htmllibdir@/html/*
 	rm -rf                   $(DESTDIR)@htmllibdir@/lang

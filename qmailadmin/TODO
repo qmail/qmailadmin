@@ -12,11 +12,12 @@ CSS support in templates.
 Look through archives for other todo items, and add them
 to this list.
 
-Verify we are actually using the latest build system, and that
-all patches have been added.  Check for patches between RC1 and
-final, and verify they exist in new code.
-
 Eliminate as many global variables as possible.
+
+Remove the last HTML from the c program.  It is only found in 
+mailinglist.c because of the double nested if in the program
+logic.  Need to find a way to eliminate the nesting, or allow
+for it in ##t when it is upgraded.
 
 Move session handling from time based to a MD5 hash of some
 random data.  Move the session files into a single directory

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.10 2004-01-31 11:08:00 rwidmer Exp $
+ * $Id: qmailadmin.c,v 1.11 2004-02-01 02:13:56 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,6 @@ char uBufL[MAX_BUFF];
 
 /*   not in qmailadminx.h   */
 FILE *lang_fs;
-FILE *color_table;
 
 void del_id_files( char *);
 int create_session_file( char *ip_addr, char *domaindir);
@@ -237,7 +236,6 @@ main(argc,argv)
 
   init_globals();
   if( open_lang()) errors += 1;
-  if( open_colortable()) errors += 2;
   get_parms();  
   get_my_ip( ip_addr );
 

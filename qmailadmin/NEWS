@@ -12,6 +12,17 @@ batches, in the same order they were created.
 
 #################################################################
 
+Moving forward...
+
+Remove colortable.  There is very little hard coded html left,
+so there is no need to change its color.  Hard coded html is 
+currently only in mailinglist, and that will be removed soon.
+
+Remove obsolete function build_list_value() from mailinglist.c.
+
+
+#################################################################
+
 The final (hopefully) update :
 
 Change the version in configure

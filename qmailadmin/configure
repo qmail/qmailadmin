@@ -12,31 +12,31 @@ ac_help=
 ac_default_prefix=/usr/local
 # Any additions from configure.in:
 ac_help="$ac_help
-  --enable-vpopmaildir=dir  Home directory of vpopmail."
+  --enable-vpopmaildir=DIR  Home directory of vpopmail."
 ac_help="$ac_help
-  --enable-htmldir={dir}    HTTP server's base html dir."
+  --enable-htmldir=DIR      HTTP server's base html dir."
 ac_help="$ac_help
-  --enable-cgibindir={dir}  HTTP server's cgi-bin directory."
+  --enable-cgibindir=DIR    HTTP server's cgi-bin directory."
 ac_help="$ac_help
-  --enable-imageurl={url}   URL to image files [/images/qmailadmin]."
+  --enable-imageurl=URL     URL to image files [/images/qmailadmin]."
 ac_help="$ac_help
-  --enable-imagedir={dir}   Where to put the image files [DocumentRoot/images/qmailadmin]."
+  --enable-imagedir=DIR     Where to put the image files [DocumentRoot/images/qmailadmin]."
 ac_help="$ac_help
-  --enable-htmllibdir={dir} qmailadmin HTML library directory."
+  --enable-htmllibdir=DIR   qmailadmin HTML library directory."
 ac_help="$ac_help
-  --enable-qmaildir={dir}   directory where qmail is installed."
+  --enable-qmaildir=DIR     directory where qmail is installed."
 ac_help="$ac_help
-  --enable-true-path={path} Path to 'true' binary."
+  --enable-true-path=PATH   Path to 'true' binary."
 ac_help="$ac_help
-  --enable-ezmlmdir={path}  Path to ezmlm binaries or =n to disable."
+  --enable-ezmlmdir=PATH    Path to ezmlm binaries or =n to disable."
 ac_help="$ac_help
-  --enable-cgipath={path}   URL path for cgi [/cgi-bin/qmailadmin]."
+  --enable-cgipath=PATH     URL path for cgi [/cgi-bin/qmailadmin]."
 ac_help="$ac_help
-  --enable-autoresponder-path={path} Path to autoresponder directory."
+  --enable-autoresponder-path=PATH   Path to autoresponder directory."
 ac_help="$ac_help
-  --enable-vpopuser=[user]      User vpopmail was installed as [vpopmail]."
+  --enable-vpopuser=USER        User vpopmail was installed as [vpopmail]."
 ac_help="$ac_help
-  --enable-vpopgroup=[group]    Group vpopmail was installed as [vchkpw]."
+  --enable-vpopgroup=GROUP      Group vpopmail was installed as [vchkpw]."
 ac_help="$ac_help
   --disable-ezmlm-mysql         Disable MySQL options for mailing lists."
 ac_help="$ac_help
@@ -56,7 +56,7 @@ ac_help="$ac_help
 ac_help="$ac_help
   --enable-modify-spam  Allow users to enable/disable spam checking."
 ac_help="$ac_help
-  --enable-spam-command={cmd}   Remember to use '|preline' at the beginning, [|preline /usr/local/bin/maildrop /etc/mailfilter]."
+  --enable-spam-command=CMD     Remember to use '|preline' at the beginning, [|preline /usr/local/bin/maildrop /etc/mailfilter]."
 ac_help="$ac_help
   --enable-help  Display help links on login page."
 

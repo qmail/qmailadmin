@@ -59,7 +59,7 @@ do
     fi
 done
 
-AC_ARG_ENABLE(vpopmaildir, [  --enable-vpopmaildir=dir  Home directory of vpopmail.],
+AC_ARG_ENABLE(vpopmaildir, [  --enable-vpopmaildir=DIR  Home directory of vpopmail.],
     vpopmaildir="$enableval",
     [
         if test "$vpopmaildir" = ""
@@ -82,7 +82,7 @@ do
         htmldir=$f
     fi
 done
-AC_ARG_ENABLE(htmldir, [  --enable-htmldir={dir}    HTTP server's base html dir.],
+AC_ARG_ENABLE(htmldir, [  --enable-htmldir=DIR      HTTP server's base html dir.],
     htmldir="$enableval",
     [
         if test "$htmldir" = ""
@@ -103,7 +103,7 @@ do
     fi
 done
 
-AC_ARG_ENABLE(cgibindir, [  --enable-cgibindir={dir}  HTTP server's cgi-bin directory.],
+AC_ARG_ENABLE(cgibindir, [  --enable-cgibindir=DIR    HTTP server's cgi-bin directory.],
     cgibindir="$enableval",
     [
         if test "$cgibindir" = ""
@@ -114,7 +114,7 @@ AC_ARG_ENABLE(cgibindir, [  --enable-cgibindir={dir}  HTTP server's cgi-bin dire
 AC_SUBST(cgibindir)
 
 imageurl="/images/qmailadmin"
-AC_ARG_ENABLE(imageurl, [  --enable-imageurl={url}   URL to image files [/images/qmailadmin].],
+AC_ARG_ENABLE(imageurl, [  --enable-imageurl=URL     URL to image files [/images/qmailadmin].],
     imageurl="$enableval",
     [
         if test "$imageurl" = ""
@@ -133,7 +133,7 @@ do
         imagedir=$f$imageurl
     fi
 done
-AC_ARG_ENABLE(imagedir, [  --enable-imagedir={dir}   Where to put the image files [DocumentRoot/images/qmailadmin].],
+AC_ARG_ENABLE(imagedir, [  --enable-imagedir=DIR     Where to put the image files [DocumentRoot/images/qmailadmin].],
     imagedir="$enableval",
     [
         if test "$imagedir" = ""
@@ -145,7 +145,7 @@ AC_SUBST(imagedir)
 
 htmllibdir="/usr/local/share/qmailadmin/"
 
-AC_ARG_ENABLE(htmllibdir, [  --enable-htmllibdir={dir} qmailadmin HTML library directory.],
+AC_ARG_ENABLE(htmllibdir, [  --enable-htmllibdir=DIR   qmailadmin HTML library directory.],
     htmllibdir="$enableval",
     [
         if test "$htmllibdir" = ""
@@ -166,7 +166,7 @@ do
     fi
 done
 
-AC_ARG_ENABLE(qmaildir, [  --enable-qmaildir={dir}   directory where qmail is installed.],
+AC_ARG_ENABLE(qmaildir, [  --enable-qmaildir=DIR     directory where qmail is installed.],
     qmaildir="$enableval",
     [
         if test "$qmaildir" = ""
@@ -184,7 +184,7 @@ do
         true_path=$f
     fi
 done
-AC_ARG_ENABLE(true-path, [  --enable-true-path={path} Path to 'true' binary.],
+AC_ARG_ENABLE(true-path, [  --enable-true-path=PATH   Path to 'true' binary.],
     true_path="$enableval",
     [
         if test "$true_path" = ""
@@ -203,7 +203,7 @@ do
     fi
 done
 
-AC_ARG_ENABLE(ezmlmdir, [  --enable-ezmlmdir={path}  Path to ezmlm binaries or =n to disable.],
+AC_ARG_ENABLE(ezmlmdir, [  --enable-ezmlmdir=PATH    Path to ezmlm binaries or =n to disable.],
     ezmlmdir="$enableval",
     [
         if test "$ezmlmdir" = ""
@@ -215,7 +215,7 @@ AC_DEFINE_UNQUOTED(EZMLMDIR,"$ezmlmdir","")
 
 cgipath="/cgi-bin/qmailadmin"
 
-AC_ARG_ENABLE(cgipath, [  --enable-cgipath={path}   URL path for cgi [/cgi-bin/qmailadmin].],
+AC_ARG_ENABLE(cgipath, [  --enable-cgipath=PATH     URL path for cgi [/cgi-bin/qmailadmin].],
     cgipath="$enableval",
     [
         if test "$cgipath" = ""
@@ -233,7 +233,7 @@ do
         autorespond_path=$f
     fi
 done
-AC_ARG_ENABLE(autoresponder-path, [  --enable-autoresponder-path={path} Path to autoresponder directory.],
+AC_ARG_ENABLE(autoresponder-path, [  --enable-autoresponder-path=PATH   Path to autoresponder directory.],
 AC_ARG_ENABLE(autoresponder-bin, [], autorespond_path="$enableval", [])
     autorespond_path="$enableval",
     [
@@ -245,7 +245,7 @@ AC_ARG_ENABLE(autoresponder-bin, [], autorespond_path="$enableval", [])
 AC_DEFINE_UNQUOTED(AUTORESPOND_PATH,"$autorespond_path","")
 
 vpopuser="vpopmail"
-AC_ARG_ENABLE(vpopuser, [  --enable-vpopuser=[user]      User vpopmail was installed as [vpopmail].],
+AC_ARG_ENABLE(vpopuser, [  --enable-vpopuser=USER        User vpopmail was installed as [vpopmail].],
     vpopuser="$enableval",
     [
         if test "$vpopuser" = ""
@@ -257,7 +257,7 @@ AC_DEFINE_UNQUOTED(VPOPUSER,"$vpopuser","")
 AC_SUBST(vpopuser)
    
 vpopgroup="vchkpw"
-AC_ARG_ENABLE(vpopgroup, [  --enable-vpopgroup=[group]    Group vpopmail was installed as [vchkpw].],
+AC_ARG_ENABLE(vpopgroup, [  --enable-vpopgroup=GROUP      Group vpopmail was installed as [vchkpw].],
     vpopgroup="$enableval",
     [
         if test "$vpopgroup" = ""
@@ -382,7 +382,7 @@ case $MODIFY_SPAM in
 esac
 
 spam_command="|preline /usr/local/bin/maildrop /etc/mailfilter"
-AC_ARG_ENABLE(spam_command, [  --enable-spam-command={cmd}   Remember to use '|preline' at the beginning, [|preline /usr/local/bin/maildrop /etc/mailfilter].],
+AC_ARG_ENABLE(spam_command, [  --enable-spam-command=CMD     Remember to use '|preline' at the beginning, [|preline /usr/local/bin/maildrop /etc/mailfilter].],
     spam_command="$enableval",
 )
 AC_DEFINE_UNQUOTED(SPAM_COMMAND, "$spam_command","")

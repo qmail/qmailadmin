@@ -32,7 +32,7 @@ document.logon.newu.focus();
         <!-- Form fields -->
         <tr>
          <td>
-          <form method="post" name="logon" action="##C/com/addusernow">
+          <form method="post" name="logon" action="##C/com/addusernow?##&">
            <table cellpadding="0" cellspacing="0" border="0">
             <tr>
              <td align=right><b>##X002:&nbsp;</b></td>
@@ -66,19 +66,15 @@ document.logon.newu.focus();
 ##tt
            </table>
            ##c
-           <input type="hidden" name="do.login" value="Add">
-           <input type="hidden" name="user" value="##U">
-           <input type="hidden" name="dom" value="##D">
-           <input type="hidden" name="time" value="##T">
            <input type="submit" value="##X060" name="##X060">
           </form>
           <div align="right">
            <hr>
            <font size="2"><b>
            [&nbsp;
-           <a href="##C/com/showusers?user=##U&dom=##D&time=##T&">##X061</a>
+           <a href="##C/com/showusers?##&">##X061</a>
            &nbsp;|&nbsp;
-           <a href="##C/com/showmenu?user=##U&dom=##D&time=##T&">##X001</a>
+           <a href="##C/com/showmenu?##&">##X001</a>
            &nbsp;|&nbsp;
 ##x
            &nbsp;]

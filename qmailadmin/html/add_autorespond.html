@@ -32,7 +32,7 @@ document.addautorespond.newu.focus();
         <!-- Form fields -->
         <tr>
          <td align="left">
-          <form method="post" name="addautorespond" action="##C/com/addautorespondnow">
+          <form method="post" name="addautorespond" action="##C/com/addautorespondnow?##&">
            <table cellpadding="0" cellspacing="0" border="0">
             <tr>
              <td align="right"><b>##X004&nbsp;</b></td>
@@ -48,18 +48,15 @@ document.addautorespond.newu.focus();
             </tr>
            </table>
            <textarea cols="80" rows="10" name="message"></textarea>
-           <input type="hidden" name="user" value="##U">
-           <input type="hidden" name="dom" value="##D">
-           <input type="hidden" name="time" value="##T">
            <input type="submit" value="##X060" name="##X060">
           </form>
           <div align="right">
            <hr>
            <font size="2"><b>
            [&nbsp;
-           <a href="##C/com/showautoresponders?user=##U&dom=##D&time=##T&">##X077</a>
+           <a href="##C/com/showautoresponders?##&">##X077</a>
            &nbsp;|&nbsp;
-           <a href="##C/com/showmenu?user=##U&dom=##D&time=##T&">##X001</a>
+           <a href="##C/com/showmenu?##&">##X001</a>
            &nbsp;|&nbsp;
 ##x
            &nbsp;]

@@ -1,5 +1,5 @@
 /* 
- * $Id: printh.c,v 1.1.2.1 2004-11-10 05:24:11 tomcollins Exp $
+ * $Id: printh.c,v 1.1.2.2 2004-11-14 18:05:55 tomcollins Exp $
  * Copyright (C) 2004 Tom Logic LLC 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@
  *   format - a printf-style format string*
  *   ...    - variable arguments for the format string
  *
- *  NOTE: Currently supported formats: %%, %s, %d/%i, %u, %ld/%li, %lu
+ *  NOTE: Currently supported formats: %%, %c, %s, %d/%i, %u, %ld/%li, %lu
  *  Since this function was designed to escape strings for use on HTML pages,
  *  the formats don't support any extended options.
  *
@@ -89,6 +89,10 @@ int vsnprinth (char *buffer, size_t size, const char *format, va_list ap)
 			switch (*f) {
 				case '%':
 					strcpy (n, "%");
+					break;
+					
+				case 'c':
+					snprintf (n, sizeof(n), "%c", va_arg (ap, int));
 					break;
 					
 				case 'd':
@@ -148,7 +152,7 @@ int vsnprinth (char *buffer, size_t size, const char *format, va_list ap)
 				} else if (stringtype == SPRINTH_CGI) {
 					if (*s == ' ')
 						copy = strcpy (n, "+");
-					else if (! isalnum(*s)) {
+					else if (! isalnum(*s) && (strchr("._-", *s) == NULL)) {
 						copy = n;
 						sprintf (n, "%%%c%c", hex[*s >> 4 & 0x0F], hex[*s & 0x0F]);
 					}

@@ -1,5 +1,5 @@
 /* 
- * $Id: cgi.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: cgi.c,v 1.2.2.1 2004-11-14 18:05:54 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,15 @@ get_cgi()
 {
  int count;
  int i,j;
-
+ char *qs;
+ int qslen = 0;
+ 
+  qs = getenv("QUERY_STRING");
+  if (qs != NULL) qslen = strlen (qs);
   count = atoi( safe_getenv("CONTENT_LENGTH"));
 
-  TmpCGI = malloc(count+1);
-  memset(TmpCGI,0,count+1);
+  TmpCGI = malloc(count+qslen+2);
+  memset(TmpCGI,0,count+qslen+2);
 
   i = 0;
   do {
@@ -45,8 +49,17 @@ get_cgi()
     if ( j >= 0 ) i += j;
     else break;
   } while (j > 0 && i < count );
+  
+  /* append query string to end */
+  if (qslen > 0) {
+    sprintf (&TmpCGI[i], "&%s", qs);
+  }
+  
 }
 
+/* source is encoded cgi parameters, name is "fieldname="
+ * copies value of fieldname into dest
+ */
 int GetValue(source,dest,name,dest_max)
  char *source;
  char *dest;
@@ -55,11 +68,14 @@ int GetValue(source,dest,name,dest_max)
 {
  int i,j,k;
 
-
   memset(dest,0,dest_max);
-  for(i=0; strstart(&source[i],name)!=&source[i] && source[i]!=0; ++i);
+  for (i = 0; source[i] != '\0'; i++) {
+    if ((i == 0) || (source[i-1] == '&')) {
+      if (strstart (&source[i], name) != NULL) break;
+    }
+  }
 
-  if( source[i] != 0 ) {
+  if( source[i] != '\0' ) {
     i+=strlen(name);
   } else {
     return( -1 );
@@ -88,5 +104,8 @@ int GetValue(source,dest,name,dest_max)
     dest[k] = 0;
     --k;
   }
+
+  /* uncomment next line to dump cgi values to error log */
+//  fprintf (stderr, "%s%s\n", name, dest);
   return(0);
 }

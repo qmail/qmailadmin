@@ -32,7 +32,7 @@ document.modautorespond.owner.focus();
         <!-- Form fields -->
         <tr>
          <td>
-          <form method="post" name="modautorespond" action="##C/com/modautorespondnow">
+          <form method="post" name="modautorespond" action="##C/com/modautorespondnow?##&">
            <table cellpadding="0" cellspacing="0" border="0">
             <tr>
              <td align=right><b>##X004</b>&nbsp;</td>
@@ -42,18 +42,15 @@ document.modautorespond.owner.focus();
              <td align=right><b>##X005</b>&nbsp;</td>
              <td><input type="text" size="40" name="owner" maxlength="128" ##F
            <input type="hidden" name="newu" value="##A">
-           <input type="hidden" name="user" value="##U">
-           <input type="hidden" name="dom" value="##D">
-           <input type="hidden" name="time" value="##T">
            <input type="submit" name="do.login" value="##X105">
           </form>
           <div align="right">
            <hr>
            <font size="2"><b>
            [&nbsp;
-           <a href="##C/com/showautoresponders?user=##U&dom=##D&time=##T&">##X077</a>
+           <a href="##C/com/showautoresponders?##&">##X077</a>
            &nbsp;|&nbsp;
-           <a href="##C/com/showmenu?user=##U&dom=##D&time=##T&">##X001</a>
+           <a href="##C/com/showmenu?##&">##X001</a>
            &nbsp;|&nbsp;
 ##x
            &nbsp;]

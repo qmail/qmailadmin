@@ -34,7 +34,7 @@ document.modmailinglistnow.listowner.focus();
         <!-- Form fields -->
         <tr>
          <td align="left">
-          <form method="get" name="modmailinglistnow" action="##C/com/modmailinglistnow">
+          <form method="post" name="modmailinglistnow" action="##C/com/modmailinglistnow?##&">
            <table cellpadding="0" cellspacing="0" border="0">
             <tr>
              <td ALIGN=RIGHT><b>##X017</b></td>
@@ -48,18 +48,15 @@ document.modmailinglistnow.listowner.focus();
 <!-- options for the mailing list -->
 ##E
            <input type="hidden" name="newu" value="##A">
-           <input type="hidden" name="user" value="##U">
-           <input type="hidden" name="dom" value="##D">
-           <input type="hidden" name="time" value="##T">
            <DIV ALIGN=RIGHT><input type="submit" name="##X071" value="##X071"></DIV> 
           </form>
           <div align="right">
            <hr>
            <font size="2"><b>
            [&nbsp;
-           <a href="##C/com/showmailinglists?user=##U&dom=##D&time=##T&">##X080</a>
+           <a href="##C/com/showmailinglists?##&">##X080</a>
            &nbsp;|&nbsp;
-           <a href="##C/com/showmenu?user=##U&dom=##D&time=##T&">##X001</a>
+           <a href="##C/com/showmenu?##&">##X001</a>
            &nbsp;|&nbsp;
 ##x
            &nbsp;]

@@ -13,6 +13,12 @@ patch or information related to the entry.
 	  will now display properly.)
 	- Add printh.c, new routines for generating HTML-safe and CGI-safe
 	  strings.
+	- Convert sprintf calls to snprintf to avoid buffer overflow.
+	- Changes to almost all .c and .html files to make use of printh
+	  routines.  QmailAdmin should now properly handle email addresses
+	  that contain special characters (like '+' and '&'), including
+	  domain admin addresses.  It now also escapes user-supplied text
+	  to avoid possible HTML-insertion and cross site scripting attacks.
 
 1.2.3 - released 7-Oct-04
 

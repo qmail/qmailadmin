@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.3.2.1 2004-02-02 00:39:47 tomcollins Exp $
+ * $Id: autorespond.c,v 1.3.2.2 2004-11-14 18:05:54 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ show_autoresponders(user,dom,mytime,dir)
   count_autoresponders();
 
   if(CurAutoResponders == 0) {
-    sprintf(StatusMessage,"%s", get_html_text("233"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("233"));
     show_menu(Username, Domain, Mytime);
   } else {
     send_template( "show_autorespond.html" );
@@ -69,23 +69,23 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
   sort_dosort();
 
   for (i = 0; addr = sort_get_entry(i); ++i) {
-    fprintf(actout, "<tr>");
+    printf ("<tr>");
     
-    fprintf(actout, "<td align=\"center\">");
-    fprintf(actout, "<a href=\"%s/com/delautorespond?user=%s&dom=%s&time=%d&modu=%s\">",
-      CGIPATH,user,dom,mytime,addr);
-    fprintf(actout, "<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
-    fprintf(actout, "</td>");
+    printf ("<td align=\"center\">");
+    printh ("<a href=\"%s/com/delautorespond?user=%C&dom=%C&time=%d&modu=%C\">",
+      CGIPATH, user, dom, mytime, addr);
+    printf ("<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
+    printf ("</td>");
 
-    fprintf(actout, "<td align=\"center\">");
-    fprintf(actout, "<a href=\"%s/com/modautorespond?user=%s&dom=%s&time=%d&modu=%s\">",
-      CGIPATH,user,dom,mytime,addr);
-    fprintf(actout, "<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
-    fprintf(actout, "</td>");
+    printf ("<td align=\"center\">");
+    printh ("<a href=\"%s/com/modautorespond?user=%C&dom=%C&time=%d&modu=%C\">",
+      CGIPATH, user, dom, mytime, addr);
+    printf ("<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
+    printf ("</td>");
 
-    fprintf(actout, "<td align=\"left\">%s@%s</td>", addr, Domain);
+    printh ("<td align=\"left\">%H@%H</td>", addr, Domain);
     
-    fprintf(actout, "</tr>\n");
+    printf ("</tr>\n");
   }
   sort_cleanup();
 }
@@ -94,7 +94,7 @@ addautorespond()
 {
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
@@ -102,7 +102,7 @@ addautorespond()
   count_autoresponders();
   load_limits();
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
-    fprintf(actout, "%s %d\n", get_html_text("158"), MaxAutoResponders);
+    printf ("%s %d\n", get_html_text("158"), MaxAutoResponders);
     show_menu();
     vclose();
     exit(0);
@@ -119,7 +119,7 @@ addautorespondnow()
  struct vqpasswd *vpw;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
@@ -127,54 +127,33 @@ addautorespondnow()
   count_autoresponders();
   load_limits();
   if ( MaxAutoResponders != -1 && CurAutoResponders >= MaxAutoResponders ) {
-    fprintf(actout, "%s %d\n", get_html_text("158"), MaxAutoResponders);
+    printf ("%s %d\n", get_html_text("158"), MaxAutoResponders);
     show_menu();
     vclose();
     exit(0);
   }
 
-  if ( fixup_local_name(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("174"), ActionUser);
+  *StatusMessage = '\0';
+  
+  if ( fixup_local_name(ActionUser) )
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("174"), ActionUser);
+  else if ( check_local_user(ActionUser) )
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("175"), ActionUser);
+  else if ( strlen(ActionUser) == 0 )
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("176"));
+  else if ( strlen(Newu)>0 && check_email_addr(Newu) )
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("177"), Newu);
+  else if (strlen(Alias) <= 1)
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("178"), ActionUser);
+  else if (strlen(Message) <= 1)
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("179"), ActionUser);
+
+  /* if there was an error, go back to the add screen */
+  if (*StatusMessage != '\0') {
     addautorespond();
     vclose();
     exit(0);
   }
-
-  if ( check_local_user(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("175"), ActionUser);
-    addautorespond();
-    vclose();
-    exit(0);
-  }
-
-  if ( strlen(ActionUser) == 0 ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("176"));
-    addautorespond();
-    vclose();
-    exit(0);
-  }
-
-  if ( strlen(Newu)>0 && check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("177"), Newu);
-    addautorespond();
-    vclose();
-    exit(0);
-  }
-
-  if (strlen(Alias) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("178"), ActionUser);
-    addautorespond();
-    vclose();
-    exit(0);
-  }
-
-  if (strlen(Message) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("179"), ActionUser);
-    addautorespond();
-    vclose();
-    exit(0);
-  }
-
 
   /*
    * Make the autoresponder directory
@@ -209,15 +188,15 @@ addautorespondnow()
   /*
    * Report success
    */
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("180"),
-    ActionUser, Domain);
+  snprinth (StatusMessage, sizeof(StatusMessage), "%s %H@%H\n",
+    get_html_text("180"), ActionUser, Domain);
   show_autoresponders(Username, Domain, Mytime);
 }
 
 delautorespond()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
@@ -230,7 +209,7 @@ delautorespondnow()
  int pid;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
@@ -250,7 +229,7 @@ delautorespondnow()
   /* delete the autoresponder directory */
   sprintf(TmpBuf, "%s/%s", RealDir, TmpBuf2);
   vdelfiles(TmpBuf);
-  sprintf(StatusMessage, "%s %s\n", get_html_text("182"), ActionUser);
+  snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("182"), ActionUser);
 
   count_autoresponders();
 
@@ -264,7 +243,7 @@ delautorespondnow()
 modautorespond()
 {
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
@@ -280,39 +259,28 @@ modautorespondnow()
  struct vqpasswd *vpw;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
 
-  if ( fixup_local_name(ActionUser) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("174"), ActionUser);
+  *StatusMessage = '\0';
+  
+  if ( fixup_local_name(ActionUser) )
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("174"), ActionUser);
+  else if ( strlen(Newu)>0 && check_email_addr(Newu) )
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("177"), Newu);
+  else if (strlen(Alias) <= 1)
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("178"), ActionUser);
+  else if (strlen(Message) <= 1)
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("179"), ActionUser);
+
+  /* exit on errors */
+  if (*StatusMessage != '\0') {
     modautorespond();
     vclose();
     exit(0);
   }
-
-  if ( strlen(Newu)>0 && check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("177"), Newu);
-    modautorespond();
-    vclose();
-    exit(0);
-  }
-
-  if (strlen(Alias) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("178"), ActionUser);
-    modautorespond();
-    vclose();
-    exit(0);
-  }
-
-  if (strlen(Message) <= 1) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("179"), ActionUser);
-    modautorespond();
-    vclose();
-    exit(0);
-  }
-
 
   /*
    * Make the autoresponder directory
@@ -347,8 +315,8 @@ modautorespondnow()
   /*
    * Report success
    */
-  sprintf(StatusMessage, "%s %s@%s\n", get_html_text("183"),
-    ActionUser, Domain);
+  snprinth (StatusMessage, sizeof(StatusMessage), "%s %H@%H\n",
+    get_html_text("183"), ActionUser, Domain);
   show_autoresponders(Username, Domain, Mytime);
 }
 

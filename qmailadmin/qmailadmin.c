@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.2 2004-10-19 15:44:40 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.3 2004-11-14 18:05:55 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -226,20 +226,20 @@ main(argc,argv)
 
          pw = vauth_user( Username, Domain, Password, "" );
          if ( pw == NULL ) { 
-           sprintf(StatusMessage, "%s\n", get_html_text("198"));
+           snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("198"));
            show_login();
            vclose();
            exit(0);
          }
 
-         sprintf(TmpBuf, "%s/" MAILDIR, pw->pw_dir);
+         snprintf (TmpBuf, sizeof(TmpBuf), "%s/" MAILDIR, pw->pw_dir);
          del_id_files( TmpBuf);
 
          Mytime = time(NULL);
-         sprintf(TmpBuf, "%s/" MAILDIR "/%d.qw", pw->pw_dir, Mytime);
+         snprintf (TmpBuf, sizeof(TmpBuf), "%s/" MAILDIR "/%d.qw", pw->pw_dir, Mytime);
          fs = fopen(TmpBuf, "w");
          if ( fs == NULL ) {
-           fprintf(actout,"%s %s<br>\n", get_html_text("144"), TmpBuf);
+           printf ("%s %s<br>\n", get_html_text("144"), TmpBuf);
            vclose();
            exit(0);
          }
@@ -247,7 +247,7 @@ main(argc,argv)
          /* set session vars */
          GetValue(TmpCGI, returntext, "returntext=", sizeof(returntext));
          GetValue(TmpCGI, returnhttp, "returnhttp=", sizeof(returnhttp));
-         sprintf(TmpBuf, "ip_addr=%s&returntext=%s&returnhttp=%s\n",
+         snprinth (TmpBuf, sizeof(TmpBuf), "ip_addr=%C&returntext=%C&returnhttp=%C\n",
                  ip_addr, returntext, returnhttp); 
          fputs(TmpBuf,fs); 
         // fputs(ip_addr, fs);
@@ -386,14 +386,14 @@ init_globals()
 
   umask(VPOPMAIL_UMASK);
 
-  fprintf(actout,"Content-Type: text/html\n");
+  printf ("Content-Type: text/html\n");
 #ifdef NO_CACHE
-  fprintf(actout,"Cache-Control: no-cache\n"); 
-  fprintf(actout,"Cache-Control: no-store\n"); 
-  fprintf(actout,"Pragma: no-cache\n"); 
-  fprintf(actout,"Expires: Thu, 01 Dec 1994 16:00:00 GMT\n");
+  printf ("Cache-Control: no-cache\n"); 
+  printf ("Cache-Control: no-store\n"); 
+  printf ("Pragma: no-cache\n"); 
+  printf ("Expires: Thu, 01 Dec 1994 16:00:00 GMT\n");
 #endif    
-  fprintf(actout,"\n"); 
+  printf ("\n"); 
 }
 
 void del_id_files( char *dirname )
@@ -407,7 +407,7 @@ void del_id_files( char *dirname )
 
   while((mydirent=readdir(mydir))!=NULL){
     if ( strstr(mydirent->d_name,".qw")!=0 ) {
-      sprintf(TmpBuf3, "%s/%s", dirname, mydirent->d_name);
+      snprintf (TmpBuf3, sizeof(TmpBuf3), "%s/%s", dirname, mydirent->d_name);
       unlink(TmpBuf3);
     }
   }

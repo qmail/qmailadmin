@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3.2.2 2004-10-19 15:44:40 tomcollins Exp $
+ * $Id: auth.c,v 1.3.2.3 2004-11-14 18:05:54 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,24 +43,24 @@ auth_system(ip_addr, pw)
  char ip_value[MAX_BUFF];
  
   if( chdir(RealDir) < 0 ){
-    sprintf(StatusMessage, "%s %s\n", get_html_text("171"), RealDir);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", get_html_text("171"), RealDir);
     show_login();
     vclose();
     exit(0);
   }
 
-  sprintf(TmpBuf1, "%s/" MAILDIR "/%s.qw", pw->pw_dir, Time);
+  snprintf(TmpBuf1, sizeof(TmpBuf1), "%s/" MAILDIR "/%s.qw", pw->pw_dir, Time);
 
   fs = fopen(TmpBuf1, "r");
   if ( fs == NULL ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("172"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("172"));
     show_login();
     vclose();
     exit(0);
   } 
 
   if ( fgets(TmpBuf, sizeof(TmpBuf), fs) == NULL ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 4);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 4);
     vclose();
     exit(0);
   }
@@ -70,7 +70,7 @@ auth_system(ip_addr, pw)
   GetValue(TmpBuf, ip_value, "ip_addr=", sizeof(ip_value)); 
   if ( strcmp(ip_addr, ip_value) != 0 ) {
     unlink(TmpBuf1);
-    sprintf(StatusMessage,"invalid\n");
+    strcpy (StatusMessage, "invalid\n");
     show_login();
     vclose();
     exit(0);
@@ -80,7 +80,7 @@ auth_system(ip_addr, pw)
   time1 = atoi(Time); time2 = time(NULL);
   if ( time2 > time1 + 7200 ) {
     unlink(TmpBuf1);
-    sprintf(StatusMessage, "%s\n", get_html_text("173"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("173"));
     show_login();
     vclose();
     exit(0);
@@ -97,24 +97,24 @@ auth_user_domain(ip_addr,pw)
  char ip_value[MAX_BUFF];
 
   if ( chdir(RealDir) < 0 ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("171"), RealDir );
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", get_html_text("171"), RealDir );
     show_login();
     vclose();
     exit(0);
   }
 
-  sprintf(TmpBuf1, "%s/" MAILDIR "/%s.qw", pw->pw_dir, Time);
+  snprintf(TmpBuf1, sizeof(TmpBuf1), "%s/" MAILDIR "/%s.qw", pw->pw_dir, Time);
 
   fs = fopen(TmpBuf1, "r");
   if ( fs == NULL ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("172"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("172"));
     show_login();
     vclose();
     exit(0);
   } 
 
   if ( fgets(TmpBuf, sizeof(TmpBuf), fs) == NULL ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 5);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("150"), 5);
     vclose();
     exit(0);
   }
@@ -124,7 +124,8 @@ auth_user_domain(ip_addr,pw)
   GetValue(TmpBuf, ip_value, "ip_addr=", sizeof(ip_value)); 
   if ( strcmp(ip_addr, ip_value) != 0 ) {
     unlink(TmpBuf1);
-    sprintf(StatusMessage, "%s %d (%s != %s)\n", get_html_text("150"), 6, ip_addr, ip_value);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d (%s != %s)\n",
+      get_html_text("150"), 6, ip_addr, ip_value);
     show_login();
     vclose();
     exit(0);
@@ -134,7 +135,7 @@ auth_user_domain(ip_addr,pw)
   time1 = atoi(Time); time2 = time(NULL);
   if ( time2 > time1 + 7200 ) {
     unlink(TmpBuf1);
-    sprintf(StatusMessage, "%s\n", get_html_text("173"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("173"));
     show_login();
     vclose();
     exit(0);

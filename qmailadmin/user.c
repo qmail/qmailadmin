@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.3 2004-11-11 07:21:49 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.4 2004-11-14 18:05:55 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   /* Get the default catchall box name */
   if ((fs=fopen(".qmail-default","r")) == NULL) {
     /* report error opening .qmail-default and exit */
-    fprintf(actout,"<tr><td colspan=\"%i\">%s .qmail-default</tr></td>", 
+    printf ("<tr><td colspan=\"%i\">%s .qmail-default</tr></td>", 
       colspan, get_html_text("144"));
     vclose();
     exit(0);
@@ -97,7 +97,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
       pw = vauth_getall(dom,0,0);
     }
 
-    if (k == 0) sprintf(Pagenumber, "1");
+    if (k == 0) strcpy (Pagenumber, "1");
     else sprintf(Pagenumber, "%d", (k/MAXUSERSPERPAGE)+1);
   }
 
@@ -149,7 +149,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
   }
 
   if (pw == NULL) {
-    fprintf(actout, "<tr><td colspan=\"%i\" bgcolor=%s>%s</td></tr>\n", 
+    printf ("<tr><td colspan=\"%i\" bgcolor=%s>%s</td></tr>\n", 
       colspan, get_color_text("000"), get_html_text("131"));
       moreusers = 0;
     } else {
@@ -162,28 +162,28 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           long diskquota = 0, maxmsg = 0;
 
           /* display account name and user name */
-          fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-          fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_name);
-          fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_gecos);
+          printf ("<tr bgcolor=%s>", get_color_text("000"));
+          printh ("<td align=\"left\">%H</td>", pw->pw_name);
+          printh ("<td align=\"left\">%H</td>", pw->pw_gecos);
 
           /* display user's quota */
 	  snprintf(path, sizeof(path), "%s/" MAILDIR, pw->pw_dir);
           readuserquota(path, &diskquota, &maxmsg);
-          fprintf(actout, "<td align=\"right\">%-2.2lf&nbsp;/&nbsp;</td>", ((double)diskquota)/1048576.0);  /* Convert to MB */
+          printf ("<td align=\"right\">%-2.2lf&nbsp;/&nbsp;</td>", ((double)diskquota)/1048576.0);  /* Convert to MB */
           if (strncmp(pw->pw_shell, "NOQUOTA", 2) != 0) {
               if(quota_to_megabytes(qconvert, pw->pw_shell)) {
-                  fprintf(actout, "<td align=\"left\">(BAD)</td>");
+                  printf ("<td align=\"left\">(BAD)</td>");
               }
-              else { fprintf(actout, "<td align=\"left\">%s</td>", qconvert); }
+              else { printf ("<td align=\"left\">%s</td>", qconvert); }
           }
-          else { fprintf(actout, "<td align=\"left\">%s</td>", get_html_text("229")); }
+          else { printf ("<td align=\"left\">%s</td>", get_html_text("229")); }
 
           /* display button to modify user */
-          fprintf(actout, "<td align=\"center\">");
-          fprintf(actout, "<a href=\"%s/com/moduser?user=%s&dom=%s&time=%d&moduser=%s\">",
+          printf ("<td align=\"center\">");
+          printh ("<a href=\"%s/com/moduser?user=%C&dom=%C&time=%d&moduser=%C\">",
             CGIPATH,user,dom,mytime,pw->pw_name);
-          fprintf(actout, "<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
-          fprintf(actout, "</td>");
+          printf ("<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
+          printf ("</td>");
             
           /* if the user has admin privileges and pw->pw_name is not 
            * the user or postmaster, allow deleting 
@@ -199,33 +199,33 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           }
 
           /* display trashcan for delete, or nothing if delete not allowed */
-          fprintf(actout, "<td align=\"center\">");
+          printf ("<td align=\"center\">");
           if (allowdelete) {
-            fprintf(actout, "<a href=\"%s/com/deluser?user=%s&dom=%s&time=%d&deluser=%s\">",
+            printh ("<a href=\"%s/com/deluser?user=%C&dom=%C&time=%d&deluser=%C\">",
               CGIPATH,user,dom,mytime,pw->pw_name);
-            fprintf(actout, "<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
+            printf ("<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
           } else {
-            /* fprintf(actout, "<img src=\"%s/disabled.png\" border=\"0\">", IMAGEURL); */
+            /* printf ("<img src=\"%s/disabled.png\" border=\"0\">", IMAGEURL); */
           }
-          fprintf(actout, "</td>");
+          printf ("</td>");
 
           /* display button in the 'set catchall' column */
-          fprintf(actout, "<td align=\"center\">");
+          printf ("<td align=\"center\">");
           if (bounced==0 && strncmp(pw->pw_name,TmpBuf3,sizeof(TmpBuf3)) == 0) {
-            fprintf(actout, "<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
+            printf ("<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
               IMAGEURL);
           } else if (AdminType==DOMAIN_ADMIN) {
-            fprintf(actout, "<a href=\"%s/com/setdefault?user=%s&dom=%s&time=%d&deluser=%s&page=%s\">",
+            printh ("<a href=\"%s/com/setdefault?user=%C&dom=%C&time=%d&deluser=%C&page=%s\">",
               CGIPATH,user,dom,mytime,pw->pw_name,Pagenumber);
-            fprintf(actout, "<img src=\"%s/radio-off.png\" border=\"0\"></a>",
+            printf ("<img src=\"%s/radio-off.png\" border=\"0\"></a>",
               IMAGEURL);
           } else {
-            fprintf(actout, "<img src=\"%s/disabled.png\" border=\"0\">",
+            printf ("<img src=\"%s/disabled.png\" border=\"0\">",
               IMAGEURL);
           }
-          fprintf(actout, "</td>");
+          printf ("</td>");
 
-          fprintf(actout, "</tr>\n");
+          printf ("</tr>\n");
         }        
         pw = vauth_getall(dom,0,0);
         ++k;
@@ -234,80 +234,71 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
 
     if (AdminType == DOMAIN_ADMIN) {
 #ifdef USER_INDEX
-      fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-      fprintf(actout, "<td colspan=\"%i\" align=\"center\">", colspan);
-      fprintf(actout, "<hr>");
-      fprintf(actout, "<b>%s</b>", get_html_text("133"));
-      fprintf(actout, "<br>");
-      for (k = 97; k < 123; k++) {
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&searchuser=%c\">%c</a>\n",
+      printf ("<tr bgcolor=%s>", get_color_text("000"));
+      printf ("<td colspan=\"%i\" align=\"center\">", colspan);
+      printf ("<hr>");
+      printf ("<b>%s</b>", get_html_text("133"));
+      printf ("<br>");
+      for (k = 'a'; k <= 'z'; k++) {
+        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&searchuser=%c\">%c</a>\n",
           CGIPATH,user,dom,mytime,k,k);
       }
-      fprintf(actout, "<br>");
+      printf ("<br>");
       for (k = 0; k < 10; k++) {
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&searchuser=%d\">%d</a>\n",
+        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&searchuser=%d\">%d</a>\n",
           CGIPATH,user,dom,mytime,k,k);
       }
-      fprintf(actout, "</td>");
-      fprintf(actout, "</tr>\n");
+      printf ("</td>");
+      printf ("</tr>\n");
 
-      fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-      fprintf(actout, "<td colspan=%i>", colspan);
-      fprintf(actout, "<table border=0 cellpadding=3 cellspacing=0 width=\"100%%\"><tr><td align=\"center\"><br>");
-      fprintf(actout, "<form method=\"get\" action=\"%s/com/showusers\">", 
-        CGIPATH);
-      fprintf(actout, "<input type=\"hidden\" name=\"user\" value=\"%s\">", 
-        user);
-      fprintf(actout, "<input type=\"hidden\" name=\"dom\" value=\"%s\">", 
-        dom);
-      fprintf(actout, "<input type=\"hidden\" name=\"time\" value=\"%d\">", 
-        mytime);
-      fprintf(actout, "<input type=\"text\" name=\"searchuser\" value=\"%s\">&nbsp;", SearchUser);
-      fprintf(actout, "<input type=\"submit\" value=\"%s\">", 
-        get_html_text("204"));
-      fprintf(actout, "</form>");
-      fprintf(actout, "</td></tr></table>");
-      fprintf(actout, "<hr>");
-      fprintf(actout, "</td></tr>\n");
+      printf ("<tr bgcolor=%s>", get_color_text("000"));
+      printf ("<td colspan=%i>", colspan);
+      printf ("<table border=0 cellpadding=3 cellspacing=0 width=\"100%%\"><tr><td align=\"center\"><br>");
+      printf ("<form method=\"get\" action=\"%s/com/showusers\">", CGIPATH);
+      printh ("<input type=\"hidden\" name=\"user\" value=\"%H\">", user);
+      printh ("<input type=\"hidden\" name=\"dom\" value=\"%H\">", dom);
+      printf ("<input type=\"hidden\" name=\"time\" value=\"%d\">", mytime);
+      printh ("<input type=\"text\" name=\"searchuser\" value=\"%H\">&nbsp;", SearchUser);
+      printf ("<input type=\"submit\" value=\"%s\">", get_html_text("204"));
+      printf ("</form>");
+      printf ("</td></tr></table>");
+      printf ("<hr>");
+      printf ("</td></tr>\n");
 #endif
 
-      fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
-      fprintf(actout, "<td colspan=\"%i\" align=\"right\">", colspan);
+      printf ("<tr bgcolor=%s>", get_color_text("000"));
+      printf ("<td colspan=\"%i\" align=\"right\">", colspan);
 #ifdef USER_INDEX
-      fprintf(actout, "<font size=\"2\"><b>");
-      fprintf(actout, "[&nbsp;");
+      printf ("<font size=\"2\"><b>");
+      printf ("[&nbsp;");
       /* only display "previous page" if pagenumber > 1 */
       if (atoi(Pagenumber) > 1) {
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
+        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
           CGIPATH,user,dom,mytime,
           atoi(Pagenumber)-1 ? atoi(Pagenumber)-1 : atoi(Pagenumber), 
           get_html_text("135"));
-        fprintf(actout, "&nbsp;|&nbsp");
+        printf ("&nbsp;|&nbsp");
       }
-/*
-        fprintf(actout, "<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&page=%s\">%s</a>",
-            CGIPATH,user,dom,mytime,Pagenumber,get_html_text("136"));
-*/
 
       if (moreusers && atoi(Pagenumber) < totalpages) {
-        fprintf(actout,"<a href=\"%s/com/showusers?user=%s&dom=%s&time=%d&page=%d\">%s</a>",
+        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
           CGIPATH,user,dom,mytime,atoi(Pagenumber)+1,
           get_html_text("137"));
-        fprintf(actout, "&nbsp;|&nbsp");
+        printf ("&nbsp;|&nbsp");
       }
-/*        fprintf(actout, "&nbsp;|&nbsp");*/
+/*        printf ("&nbsp;|&nbsp");*/
 #endif
-      fprintf(actout, "<a href=\"%s/com/deleteall?user=%s&dom=%s&time=%d\">%s</a>", 
+      printh ("<a href=\"%s/com/deleteall?user=%C&dom=%C&time=%d\">%s</a>", 
         CGIPATH,user,dom,mytime,get_html_text("235"));
-      fprintf(actout, "&nbsp;|&nbsp");
-      fprintf(actout, "<a href=\"%s/com/bounceall?user=%s&dom=%s&time=%d\">%s</a>", 
+      printf ("&nbsp;|&nbsp");
+      printh ("<a href=\"%s/com/bounceall?user=%C&dom=%C&time=%d\">%s</a>", 
         CGIPATH,user,dom,mytime,get_html_text("134"));
-      fprintf(actout, "&nbsp;|&nbsp");
-      fprintf(actout, "<a href=\"%s/com/setremotecatchall?user=%s&dom=%s&time=%d\">%s</a>", 
+      printf ("&nbsp;|&nbsp");
+      printh ("<a href=\"%s/com/setremotecatchall?user=%C&dom=%C&time=%d\">%s</a>", 
         CGIPATH,user,dom,mytime,get_html_text("206"));
-      fprintf(actout, "&nbsp]");
-      fprintf(actout, "</b></font>");
-      fprintf(actout, "</td></tr>\n");
+      printf ("&nbsp]");
+      printf ("</b></font>");
+      printf ("</td></tr>\n");
   }
   return 0;
 }
@@ -318,13 +309,13 @@ adduser()
   load_limits();
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
                                                 
   if ( MaxPopAccounts != -1 && CurPopAccounts >= MaxPopAccounts ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("199"),
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("199"),
       MaxPopAccounts);
     show_menu();
     vclose();
@@ -339,7 +330,7 @@ moduser()
 {
   if (!( AdminType==DOMAIN_ADMIN ||
         (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
@@ -376,13 +367,13 @@ addusernow()
   load_limits();
 
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
 
   if ( MaxPopAccounts != -1 && CurPopAccounts >= MaxPopAccounts ) {
-    sprintf(StatusMessage, "%s %d\n", get_html_text("199"),
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", get_html_text("199"),
       MaxPopAccounts);
     show_menu();
     vclose();
@@ -392,14 +383,14 @@ addusernow()
   GetValue(TmpCGI,Newu, "newu=", sizeof(Newu));
 
   if ( fixup_local_name(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("148"), Newu);
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", get_html_text("148"), Newu);
     adduser();
     vclose();
     exit(0);
   } 
 
   if ( check_local_user(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("175"), Newu);
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("175"), Newu);
     adduser();
     vclose();
     exit(0);
@@ -411,7 +402,7 @@ addusernow()
   GetValue(TmpCGI,Password1, "password1=", sizeof(Password1));
   GetValue(TmpCGI,Password2, "password2=", sizeof(Password2));
   if ( strcmp( Password1, Password2 ) != 0 ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("200"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("200"));
     adduser();
     vclose();
     exit(0);
@@ -419,7 +410,7 @@ addusernow()
 
 #ifndef ENABLE_LEARN_PASSWORDS
   if ( strlen(Password1) <= 0 ) {
-    sprintf(StatusMessage, "%s\n", get_html_text("234"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("234"));
     adduser();
     vclose();
     exit(0);
@@ -436,14 +427,14 @@ addusernow()
   GetValue(TmpCGI, c_num, "number_of_mailinglist=", MAX_BUFF);
   num = atoi(c_num);
   if(!(mailingListNames = malloc(sizeof(char *) * num))) {
-    sprintf(StatusMessage, "%s\n", get_html_text("201"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("201"));
     vclose();
     exit(0);
 
   } else {
     for(cnt = 0; cnt < num; cnt++) {
       if(!(mailingListNames[cnt] = malloc(MAX_BUFF))) {
-        sprintf(StatusMessage, "%s\n", get_html_text("201"));
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("201"));
         vclose();
         exit(0);
       }
@@ -484,7 +475,7 @@ addusernow()
       vsetuserquota (Newu, Domain, "NOQUOTA");
     } else if ( Quota[0] != 0 ) {
       if(quota_to_bytes(qconvert, Quota)) { 
-        sprintf(StatusMessage, get_html_text("314"));
+        snprintf (StatusMessage, sizeof(StatusMessage), get_html_text("314"));
       } else {
         vsetuserquota (Newu, Domain, qconvert);
       }
@@ -502,13 +493,13 @@ addusernow()
 #endif
 
     /* report success */
-    sprintf(StatusMessage, "%s %s@%s (%s) %s",
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H@%H (%H) %s",
       get_html_text("002"), Newu, Domain, Gecos,
       get_html_text("119"));
 
   } else {
     /* otherwise, report error */
-    sprintf(StatusMessage, "<font color=\"red\">%s %s@%s (%s) %s</font>", 
+    snprinth (StatusMessage, sizeof(StatusMessage), "<font color=\"red\">%s %H@%H (%H) %s</font>", 
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }
 
@@ -569,7 +560,7 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
        without the path information.  Add a pointer to point into cmd
        at the start of the program name only.    BUG 2003-12 */
     error = execl(cmd, cmd, p1, p2, p3, p4, NULL);
-    fprintf(actout, "Error %d %s \"%s\", %s, %s, %s, %s, %s\n",
+    printf ("Error %d %s \"%s\", %s, %s, %s, %s, %s\n",
       errno, get_html_text("202"), cmd, hook_type, p1, p2, p3, p4);
     /* if (error == -1) return (-1); */
     exit(127);
@@ -594,14 +585,14 @@ delusergo()
  struct vqpasswd *pw;
      
   if ( AdminType!=DOMAIN_ADMIN ) {
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
 
   vdeluser( ActionUser, Domain );
 
-  sprintf(StatusMessage, "%s %s", ActionUser, get_html_text("141"));
+  snprinth (StatusMessage, sizeof(StatusMessage), "%H %s", ActionUser, get_html_text("141"));
 
   /* Start create forward when delete - 
    * Code added by Eugene Teo 6 June 2000 
@@ -612,7 +603,7 @@ delusergo()
   if (strcmp(forward, "on") == 0) {
     GetValue(TmpCGI, forwardto, "forwardto=", sizeof(forwardto));    
     if(adddotqmail_shared(ActionUser, forwardto, -1)!=0) {
-       sprintf(StatusMessage, get_html_text("315"), forwardto);
+       snprintf (StatusMessage, sizeof(StatusMessage), get_html_text("315"), forwardto);
     }
   } 
 
@@ -637,60 +628,41 @@ setremotecatchall()
   send_template("setremotecatchall.html");
 }
 
+void set_qmaildefault(char *opt)
+{
+ FILE *fs;
+
+  if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
+    printf ("%s %s<br>\n", get_html_text("144"), ".qmail-default");
+  } else {
+    fprintf(fs,"| %s/bin/vdelivermail '' %s\n", VPOPMAILDIR, opt);
+    fclose(fs);
+  }
+  show_users(Username, Domain, Mytime);
+  vclose();
+  exit(0);
+}
+
 setremotecatchallnow() 
 {
   GetValue(TmpCGI,Newu, "newu=", sizeof(Newu));
 
   if (check_email_addr(Newu) ) {
-    sprintf(StatusMessage, "%s %s\n", get_html_text("148"), Newu);
+    snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", get_html_text("148"), Newu);
     setremotecatchall();
     exit(0);
   }
-  set_remote_catchall_now();
-}
-
-set_remote_catchall_now()
-{
- FILE *fs;
-
-  if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), ".qmail-default");
-  } else {
-    fprintf(fs,"| %s/bin/vdelivermail '' %s\n",VPOPMAILDIR,Newu);
-    fclose(fs);
-  }
-  show_users(Username, Domain, Mytime);
-  exit(0);
+  set_qmaildefault (Newu);
 }
 
 void bounceall()
 {
- FILE *fs;
-
-  if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), ".qmail-default");
-  } else {
-    fprintf(fs,"| %s/bin/vdelivermail '' bounce-no-mailbox\n",VPOPMAILDIR);
-    fclose(fs);
-  }
-  show_users(Username, Domain, Mytime);
-  vclose();
-  exit(0);
+  set_qmaildefault ("bounce-no-mailbox");
 }
 
 void deleteall()
 {
- FILE *fs;
-
-  if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), ".qmail-default");
-  } else {
-    fprintf(fs,"| %s/bin/vdelivermail '' delete\n",VPOPMAILDIR);
-    fclose(fs);
-  }
-  show_users(Username, Domain, Mytime);
-  vclose();
-  exit(0);
+  set_qmaildefault ("delete");
 }
 
 int get_catchall(void)
@@ -700,7 +672,7 @@ int get_catchall(void)
 
   /* Get the default catchall box name */
   if ((fs=fopen(".qmail-default","r")) == NULL) {
-    fprintf(actout,"<tr><td colspan=\"5\">%s %s</td><tr>\n", 
+    printf ("<tr><td colspan=\"5\">%s %s</td><tr>\n", 
       get_html_text("144"), ".qmail-default");
     vclose();
     exit(0);
@@ -709,15 +681,15 @@ int get_catchall(void)
   fclose(fs);
 
   if (strstr(TmpBuf, " bounce-no-mailbox\n") != NULL) {
-    fprintf(actout,"<b>%s</b>", get_html_text("130"));
+    printf ("<b>%s</b>", get_html_text("130"));
 
   } else if (strstr(TmpBuf, " delete\n") != NULL) {
-    fprintf(actout,"<b>%s</b>", get_html_text("236"));
+    printf ("<b>%s</b>", get_html_text("236"));
 
   } else if ( strstr(TmpBuf, "@") != NULL ) {
     i=strlen(TmpBuf);
     for(;TmpBuf[i]!=' ';--i);
-    fprintf(actout,"<b>%s %s</b>", get_html_text("062"), &TmpBuf[i]);
+    printh ("<b>%s %H</b>", get_html_text("062"), &TmpBuf[i]);
 
   } else {
     i = strlen(TmpBuf) - 1;
@@ -727,7 +699,7 @@ int get_catchall(void)
 
     /* take off newline */
     i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;/* take off newline */
-    fprintf(actout,"<b>%s %s</b>", get_html_text("062"), TmpBuf2);
+    printh ("<b>%s %H</b>", get_html_text("062"), TmpBuf2);
   }
   return 0;
 }
@@ -750,24 +722,24 @@ modusergo()
 
   if (!( AdminType==DOMAIN_ADMIN ||
          (AdminType==USER_ADMIN && strcmp(ActionUser,Username)==0))){
-    sprintf(StatusMessage,"%s", get_html_text("142"));
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
 
   if (strlen(Password1)>0 && strlen(Password2)>0 ) {
     if ( strcmp( Password1, Password2 ) != 0 ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("200"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("200"));
       moduser();
       vclose();
       exit(0);
     }
     ret_code = vpasswd( ActionUser, Domain, Password1, USE_POP);
     if ( ret_code != VA_SUCCESS ) {
-      sprintf(StatusMessage, "%s (%s)", get_html_text("140"), 
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s (%s)", get_html_text("140"), 
         verror(ret_code));
     } else {
-      /* sprintf(StatusMessage,"%s %s@%s.", get_html_text("139"), 
+      /* snprinth (StatusMessage, sizeof(StatusMessage), "%s %H@%H.", get_html_text("139"), 
 ActionUser, Domain ); */
       strcpy (StatusMessage, get_html_text("139"));
     }
@@ -784,23 +756,23 @@ ActionUser, Domain ); */
       /* Blank or no change, do nothing */
     } else if (strncmp(Quota, "NOQUOTA", 2)==0) {
       if (vsetuserquota( ActionUser, Domain, Quota )) {
-        sprintf(StatusMessage, get_html_text("307"));  /* invalid quota */
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("307"));  /* invalid quota */
       } else {
-        sprintf(StatusMessage, get_html_text("308"));
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("308"));
       }
     } else if (atoi(Quota)) {
       quotaptr = Quota;
       if (quota_to_bytes(qconvert, quotaptr)) {
-        sprintf(StatusMessage, get_html_text("307"));
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("307"));
       } else if(strcmp(qconvert, vpw->pw_shell)==0) {
         /* unchanged, do nothing */
       } else if(vsetuserquota( ActionUser, Domain, qconvert )) {
-        sprintf(StatusMessage, get_html_text("307"));
+        snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("307"));
       } else { 
-        sprintf(StatusMessage, get_html_text("309"), qconvert);
+        snprintf (StatusMessage, sizeof(StatusMessage), get_html_text("309"), qconvert);
       }
     } else {
-      sprintf(StatusMessage, get_html_text("307"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s", get_html_text("307"));
     }
   }
 #endif
@@ -889,14 +861,14 @@ ActionUser, Domain ); */
 
     /* If nothing was entered, error */
     if ( box[0] == 0 ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("215"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("215"));
       moduser();
       vclose();
       exit(0);
 
     /* check it for a valid email address
     } else if ( check_email_addr( box ) == 1 )  {
-      sprintf(StatusMessage, "%s\n", get_html_text("148"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("148"));
       moduser();
     */
     }
@@ -941,7 +913,7 @@ ActionUser, Domain ); */
 
     /* if no subject, error */
     if ( box[0] == 0 ) {
-      sprintf(StatusMessage, "%s\n", get_html_text("216"));
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", get_html_text("216"));
       moduser();
       vclose();
       exit(0);

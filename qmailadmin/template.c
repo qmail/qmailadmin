@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.7.2.3 2004-10-19 15:44:40 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.4 2004-11-14 18:05:55 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #include <vauth.h>
+#include "printh.h"
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
@@ -95,7 +96,7 @@ int send_template_now(char *filename)
   /* open the template */
   fs = fopen( TmpBuf2, "r" );
   if (fs == NULL) {
-    fprintf(actout,"%s %s<br>\n", get_html_text("144"), TmpBuf2);
+    printf ("%s %s<br>\n", get_html_text("144"), TmpBuf2);
     return 0;
   }
 
@@ -119,14 +120,19 @@ int send_template_now(char *filename)
 
         /* switch on the tag */
         switch (inchar) {
+          /* send stock (user, dom, time) cgi parameters */
+          case '&':
+            printh ("user=%C&dom=%C&time=%d&", Username, Domain, Mytime);
+            break;
+
           /* send the action user parameter */
           case 'A':
-            fprintf(actout,"%s", ActionUser);
+            printh ("%H", ActionUser);
             break;
 
           /* send the Alias parameter */
           case 'a':
-            fprintf(actout,"%s", Alias);
+            printh ("%H", Alias);
             break;
 
           /* show number of pop accounts */
@@ -147,7 +153,7 @@ int send_template_now(char *filename)
 
           /* send the CGIPATH parameter */
           case 'C':
-            fprintf(actout,"%s", CGIPATH);
+            printf ("%s", CGIPATH);
             break;
 
           /* show the lines inside a mailing list table */
@@ -157,7 +163,7 @@ int send_template_now(char *filename)
 
           /* send the domain parameter */
           case 'D':
-            fprintf(actout,"%s", Domain);
+            printh ("%H", Domain);
             break;
 
           /* show the lines inside a forward table */
@@ -199,9 +205,9 @@ int send_template_now(char *filename)
                     TmpBuf3[j] = TmpBuf2[i];
                   }
                   TmpBuf3[j] = '\0';
-                  fprintf(actout, "value=\"%s@%s\"></td>\n", TmpBuf3, Domain);
+                  printh ("value=\"%H@%H\"></td>\n", TmpBuf3, Domain);
                 } else {
-                  fprintf(actout, "value=\"%s\"></td>\n", &TmpBuf2[1]);
+                  printh ("value=\"%H\"></td>\n", &TmpBuf2[1]);
                 }
               } 
               upperit(ActionUser);
@@ -211,24 +217,24 @@ int send_template_now(char *filename)
 
               fgets( TmpBuf2, sizeof(TmpBuf2), fs);
               fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-              fprintf(actout, "         <td>&nbsp;</td>\n");
-              fprintf(actout, "         </tr>\n");
-              fprintf(actout, "         <tr>\n");
-              fprintf(actout, "         <td align=right><b>%s</b></td>\n", get_html_text("006"));
+              printf ("         <td>&nbsp;</td>\n");
+              printf ("         </tr>\n");
+              printf ("         <tr>\n");
+              printf ("         <td align=right><b>%s</b></td>\n", get_html_text("006"));
 
               /* take off newline */
               i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;
-              fprintf(actout, "         <td><input type=\"text\" size=40 name=\"alias\" maxlength=128 value=\"%s\"></td>\n",
+              printh ("         <td><input type=\"text\" size=40 name=\"alias\" maxlength=128 value=\"%h\"></td>\n",
                 &TmpBuf2[9]);
-              fprintf(actout, "         <td>&nbsp;</td>\n");
-              fprintf(actout, "        </tr>\n");
-              fprintf(actout, "       </table>\n");
-              fprintf(actout, "       <textarea cols=80 rows=40 name=\"message\">");
+              printf ("         <td>&nbsp;</td>\n");
+              printf ("        </tr>\n");
+              printf ("       </table>\n");
+              printf ("       <textarea cols=80 rows=40 name=\"message\">");
                 fgets(TmpBuf2, sizeof(TmpBuf2), fs);
               while (fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-                fprintf(actout, "%s", TmpBuf2);
+                printf ("%s", TmpBuf2);
               }
-              fprintf(actout, "</textarea>");
+              printf ("</textarea>");
               fclose(fs);
             }
             break;
@@ -318,9 +324,9 @@ int send_template_now(char *filename)
           /* login username */
           case 'L':
             if(strlen(Username)>0) {
-               printf("%s", Username);
+               printh ("%H", Username);
             } else if(TmpCGI && GetValue(TmpCGI, value, "user=", sizeof(value))==0) {
-               printf("%s", value);
+               printh ("%H", value);
             } else
                printf("postmaster");
             break;
@@ -344,14 +350,14 @@ int send_template_now(char *filename)
             i=0; 
             TmpBuf[i]=fgetc(fs);
             if (TmpBuf[i] == '/') {
-              fprintf(actout, "%s", get_html_text("144"));
+              printf ("%s", get_html_text("144"));
             } else {
               for(;TmpBuf[i] != '\0' && TmpBuf[i] != '#' && i < sizeof(TmpBuf)-1;) {
                 TmpBuf[++i] = fgetc(fs);
               }
               TmpBuf[i] = '\0';
               if ((strstr(TmpBuf, "../")) != NULL) {
-                fprintf(actout, "%s: %s", get_html_text("144"), TmpBuf);
+                printf ("%s: %s", get_html_text("144"), TmpBuf);
               } else if((strcmp(TmpBuf, filename)) != 0) {
                 send_template_now(TmpBuf);
               }
@@ -365,7 +371,7 @@ int send_template_now(char *filename)
 
                pw = vauth_getall(Domain,1,1);
                while (pw != NULL) {
-                 fprintf(actout, "<option value=\"%s\">%s</option>\n", 
+                 printh ("<option value=\"%H\">%H</option>\n", 
                    pw->pw_name, pw->pw_name);
                  pw = vauth_getall(Domain,0,0);
                }
@@ -384,7 +390,7 @@ int send_template_now(char *filename)
             {
               TmpBuf3[0] = '\0';
               get_mailinglist_prefix(TmpBuf3);
-              fprintf(actout, "%s", TmpBuf3);
+              printh ("%H", TmpBuf3);
             }
             break;
 
@@ -416,7 +422,7 @@ int send_template_now(char *filename)
 
           /* send the status message parameter */
           case 'S':
-            fprintf(actout,"%s", StatusMessage);
+            printf ("%s", StatusMessage);
             break;
 
           /* show the catchall name */
@@ -426,7 +432,7 @@ int send_template_now(char *filename)
 
           /* send the time parameter */
           case 'T':
-            fprintf(actout,"%d", Mytime);
+            printf ("%d", Mytime);
             break;
 
           /* transmit block? */
@@ -436,7 +442,7 @@ int send_template_now(char *filename)
             
           /* send the username parameter */
           case 'U':
-            fprintf(actout,"%s", Username);
+            printh ("%H", Username);
             break;
 
           /* show the users */
@@ -455,46 +461,45 @@ int send_template_now(char *filename)
           /* display the main menu */
           /* move this to a function... */
           case 'v':
-            fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s</b></font><br>", 
+            printh ("<font size=\"2\" color=\"#000000\"><b>%H</b></font><br>", 
               Domain);
-            fprintf(actout, 
+            printf (
        "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>", 
               get_html_text("001"));
             if (AdminType==DOMAIN_ADMIN){
 
               if (MaxPopAccounts != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showusers?user=%s&time=%i&dom=%s&\">",
+                printh (
+       "<a href=\"%s/com/showusers?user=%C&time=%i&dom=%C&\">",
                   CGIPATH,Username,Mytime,Domain); 
-                fprintf(actout, 
+                printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                   get_html_text("061"));
               }
 
               if (MaxForwards != 0 || MaxAliases != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showforwards?user=%s&time=%i&dom=%s&\">",
+                printh (
+       "<a href=\"%s/com/showforwards?user=%C&time=%i&dom=%C&\">",
                   CGIPATH,Username,Mytime,Domain);
-                fprintf(actout, 
+                printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                   get_html_text("122"));
               }
 
               if (MaxAutoResponders != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showautoresponders?user=%s&time=%i&dom=%s&\">",
+                printh (
+       "<a href=\"%s/com/showautoresponders?user=%C&time=%i&dom=%C&\">",
                   CGIPATH,Username,Mytime,Domain);
-                fprintf(actout, 
+                printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
                   get_html_text("077"));
               }
 
               if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
-                fprintf(actout, 
-       "<a href=\"%s/com/showmailinglists?user=%s&time=%i&dom=%s&\">",
+                printh (
+       "<a href=\"%s/com/showmailinglists?user=%C&time=%i&dom=%C&\">",
                   CGIPATH, Username,Mytime,Domain);
-                fprintf(actout, 
+                printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                   get_html_text("080"));
               }
@@ -507,63 +512,63 @@ int send_template_now(char *filename)
 	      char path[256];
               vpw = vauth_getpw(Username, Domain);
 
-               fprintf(actout, 
-       "<a href=\"%s/com/moduser?user=%s&time=%i&dom=%s&moduser=%s\">",
+               printh (
+       "<a href=\"%s/com/moduser?user=%C&time=%i&dom=%C&moduser=%C\">",
                  CGIPATH,Username,Mytime,Domain,Username);
-               fprintf(actout, 
-       "<font size=\"2\" color=\"#000000\"><b>%s %s</b></font></a><br><br>",
+               printh (
+       "<font size=\"2\" color=\"#000000\"><b>%s %H</b></font></a><br><br>",
                  get_html_text("111"), Username);
               if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
                 quota_to_megabytes(qconvert, vpw->pw_shell);
               } else {
                 sprintf(qconvert, get_html_text("229")); qnote = "";
               }
-              fprintf(actout, "<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
+              printf ("<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
                 get_html_text("249"), get_html_text("253"), qconvert, qnote);
-              fprintf(actout, "<br>%s ", get_html_text("254"));
+              printf ("<br>%s ", get_html_text("254"));
 	      snprintf(path, sizeof(path), "%s/" MAILDIR, vpw->pw_dir);
               readuserquota(path, &diskquota, &maxmsg);
-              fprintf(actout, "%-2.2lf MB</font><br>", ((double)diskquota)/1048576.0);  /* Convert to MB */
+              printf ("%-2.2lf MB</font><br>", ((double)diskquota)/1048576.0);  /* Convert to MB */
              }
 
              if (AdminType == DOMAIN_ADMIN) {
-               fprintf(actout, "<br>");
-               fprintf(actout, 
+               printf ("<br>");
+               printf (
        "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>",
                  get_html_text("124"));
 
                if (MaxPopAccounts != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/adduser?user=%s&time=%i&dom=%s&\">",
+                 printh (
+       "<a href=\"%s/com/adduser?user=%C&time=%i&dom=%C&\">",
                    CGIPATH,Username,Mytime,Domain);
-                 fprintf(actout, 
+                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                    get_html_text("125"));
                }
 
                if (MaxForwards != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/adddotqmail?atype=forward&user=%s&time=%i&dom=%s&\">",
+                 printh (
+       "<a href=\"%s/com/adddotqmail?atype=forward&user=%C&time=%i&dom=%C&\">",
                    CGIPATH, Username,Mytime,Domain);
-                 fprintf(actout, 
+                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                    get_html_text("127"));
                }
 
                if (MaxAutoResponders != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/addautorespond?user=%s&time=%i&dom=%s&\">",
+                 printh (
+       "<a href=\"%s/com/addautorespond?user=%C&time=%i&dom=%C&\">",
                    CGIPATH, Username,Mytime,Domain);
-                 fprintf(actout, 
+                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
                    get_html_text("128"));
                }
 
                if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
-                 fprintf(actout, 
-       "<a href=\"%s/com/addmailinglist?user=%s&time=%i&dom=%s&\">",
+                 printh (
+       "<a href=\"%s/com/addmailinglist?user=%C&time=%i&dom=%C&\">",
                    CGIPATH, Username,Mytime,Domain);
-                 fprintf(actout, 
+                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                    get_html_text("129"));
                }
@@ -582,10 +587,10 @@ int send_template_now(char *filename)
             printf("<a href=\"");
             strcpy (value, get_session_val("returntext="));
             if(strlen(value) > 0) {
-               printf("%s\">%s", 
+               printh("%s\">%H", 
                       get_session_val("returnhttp="), value);
             } else {
-               printf("%s/com/logout?user=%s&dom=%s&time=%d&\">%s",
+               printh("%s/com/logout?user=%C&dom=%C&time=%d&\">%s",
                       CGIPATH, Username, Domain, Mytime, get_html_text("218"));
             }
             printf("</a>\n");
@@ -603,7 +608,7 @@ int send_template_now(char *filename)
          
           /* send the image URL directory */
           case 'Z':
-            fprintf(actout, "%s", IMAGEURL);
+            printf ("%s", IMAGEURL);
             break;            
 
           /* display domain on login page (last used, value of dom in URL,
@@ -611,9 +616,9 @@ int send_template_now(char *filename)
            */
           case 'z':
             if( strlen(Domain) > 0 ) {
-               printf("%s", Domain);
+               printh("%H", Domain);
             } else if(TmpCGI && GetValue(TmpCGI, value, "dom=", sizeof(value))==0) {
-               printf("%s", value);
+               printh("%H", value);
 #ifdef DOMAIN_AUTOFILL
             } else {
                get_calling_host();
@@ -721,7 +726,7 @@ void check_user_forward_vacation(char newchar)
   }
 
   if ( newchar=='7') {
-    fprintf(actout, "%s", vpw->pw_gecos);
+    printh ("%H", vpw->pw_gecos);
     return;
   }
 
@@ -754,7 +759,7 @@ void check_user_forward_vacation(char newchar)
            */ 
           fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
           fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
-          printf("%s", &NTmpBuf[9]);
+          printh("%H", &NTmpBuf[9]);
         }
       } else if (newchar=='6') {
         if (fs2 == NULL) { 
@@ -782,9 +787,9 @@ void check_user_forward_vacation(char newchar)
           if (NTmpBuf[0]=='|') continue;
           if ( i>0 ) printf(", ");
           if (NTmpBuf[0]=='&') {
-            printf("%s", strtok(&NTmpBuf[1], "\n"));
+            printh("%H", strtok(&NTmpBuf[1], "\n"));
           } else {
-            printf("%s", NTmpBuf[0]);
+            printh("%H", NTmpBuf[0]);
           } 
           ++i;
         }
@@ -836,9 +841,9 @@ void check_user_forward_vacation(char newchar)
           if (strstr(NTmpBuf, SPAM_COMMAND)!=NULL) continue;
           if (i > 0) printf(", ");
           if (NTmpBuf[0] == '&') {
-            printf("%s", strtok(&NTmpBuf[1], "\n"));
+            printh("%H", strtok(&NTmpBuf[1], "\n"));
           } else {
-            printf("%s", NTmpBuf);
+            printh("%H", NTmpBuf);
           } 
           ++i;
         }
@@ -941,7 +946,7 @@ void get_calling_host() {
             domptr++;
             lowerit(domptr);
             if( strstr(srvnam, domptr) != NULL ) {
-               printf("%s", domptr);
+               printh("%H", domptr);
                count=1;
             }
          }

@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4.2.1 2004-02-02 00:39:47 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.2 2004-11-14 18:05:55 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,11 +102,11 @@ void str_replace (char *s, char orig, char repl)
 
 void qmail_button(char *modu, char *command, char *user, char *dom, time_t mytime, char *png)    
 {
-  fprintf(actout, "<td align=center>");
-  fprintf(actout, "<a href=\"%s/com/%s?user=%s&dom=%s&time=%d&modu=%s\">",
+  printf ("<td align=center>");
+  printh ("<a href=\"%s/com/%s?user=%C&dom=%C&time=%d&modu=%C\">",
     CGIPATH, command, user, dom, mytime, modu);
-  fprintf(actout, "<img src=\"%s/%s\" border=0></a>", IMAGEURL, png);
-  fprintf(actout, "</td>\n");
+  printf ("<img src=\"%s/%s\" border=0></a>", IMAGEURL, png);
+  printf ("</td>\n");
 }
 
 check_local_user( user )
@@ -140,10 +140,10 @@ show_counts()
   count_autoresponders();
   count_mailinglists();
 
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("061"), CurPopAccounts);
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("074"), CurForwards);
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("077"), CurAutoResponders);
-  fprintf(actout, "%s = %d<BR>\n", get_html_text("080"), CurMailingLists);
+  printf ("%s = %d<BR>\n", get_html_text("061"), CurPopAccounts);
+  printf ("%s = %d<BR>\n", get_html_text("074"), CurForwards);
+  printf ("%s = %d<BR>\n", get_html_text("077"), CurAutoResponders);
+  printf ("%s = %d<BR>\n", get_html_text("080"), CurMailingLists);
 }
 
 check_email_addr( addr )
@@ -164,9 +164,7 @@ check_email_addr( addr )
 
   for(taddr=addr;*taddr!='@'&&*taddr!=0;++taddr) {
     if ( isspace(*taddr) ) return(1);
-    if(ispunct(*taddr) && 
-       *taddr!='.' && *taddr!='-' && *taddr!='+' && *taddr!='=' &&
-       *taddr!='_') {
+    if(ispunct(*taddr) && (strchr (".-+=_&", *taddr) == NULL)){
       return(1);
     }
   }
@@ -198,9 +196,8 @@ fixup_local_name( addr )
     if(!isalnum(*taddr) && !ispunct(*taddr)) return(1);
     if(isspace(*taddr)) return(1);
 
-    if(ispunct(*taddr)&&*taddr!='-'&&*taddr!='.'&&*taddr!='_' &&
-               *taddr!='+' && *taddr!='=') {
-      if(*taddr!='.') return(1);
+    if(ispunct(*taddr)&& (strchr (".-+=_&", *taddr) == NULL)){
+      return(1);
     }
   }
 
@@ -212,8 +209,8 @@ ack(msg, c)
  char *msg;
  int c;
 {
-  fprintf(actout,"%s\n", msg);
-  fprintf(actout,"</BODY></HTML>\n", msg);
+  printf ("%s\n", msg);
+  printf ("</BODY></HTML>\n", msg);
   vclose();
   exit(0);
 }

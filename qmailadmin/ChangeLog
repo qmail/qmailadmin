@@ -7,7 +7,7 @@ patch or information related to the entry.
 	- user.c: fix bug in handling .qmail files with blank lines.
 	- user.c: new catchall option, forward unknown users to remote
 	  domain (e.g., x -> x@dom.com, y -> y@dom.com, etc.) [910410]
-	- util.c: fix check_email_addr() (used to accept invalid 
+	- util.c: fix check_email_addr() (previously accepted invalid 
 	  punctuation in domain part of address).
 
 1.2.5 - released 1-Dec-04

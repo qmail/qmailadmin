@@ -1,0 +1,9 @@
+2.0.4 - released 18-Aug-03
+
+	Oden Eriksson
+	- Added this file (ChangeLog)
+	- Added the following fixes from debian:
+	  - Added the autorespond.1 man page
+	  - Fix buffer overflow with EXT and HOST environment
+	    variables (CAN-2003-0654)
+

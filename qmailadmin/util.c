@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4.2.3 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.4 2004-12-17 17:45:38 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,37 +158,39 @@ void show_counts()
   printf ("%s = %d<BR>\n", get_html_text("080"), CurMailingLists);
 }
 
-int check_email_addr( addr )
- char *addr;
+/* check_email_addr( char *addr )
+ *
+ * Make sure 'addr' is a valid email address.  Returns 1 if it's bad,
+ * 0 if it's good.
+ */
+int check_email_addr( char *addr )
 {
  char *taddr = addr;
+ char *atpos = NULL;
+ char *dotpos = NULL;
 
-
-  if(strlen(taddr)<0) return(1);
-  for(taddr=addr;*taddr!=0;++taddr) {
-    if(!isalnum(*taddr) && !ispunct(*taddr)) {
-      return(1);
-    }
-  }
-
-  /* force to lower */
-  lowerit(addr);
-
-  for(taddr=addr;*taddr!='@'&&*taddr!=0;++taddr) {
-    if ( isspace(*taddr) ) return(1);
-    if(ispunct(*taddr) && (strchr (".-+=_&", *taddr) == NULL)){
-      return(1);
+  for(taddr = addr; *taddr != '\0'; ++taddr) {
+    if (*taddr == '@') {
+      if (atpos != NULL) return 1; /* double @ */
+      atpos = taddr;
+    } else if(!isalnum(*taddr) && (strchr (".-+=_&", *taddr) == NULL)) {
+      return 1;
     }
   }
 
   /* if just a user name with no @domain.com then bad */
-  if (*taddr==0) return(1);
+  if (atpos == NULL) return 1;
 
   /* Look for a sub domain */
-  for(;*taddr!='.'&&*taddr!=0;++taddr);
+  dotpos = strchr (atpos, '.');
 
-  if (*taddr==0) return(1);
-  return(0);
+  /* no '.' in the domain part */
+  if (dotpos == NULL) return 1;
+
+  /* once we know it's good, convert it to lowercase */
+  lowerit(addr);
+
+  return 0;
 }
 
 int fixup_local_name( addr )

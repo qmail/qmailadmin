@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.11 2004-02-07 09:22:36 rwidmer Exp $
+ * $Id: util.c,v 1.12 2004-02-20 06:15:00 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,10 +29,13 @@
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 
-extern FILE *lang_fs;
-extern FILE *color_table;
-
 #define SORT_TABLE_ENTRIES 100000
+
+#define DEFAULT_LANG "en"
+#define MAX_LANG_ENTRY 4000
+#define MAX_LANG_FILESIZE 20000
+char *lang_entry[MAX_LANG_ENTRY];
+char *langpath = NULL;
 
 /* pointer to array of pointers */
 unsigned char **sort_list;
@@ -402,20 +405,86 @@ char *strstart(sstr, tstr)
 
 }
 
+/* initialize language table with NULL entries */
+void init_lang_table()
+{
+  int i;
+  
+  for (i = 0; i < MAX_LANG_ENTRY; i++)
+  	lang_entry[i] = NULL;
+}
+
+/* This function works by reading an entire "language" file into memory and
+ * parsing out the table entries.  A table entries are comprised of a numeric
+ * index, followed by a space and then the text of the entry.  For example:
+ *
+ * 123 Main Menu
+ *
+ * "123" is the index for the string "Main Menu"
+ *
+ * Previously, index had to be zero padded and three characters long, followed
+ * by a single space and then the text.  Index no longer requires the zero padding
+ * and there can be any number of spaces and tabs between the index and its text.
+ *
+ * load_lang_table scans through the file, finding and decoding each line,
+ * saving a pointer to the text of the entry and converting the trailing newline
+ * to a NULL.  To display an entry in the table, it's a simple matter of
+ * referencing lang_entry[index] which is a pointer to the NULL-terminated string.
+ */
+int load_lang_table(char *lang)
+{
+  /* load entries from translation "lang" into the lang_entry table */
+  char langfile[200];
+  char buf[512];
+  char *lang_filedata;
+  int i;
+  char *p;
+  FILE *f;
+  
+  snprintf(langfile, sizeof(langfile), "%s/lang/%s", langpath, lang);
+  f = fopen (langfile, "r");
+  if (f == NULL) return -1;
+  
+  lang_filedata = malloc(MAX_LANG_FILESIZE);
+  if (lang_filedata == NULL) return -2;
+
+  fread (lang_filedata, 1, MAX_LANG_FILESIZE, f);
+  fclose (f);
+  p = lang_filedata;
+  while (*p != '\0') {
+    /* skip leading zeros, otherwise atol does octal conversion */
+    if (*p == '0') p++;  /* skip over leading zero */
+    if (*p == '0') p++;  /* skip over second leading zero */
+
+    /* convert index value */
+    i = (int) atol (p);
+
+    /* find delimiter and advance pointer to text of entry */
+    while (*p != ' ' && *p != '\t' && *p != '\0') p++;
+    while (*p == ' ' || *p == '\t') p++;
+
+    if ((i > 0) && (i < MAX_LANG_ENTRY) && (lang_entry[i] == NULL))
+      lang_entry[i] = p;
+
+    /* find end of line and convert to NULL when found */
+    while (*p != '\n' && *p != '\0') p++;
+    if (*p != '\0') *p++ = '\0';  /* convert to NULL and point to next entry */
+  }
+  
+  /* Don't free lang_filedata!  It's a static buffer with the language entries! */
+  return 0;
+}
+
 int open_lang_file(char *lang)
 {
   char langfile[200];
-  static char *langpath = NULL;
-  struct stat mystat;
-
+  FILE *lang_fs;
+  
   /* do not read lang files with path control characters */
   if ( strstr(lang,".")!=NULL || strstr(lang,"/")!=NULL ) return(-1);
 
   /* convert to lower case (using lowerit() from libvpopmail) */
   lowerit(lang);
-
-  /* close previous language if still open */
-  if (lang_fs != NULL) fclose (lang_fs);
 
   if (langpath == NULL) {
     langpath = getenv(QMAILADMIN_TEMPLATEDIR);
@@ -424,11 +493,10 @@ int open_lang_file(char *lang)
 
   snprintf(langfile, sizeof(langfile), "%s/lang/%s", langpath, lang);
 
-  /* do not open symbolic links */
-  if (lstat(langfile, &mystat)==-1 || S_ISLNK(mystat.st_mode)) return(-1);
-
+  /* make sure language file exists and we can read it */
   if ( (lang_fs=fopen(langfile, "r"))==NULL) return(-1);
 
+  fclose (lang_fs);  
   return(0);
 }
 
@@ -445,8 +513,6 @@ int open_lang()
   int lang_err;
   float maxq, thisq;
 
-  lang_fs = NULL;
-
   /* Parse HTTP_ACCEPT_LANGUAGE to find highest preferred language
    * that we have a translation for.  Example setting:
    * de-de, ja;q=0.25, en;q=0.50, de;q=0.75
@@ -455,9 +521,9 @@ int open_lang()
    * de (1.00), ja (0.25), en (0.50), and then de (0.75).
    */
 
-  /* default to English at 0.00 preference */
+  /* default to DEFAULT_LANG at 0.00 preference */
   maxq = 0.0;
-  strcpy (Lang, "en");
+  strcpy (Lang, DEFAULT_LANG);
 
   /* read in preferred languages */
   langptr = getenv("HTTP_ACCEPT_LANGUAGE");
@@ -497,42 +563,27 @@ int open_lang()
 
     free(accept_lang);
   }
+  
+  /* now load the language file entries */
+  init_lang_table();
+  load_lang_table(Lang);
+  if (strcmp (Lang, DEFAULT_LANG) != 0) {
+    /* if any entries are missing, fill with DEFAULT_LANG equivalents */
+    load_lang_table(DEFAULT_LANG);
+  }
 }
 
-/* It's a good thing qmailadmin is a cgi script, because this
-   function leaks memory.  That's OK though, Tom has plans
-   for rewriting the html_text stuff soon. */
 char *get_html_text( int target )
 {
- static char *tmpbuf;
- char *tmpstr;
- char index[4];
-
   #ifdef DEBUG_GET_TEXT
   fprintf( stderr, "get_html_text target: %d\n", target);
   fflush( stderr );
   #endif
 
-  sprintf( index, "%03d", target );
-
-  #ifdef DEBUG_GET_TEXT
-  fprintf( stderr, "Converted index: %s\n", index );
-  fflush( stderr );
-  #endif
-
-  tmpbuf = malloc(400);
-
-  if (lang_fs == NULL) return("");
-
-  rewind(lang_fs);
-  while(fgets(tmpbuf,400,lang_fs)!=NULL){
-    tmpstr = strtok(tmpbuf, " ");
-    if (strcmp(tmpstr, index) == 0 ) {
-      tmpstr = strtok(NULL, "\n");
-      return(tmpstr);
-    }    
-  }
-  return("");
+  if ((target >= 0) && (target < MAX_LANG_ENTRY) && (lang_entry[target] != NULL))
+  	return lang_entry[target];
+  else
+  	return "";
 }
 
 /* bk - use maildir++ quotas now

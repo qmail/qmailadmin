@@ -848,7 +848,6 @@ Optional Features:
   --enable-imagedir=DIR     Where to put the image files DocumentRoot/images/qmailadmin.
   --enable-htmllibdir=DIR   qmailadmin HTML library directory.
   --enable-qmaildir=DIR     directory where qmail is installed.
-  --enable-true-path=PATH   Path to 'true' binary.
   --enable-ezmlmdir=PATH    Path to ezmlm binaries or =n to disable.
   --enable-cgipath=PATH     URL path for cgi /cgi-bin/qmailadmin.
   --enable-autoresponder-path=PATH   Path to autoresponder directory.
@@ -4617,34 +4616,6 @@ fi;
 
 cat >>confdefs.h <<_ACEOF
 #define QMAILDIR "$qmaildir"
-_ACEOF
-
-
-true_path=""
-for f in /bin /usr/bin /usr/local/bin
-do
-    if test -f $f/true
-    then
-        true_path=$f
-    fi
-done
-# Check whether --enable-true-path or --disable-true-path was given.
-if test "${enable_true_path+set}" = set; then
-  enableval="$enable_true_path"
-  true_path="$enableval"
-else
-
-        if test "$true_path" = ""
-        then
-            { { echo "$as_me:$LINENO: error: Unable to find 'true' binary, specify --enable-true-path." >&5
-echo "$as_me: error: Unable to find 'true' binary, specify --enable-true-path." >&2;}
-   { (exit 1); exit 1; }; }
-        fi
-
-fi;
-
-cat >>confdefs.h <<_ACEOF
-#define TRUE_PATH "$true_path"
 _ACEOF
 
 

@@ -176,24 +176,6 @@ AC_ARG_ENABLE(qmaildir, [  --enable-qmaildir=DIR     directory where qmail is in
     ] )
 AC_DEFINE_UNQUOTED(QMAILDIR,"$qmaildir","")
 
-true_path=""
-for f in /bin /usr/bin /usr/local/bin
-do
-    if test -f $f/true
-    then
-        true_path=$f
-    fi
-done
-AC_ARG_ENABLE(true-path, [  --enable-true-path=PATH   Path to 'true' binary.],
-    true_path="$enableval",
-    [
-        if test "$true_path" = ""
-        then
-            AC_MSG_ERROR([Unable to find 'true' binary, specify --enable-true-path.])
-        fi
-    ] )
-AC_DEFINE_UNQUOTED(TRUE_PATH,"$true_path","")
-
 ezmlmdir=""
 for f in /usr/local/bin/ezmlm /usr/bin /usr/sbin /usr/local/bin
 do

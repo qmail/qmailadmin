@@ -21,6 +21,7 @@ patch or information related to the entry.
 	- Display aliases with "-default" in the name.
 	- Use "# delete" instead of "|/bin/true delete" for blackholed
 	  accounts.
+	- Remove --enable-true-path from configure (no longer used).
 
 1.2.1 - released 10-Feb-04
 

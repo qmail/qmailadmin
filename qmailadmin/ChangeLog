@@ -1,6 +1,8 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.2.0 - unreleased
+
 1.2.0-rc2 - released 1-Jan-04
 
 	Tom Collins
@@ -11,7 +13,7 @@ patch or information related to the entry.
 
 	Rick Widmer
 	- Remove fclose(NULL) call in alias.c.
-	- Add html/README with information on template macros.
+	- Add html/README with information on template macros. [867305]
 
 1.2.0-rc1 - released 21-Dec-03
 

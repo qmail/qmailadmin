@@ -262,8 +262,8 @@
 294 nur für Abonnenten
 295 nur für Moderatoren
 296 Mailbox flags
-297 on
-298 off
+297 an
+298 aus
 299 Flag0
 300 Flag1
 301 Flag2
@@ -272,3 +272,12 @@
 304 Spam Erkennung?
 305 Zieladresse
 306 weiterleiten an
+307 Ungültige Quota
+308 Quota auf unbegrenzt gesetzt
+309 Quota auf %s Bytes gesetzt
+310 Antworten senden an
+311 den ursprünglichen Sender
+312 die gesamte Liste
+313 die Adresse
+314 Fehlerhafte Quota-Angabe
+315 Benutzer gelöscht. Kann keine Weiterleitung an '%s' erstellen.

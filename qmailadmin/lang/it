@@ -1,8 +1,8 @@
 000 iso-8859-1
 001 Menu principale
 002 Casella
-003 Aggiungi Autorisponditore:
-004 Nome Autorisponditore:
+003 Aggiungi Autoresponder:
+004 Nome Autoresponder:
 005 Indirizzo Email del gestore:
 006 Oggetto: 
 007 Aggiungi Forward:
@@ -42,9 +42,9 @@
 074 Forward 
 075 Forward 
 076 Aggiungi nuovo Forward 
-077 Autorisponditori
-078 Autorisponditore
-079 Nuovo Autorisponditore 
+077 Autoresponder 
+078 Autoresponder 
+079 Nuovo Autoresponder 
 080 Liste di Distribuzione
 081 Lista
 082 Cancella
@@ -70,7 +70,7 @@
 102 Cancella Iscritto
 103 Inoltra messaggi
 104 Si, inoltrare a:
-105 Modifica autorisponditore
+105 Modifica autoresponder
 106 Nome
 107 Contenuti
 108 Aggiungi Indirizzo Email
@@ -88,12 +88,12 @@
 120 non puo' essere aggiunto
 121 Alias
 122 Forward 
-123 Mostra redirezioni
+123 Mostra ridirezioni
 124 Collegamenti veloci
 125 Nuove Caselle
 126 Nuovi Alias
 127 Nuovi Forward 
-128 Nuovi Autorisponditori 
+128 Nuovi Autoresponder 
 129 Nuove Liste di Distribuzione
 130 Messaggi a destinatari inesistenti: respinti
 131 Non ci sono altri utenti, ritornare alla pagina precedente
@@ -102,7 +102,7 @@
 134 Respingi messaggi per destinatari inesistenti
 135 Pagina precedente
 136 Aggiorna pagina
-137 Pagina successiva
+137 Prossima pagina 
 138 Digitare password 
 139 password modificata con successo
 140 Impossibile cambiare password
@@ -145,10 +145,10 @@
 177 Indirizzo Email del gestore non valido
 178 Inserire un Oggetto
 179 Inserire che cosa va spedito
-180 Autorisponditore aggiunto con successo
+180 Autoresponder aggiunto con successo
 181 Impossibile cancellare l'autorisponditore
-182 Autorisponditore cancellato con successo
-183 Autorisponditore modificato con successo
+182 Autoresponder cancellato con successo
+183 Autoresponder modificato con successo
 184 Raggiunto numero massimo di liste di distribuzione
 185 Impossibile cancellare il documento
 186 Lista di distribuzione cancellata con successo
@@ -170,16 +170,16 @@
 202 Dove i parametri sono:
 203 Indirizzo Email rimosso dalla lista di distribuzione
 204 Vai
-205 Disabilita Autorisponditore
+205 Disabilita Autoresponder
 206 Predisponi il catch-all account 
 207 Predisponi il catch-all account 
 208 Indirizzo catch-all account:
 209 Abilita Forward 
 210 Abilita Salvataggio Copia e Forward
 211 Inoltra Casella a:
-212 Abilita Autorisponditore
-213 Oggetto Autorisponditore:
-214 Messaggio Autorisponditore:
+212 Abilita Autoresponder
+213 Oggetto Autoresponder:
+214 Messaggio Autoresponder:
 215 E' necessario un indirizzo di inoltro
 216 E' necessario l'oggetto
 217 Aggiorna Menu
@@ -198,12 +198,12 @@
 230 Totale Iscritti:
 231 Nessuna Lista da mostrare
 232 Nessun Alias/Forward da mostrare
-233 Nessun Autorisponditore da mostrare
+233 Nessun Autoresponder da mostrare
 234 Per cortesia digitare la parola d'ordine 
 235 Cancella messaggi per i destinatari inesistenti
 236 Messaggi a destinatari inesistenti: cancellati
-237 Aggiungi<br>Iscritto Digest
-238 Cancella<br>Iscritto Digest
+237 Aggiungi<br>Digest Subscriber
+238 Cancella<br>Digest Subscriber
 239 Mostra<br>Digest Subscribers
 240 Indirizzo Email aggiunto com digest subscriber alla mailing list
 241 Aggiungi Digest Subscriber alla mailing list 
@@ -221,22 +221,22 @@
 253 Limite:
 254 Usato:
 255 Account Totali:
-256 Prefisso
-257 Aiuto per l'utente
-258 Aiuto per l'amministratore
-259 Indice Aiuto
-260 Instradamento
+256 Prefix
+257 Help per l'utente
+258 Help per l'amministratore
+259 Indice Help
+260 Routing
 261 nome lista
 262 Messaggi postati
 263 Tutti possono postare.
-264 Solo gli iscritti possono inviare, altri mittenti sono rifiutati.
-265 Solo gli iscritti possono inviare, altri mittenti oltre al moderatore richiedono l'approvazione.
-266 Solo i moderatori possono inviare, altri mittenti sono rifiutati.
-267 Solo i moderatori possono inviare, altri mittenti oltre al moderatore richiedono l'approvazione.
+264 Solo gli iscritti possono postare, altri rifiutati.
+265 Solo gli iscritti possono postare, altri al moderatore per approvazione.
+266 Solo i moderatori possono postare, altri rifiutati.
+267 Solo i moderatori possono postare, altri al moderatore per approvazione.
 268 Opzioni Lista
-269 Oggeto con Prefisso <B>[%s]</B>.
+269 Oggeto con Prefix <B>[%s]</B>.
 270 Includi un trailer alla fine di ogni messaggio.
-271 Imposta una versione digest della lista.
+271 Setta una versione digest della lista.
 272 Chiamato %s-digest.
 273 Richieste di servizio inviate a %s-request.
 274 In aggiunta a %s-subscribe, %s-unsubscribe, etc. gli utenti possono inviare comandi a %s-request.
@@ -261,7 +261,7 @@
 293 aperto a tutti
 294 limitato agli iscritti
 295 limitato ai moderatori
-296 Impostazioni Casella
+296 Impostazioni Mailbox
 297 attivo
 298 disattivo
 299 Impostazione0
@@ -275,7 +275,7 @@
 307 Quota non valida
 308 Quota impostata a illimitata
 309 Quota impostata a %s bytes
-310 Le risposte andranno a
+310 Risposte andranno a
 311 il mittente originale
 312 l'intera lista
 313 l'indirizzo

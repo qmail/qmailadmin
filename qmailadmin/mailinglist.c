@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5 2003-12-04 15:22:33 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.4 2003-10-13 23:14:39 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -676,11 +676,11 @@ int show_list_group_now(int mod)
     fprintf(actout," <TR>\n");
     fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(TmpBuf), subuser_count);
     fprintf(actout," </TR>\n");
-    fprintf(actout," <TR align=center bgcolor=%s>\n", get_color_text("002"));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
+    fprintf(actout," <TR align=middle bgcolor=%s>\n", get_color_text("002"));
+    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
+    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
+    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
+    fprintf(actout,"  <TH align=middle><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
     fprintf(actout," </TR>\n");
 
     if(mod == 1) {
@@ -691,13 +691,13 @@ int show_list_group_now(int mod)
         strcpy(TmpBuf, "dellistusernow");
     }
     for(z = 0; addr = sort_get_entry(z); ++z) {
-      fprintf(actout," <TR align=center>");
-      fprintf(actout,"  <TD align=right><A href=\"%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
+      fprintf(actout," <TR align=middle>");
+      fprintf(actout,"  <TD align=right><A href=%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d><IMG src=%s/trash.png border=0></A></TD>\n",
         CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       fprintf(actout,"  <TD align=left>%s</TD>\n", addr);
       ++z;
       if(addr = sort_get_entry(z)) {
-        fprintf(actout,"  <TD align=right><A href=\"%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
+        fprintf(actout,"  <TD align=right><A href=%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d><IMG src=%s/trash.png border=0></A></TD>\n",
           CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       fprintf(actout,"  <TD align=left>%s</TD>\n", addr);
       } else {

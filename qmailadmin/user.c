@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.6 2003-12-08 18:47:47 tomcollins Exp $
+ * $Id: user.c,v 1.7 2003-12-10 06:09:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -596,7 +596,7 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
        without the path information.  Add a pointer to point into cmd
        at the start of the program name only.    BUG 2003-12 */
     error = execl(cmd, cmd, p1, p2, p3, p4, NULL);
-    sprintf(StatusMessage, "%s, \"%s\", %s, %s, %s, %s\n",
+    sprintf(StatusMessage, "%s, \"%s\", %s, %s, %s, %s, %s\n",
       get_html_text("202"), cmd, hook_type, p1, p2, p3, p4);
     if (error == -1) return (-1);
     exit(127);

@@ -548,6 +548,12 @@ ezmlm_make (int newlist)
   /* Check for prefix setting */
   GetValue(TmpCGI, tmp, "prefix=", sizeof(tmp));
   
+  /* strip leading '[' and trailing ']' from tmp */
+  tmpstr = strchr (tmp, ']');
+  if (tmpstr != NULL) *tmpstr = '\0';
+  tmpstr = tmp;
+  while (*tmpstr == '[') tmpstr++;
+
   /* Create (or delete) the file as appropriate */
   sprintf(TmpBuf, "%s/%s/prefix", RealDir, ActionUser);
   if (strlen(tmp) > 0)
@@ -555,7 +561,7 @@ ezmlm_make (int newlist)
     file=fopen(TmpBuf , "w");
     if (file)
     {
-      fprintf(file, "[%s]", tmp);
+      fprintf(file, "[%s]", tmpstr);
       fclose(file);
     }
   }
@@ -1446,6 +1452,7 @@ show_current_list_values() {
 int get_mailinglist_prefix(char* prefix)
 {
   char buffer[MAX_BUFF];
+  char *b, *p;
   FILE* file;
 
   sprintf(buffer, "%s/%s/prefix", RealDir, ActionUser);
@@ -1454,8 +1461,13 @@ int get_mailinglist_prefix(char* prefix)
   if (file)
   {
     fgets(buffer, sizeof(buffer), file);
-    strncpy(prefix, strstr(buffer, "[") + 1, strstr(buffer, "]") - strstr(buffer, "[") - 1);
     fclose(file);
+
+    b = buffer;
+    p = prefix;
+    while (*b == '[') b++;
+    while ((*b != ']') && (*b != '\n') && (*b != '\0')) *p++ = *b++;
+    *p++ = '\0';
   }
   else
   {

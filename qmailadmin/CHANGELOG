@@ -10,6 +10,9 @@ patch or information related to the entry.
 	- Use AM_INSTALL_PROGRAM_FLAGS instead of chown/chgrp/chmod in
 	  Makefile. [827196]
 
+	Andrea Riela (reviewed by Davide Guinchi)
+	- Updates to Italian translation.
+
 1.2.0-pre1 - released 9-Dec-03
 
 	Tom Collins

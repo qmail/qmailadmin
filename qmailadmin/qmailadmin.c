@@ -121,13 +121,13 @@ main(argc,argv)
     memset(TmpBuf2, 0, sizeof(TmpBuf2));
     for(j=0,i=5;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
     rm = getenv("REQUEST_METHOD");
-    rm = strdup(rm);
+    rm = (rm == NULL ? "" : strdup(rm));
 
     if ( strncmp(rm , "POST", 4) == 0 ) {
       get_cgi();
     } else {
-      TmpCGI = (char *)getenv("QUERY_STRING");
-      TmpCGI = strdup(TmpCGI);
+      TmpCGI = getenv("QUERY_STRING");
+      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
     }
 
     GetValue(TmpCGI, Username, "user=", sizeof(Username));
@@ -162,13 +162,13 @@ main(argc,argv)
     memset(TmpBuf2, 0, sizeof(TmpBuf2));
     for(j=0,i=6;pi[i]!=0&&j<99;++i,++j) TmpBuf2[j] = pi[i];
     rm = getenv("REQUEST_METHOD");
-    rm = strdup(rm);
+    rm = (rm == NULL ? "" : strdup(rm));
 
     if ( strncmp(rm , "POST", 4) == 0 ) {
       get_cgi();
     } else {
-      TmpCGI = (char *)getenv("QUERY_STRING");
-      TmpCGI = strdup(TmpCGI);
+      TmpCGI = getenv("QUERY_STRING");
+      TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
     }
 
     GetValue(TmpCGI, Username, "user=", sizeof(Username));
@@ -198,8 +198,8 @@ main(argc,argv)
        if ( strncmp(rm , "POST", 4) == 0 ) {
          get_cgi();
        } else {
-         TmpCGI = (char *)getenv("QUERY_STRING");
-         TmpCGI = strdup(TmpCGI);
+         TmpCGI = getenv("QUERY_STRING");
+         TmpCGI = (TmpCGI == NULL ? "" : strdup(TmpCGI));
        }
 
        GetValue(TmpCGI, Username, "username=", sizeof(Username));

@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.8 2004-12-02 00:07:43 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.9 2004-12-31 01:02:40 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -467,7 +467,7 @@ int send_template_now(char *filename)
           /* display the main menu */
           /* move this to a function... */
           case 'v':
-            printh ("<font size=\"2\" color=\"#000000\"><b>%H</b></font><br>", 
+            printh ("<font size=\"2\" color=\"#000000\"><b>%H</b></font><br><br>", 
               Domain);
             printf (
        "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>", 
@@ -540,9 +540,6 @@ int send_template_now(char *filename)
 
              if (AdminType == DOMAIN_ADMIN) {
                printf ("<br>");
-               printf (
-       "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>",
-                 get_html_text("124"));
 
                if (MaxPopAccounts != 0) {
                  printh (

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.h,v 1.1.1.1.2.3 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: qmailadmin.h,v 1.1.1.1.2.4 2004-12-31 01:02:40 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,8 +48,12 @@
 
 #define NUM_SQL_OPTIONS	  6
 
+#define ACTION_MODIFY 1
+#define ACTION_DELETE 2
+
 void del_id_files( char *);
 void init_globals();
+void quickAction (char *username, int action);
 
 /* copied from maildirquota.c in vpopmail
  * it really needs to get into vpopmail.h somehow

@@ -3,6 +3,12 @@ patch or information related to the entry.
 
 1.2.7 - unreleased
 
+	Tom Collins
+	- Add Quick Links section to main menu.  Admins can now enter an
+	  email address and go directly to the modify or delete page,
+	  regardless of address type (mailbox, forward, list, etc.).
+	  Thanks to PinkRoccade Public Sector for sponsoring this feature.
+
 1.2.6 - released 24-Dec-04
 
 	Tom Collins

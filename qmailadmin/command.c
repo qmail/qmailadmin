@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: command.c,v 1.2.2.5 2004-12-31 01:02:40 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,30 @@ void process_commands()
 {
   if (strcmp(TmpBuf2, "showmenu") == 0 ) {
     show_menu(Username, Domain, Mytime);
+
+  } else if (strcmp(TmpBuf2, "quick") == 0) {
+    /* This feature sponsored by PinkRoccade Public Sector, Sept 2004 */
+
+    char moddel[20];
+    /* we use global ActionUser here because the functions that
+     * quickAction calls expect the username in that global.
+     */
+    GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
+    lowerit (ActionUser);  /* convert username to lower case */
+    GetValue(TmpCGI, moddel, "MODIFY=", sizeof(moddel));
+    if (*moddel) {
+      quickAction (ActionUser, ACTION_MODIFY);
+    } else {
+      GetValue(TmpCGI, moddel, "DELETE=", sizeof(moddel));
+      if (*moddel) {
+        quickAction (ActionUser, ACTION_DELETE);
+      } else {
+        /* malformed request -- missing fields */
+        show_menu(Username, Domain, Mytime);
+        vclose();
+        exit(0);
+      }
+    }
 
   } else if (strcmp(TmpBuf2, "showusers") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.4 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.5 2004-12-31 01:02:40 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,11 +36,14 @@
 #include <vauth.h>
 #include <vlimits.h>
 
+#include "alias.h"
 #include "auth.h"
+#include "autorespond.h"
 #include "cgi.h"
 #include "command.h"
 #include "config.h"
 #include "limits.h"
+#include "mailinglist.h"
 #include "printh.h"
 #include "qmailadmin.h"
 #include "show.h"
@@ -413,4 +416,66 @@ void del_id_files( char *dirname )
     }
   }
   closedir(mydir);
+}
+
+void quickAction (char *username, int action)
+{
+  /* This feature sponsored by PinkRoccade Public Sector, Sept 2004 */
+
+  struct stat fileinfo;
+  char dotqmailfn[MAX_BUFF];
+  char *space, *ar, *ez;
+  char *aliasline;
+
+  /* Note that all of the functions called from quickAction() assume
+   * that the username to modify is in a global called "ActionUser"
+   * It would be better to pass this information as a parameter, but
+   * that's how it was originally done.  The code in command.c that
+   * calls quickAction() passes ActionUser as the username parameter
+   * in hopes that someday we'll remove the globals and pass parameters.
+   */
+
+  /* first check for alias/forward, autorepsonder (or even mailing list) */
+  aliasline = valias_select (username, Domain);
+  if (aliasline != NULL) {
+    /* Autoresponder/Mailing List detection algorithm:
+     * We're looking for either '/autorespond ' or '/ezmlm-reject ' to
+     * appear in the first line, before a space appears
+     */
+    space = strstr (aliasline, " ");
+    ar = strstr (aliasline, "/autorespond ");
+    ez = strstr (aliasline, "/ezmlm-reject ");
+    if (ar && space && (ar < space)) {
+      /* autorepsonder */
+      if (action == ACTION_MODIFY) modautorespond();
+      else if (action == ACTION_DELETE) delautorespond();
+    } else if (ez && space && (ez < space)) {
+      /* mailing list (cdb-backend only) */
+      if (action == ACTION_MODIFY) modmailinglist();
+      else if (action == ACTION_DELETE) delmailinglist();
+    } else {
+      /* it's just a forward/alias of some sort */
+      if (action == ACTION_MODIFY) moddotqmail();
+      else if (action == ACTION_DELETE) deldotqmail();
+    }
+  } else if (vauth_getpw (username, Domain)) {
+    /* POP/IMAP account */
+    if (action == ACTION_MODIFY) moduser();
+    else if (action == ACTION_DELETE) deluser();
+  } else {
+    /* check for mailing list on SQL backend (not in valias_select) */
+    snprintf (dotqmailfn, sizeof(dotqmailfn), ".qmail-%s", username);
+    str_replace (dotqmailfn+7, '.', ':');
+    if (stat (dotqmailfn, &fileinfo) == 0) {
+      /* mailing list (MySQL backend) */
+      if (action == ACTION_MODIFY) modmailinglist();
+      else if (action == ACTION_DELETE) delmailinglist();
+    } else {
+      /* user does not exist */
+      snprinth (StatusMessage, sizeof(StatusMessage), "%s (%H@%H)", 
+        get_html_text("153"), username, Domain);
+      show_menu(Username, Domain, Mytime);
+      vclose();
+    }
+  }
 }

@@ -1,6 +1,15 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.2.0-pre2 - unreleased
+
+	Michael Bowe
+	- Update to configure.in for libtools 2.57 compatability. [858201]
+
+	Tom Collins
+	- Use AM_INSTALL_PROGRAM_FLAGS instead of chown/chgrp/chmod in
+	  Makefile. [827196]
+
 1.2.0-pre1 - released 9-Dec-03
 
 	Tom Collins

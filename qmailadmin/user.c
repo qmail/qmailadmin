@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.6 2004-11-27 17:18:06 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.7 2004-12-07 00:34:21 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -998,7 +998,7 @@ void parse_users_dotqmail (char newchar)
   static struct vqpasswd *vpw = NULL;
   static FILE *fs1=NULL; /* for the .qmail file */
   static FILE *fs2=NULL; /* for the vacation message file */
-  int i;
+  int i, j;
   char fn[500];
   char linebuf[256];
   int inheader;
@@ -1027,7 +1027,7 @@ void parse_users_dotqmail (char newchar)
       while (fgets (linebuf, sizeof(linebuf), fs1) != NULL) {
         i = strlen (linebuf);
         /* strip trailing newline if any */
-        if (i && linebuf[i-1] == '\n') linebuf[i-1] = '\0';
+        if (i && (linebuf[i-1] == '\n')) linebuf[i-1] = '\0';
 
         switch (*linebuf) {
           case '\0':	/* blank line, ignore */
@@ -1116,8 +1116,11 @@ void parse_users_dotqmail (char newchar)
     case '2':	/* forwarding addresses */
       if (fs1 != NULL) {
         rewind (fs1);
-        i = 0;
+        j = 0;
         while (fgets (linebuf, sizeof(linebuf), fs1) != NULL) {
+          i = strlen (linebuf);
+          /* strip trailing newline if any */
+          if (i && (linebuf[i-1] == '\n')) linebuf[i-1] = '\0';
           switch (*linebuf) {
             case '\0':	/* blank line */
             case '/':	/* maildir delivery */
@@ -1127,9 +1130,9 @@ void parse_users_dotqmail (char newchar)
               break;
   
             default:	/* email address delivery */
-              /* print address, skipping over '&' if necessary and removing newline */
-              if (i++) printf (", ");
-              printh ("%H", strtok(&linebuf[(*linebuf == '&' ? 1 : 0)], "\n"));
+              /* print address, skipping over '&' if necessary */
+              if (j++) printf (", ");
+              printh ("%H", &linebuf[(*linebuf == '&' ? 1 : 0)], "\n");
           }
         }
       }

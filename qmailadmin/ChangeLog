@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.6 - unreleased
 
+	Tom Collins
+	- user.c: fix bug in handling .qmail files with blank lines.
+
 1.2.5 - released 1-Dec-04
 
 	Tom Collins

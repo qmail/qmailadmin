@@ -4,13 +4,14 @@ patch or information related to the entry.
 1.0.30 - unreleased
 
 	Tom Collins
-	- More updates related to build process.
+	- More updates related to build process. [826594]
 	- Fix HTML formatting on display subscribers page.
 	- Convert HTTP_ACCEPT_LANGUAGE entries to lowercase, rename pt-BR
 	  to pt-br. [852963]
 	- Major cleanup of hooks code (fix call to execl, allow blank
 	  lines, don't require entries for all hooks, pass proper 
 	  parameters to hook program, update documentation). [855707]
+	- Use VPOPMAIL_UMASK instead of hardcoded 0077.
 
 1.0.29 - released 20-Nov-03
 

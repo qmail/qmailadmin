@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.8 2004-10-19 15:44:40 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.9 2004-10-23 20:49:56 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <errno.h>
@@ -105,6 +107,7 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  struct dirent **namelist;
  char this_alias[MAX_FILE_NAME];
  char *alias_line;
+ struct stat sbuf;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -178,21 +181,23 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
       if ( strcmp(mydirent->d_name, ".qmail-default") == 0 ) continue; 
 
+      /* check for ezmlm lists (file is symbolic link) */
+      memset (&sbuf, 0, sizeof(sbuf));
+      if (lstat (mydirent->d_name, &sbuf) == 0) {
+        if (sbuf.st_mode & S_IFLNK == S_IFLNK) continue;
+      }
+
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         fprintf(actout,"<tr><td colspan=4>");
         fprintf(actout,"%s %s", get_html_text("144"), mydirent->d_name);
         fprintf(actout,"</td></tr>\n");
         continue;
       }
+
       for(i=7,j=0;j<MAX_FILE_NAME-1&&mydirent->d_name[i]!=0;++i,++j) {
         alias_name[j] = mydirent->d_name[i] == ':' ? '.' : mydirent->d_name[i];
       }
       alias_name[j] = 0;
-
-      /* until there's a better solution, assume that all aliases ending
-       * with "-owner" are ezmlm lists and should be ignored.
-       */
-      if (strcmp ("-owner", &alias_name[j-6]) == 0) continue;
 
       memset(TmpBuf2, 0, sizeof(TmpBuf2));
       fgets(TmpBuf2, sizeof(TmpBuf2), fs);

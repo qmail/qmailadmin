@@ -8,6 +8,9 @@ patch or information related to the entry.
 	  '/.maildir' directory names.
 	- Add #define to qmailadmin.h for globally setting Maildir directory
 	  name (defaults to "/Maildir" but Gentoo can use ".maildir").
+	- Better detect .qmail-alias files that are tied to mailing lists.
+	  (Aliases that end in "-owner" but aren't tied to ezmlm lists 
+	  will now display properly.)
 
 1.2.3 - released 7-Oct-04
 

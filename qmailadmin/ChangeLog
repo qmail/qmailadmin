@@ -10,6 +10,7 @@ patch or information related to the entry.
 	- Properly format autoresponder names with '.' in them. [872721]
 	- Remove old code and redundant quota setting code from user.c.
 	- Switch to using new pw_flags field in auth.c.
+	- Set permissions on html templates and lang files to 644 (not 755).
 
 1.2.0-rc2 - released 1-Jan-04
 

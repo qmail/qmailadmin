@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.1 2004-02-02 00:39:47 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.2 2004-04-24 01:03:07 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -544,6 +544,14 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
   } else if (create != 0 && check_local_user(forwardname)) {
     sprintf(StatusMessage, "%s %s\n", get_html_text("175"), forwardname);
     return(-1);
+  }
+
+  if (strcmp (dest, "#") == 0) {
+    if (dotqmail_add_line(forwardname, "#")) {
+       sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 2);
+       return(-1);
+    }
+    return 0;
   }
 
   /* see if forwarding to a local user */

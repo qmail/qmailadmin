@@ -11,6 +11,10 @@ patch or information related to the entry.
 	Zhao Xin
 	- Add Traditional Chinese (zh-cn) translation.	
 
+	Tom Collins
+	- Allow user to create a 'blackhole' address by entering "#" as 
+	  the forwarding address when creating a new alias.
+
 1.2.1 - released 10-Feb-04
 
 	Tom Collins

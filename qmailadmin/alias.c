@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.3 2003-12-26 18:56:33 tomcollins Exp $
+ * $Id: alias.c,v 1.4 2004-01-14 21:23:25 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <errno.h>

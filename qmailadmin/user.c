@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.2 2004-10-19 15:44:40 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.3 2004-11-11 07:21:49 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -913,7 +913,7 @@ ActionUser, Domain ); */
     /* tmpstr points to first non-token */
 
     count=0;
-    while( tmpstr != NULL && count < 5) {
+    while( tmpstr != NULL && count < MAX_FORWARD_PER_USER) {
       if ((*tmpstr != '|') && (*tmpstr != '/')) {
         fprintf(fs,"&%s\n", tmpstr);
         ++count;

@@ -24,6 +24,9 @@
 #define MAILDIR "Maildir"
 #endif
 
+/* max # of forwards a user can set on the Modify User screen */
+#define MAX_FORWARD_PER_USER 5
+
 #define QMAILADMIN_TEMPLATEDIR "QMAILADMIN_TEMPLATEDIR"
 
 #define SHOW_VERSION_LINK 1

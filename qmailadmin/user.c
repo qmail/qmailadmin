@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.4 2003-10-13 22:31:10 tomcollins Exp $
+ * $Id: user.c,v 1.5 2003-12-02 15:38:07 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,10 +155,12 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
             (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)) {
           long diskquota = 0, maxmsg = 0;
 
+          /* display account name and user name */
           fprintf(actout, "<tr bgcolor=%s>", get_color_text("000"));
           fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_name);
           fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_gecos);
 
+          /* display user's quota */
 	  snprintf(path, sizeof(path), "%s/Maildir", pw->pw_dir);
           readuserquota(path, &diskquota, &maxmsg);
           fprintf(actout, "<td align=\"right\">%-2.2lf&nbsp;/&nbsp;</td>", ((double)diskquota)/1048576.0);  /* Convert to MB */
@@ -170,6 +172,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           }
           else { fprintf(actout, "<td align=\"left\">%s</td>", get_html_text("229")); }
 
+          /* display button to modify user */
           fprintf(actout, "<td align=\"center\">");
           fprintf(actout, "<a href=\"%s/com/moduser?user=%s&dom=%s&time=%d&moduser=%s\">",
             CGIPATH,user,dom,mytime,pw->pw_name);
@@ -189,6 +192,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
             allowdelete = 0;
           }
 
+          /* display trashcan for delete, or nothing if delete not allowed */
           fprintf(actout, "<td align=\"center\">");
           if (allowdelete) {
             fprintf(actout, "<a href=\"%s/com/deluser?user=%s&dom=%s&time=%d&deluser=%s\">",
@@ -199,24 +203,21 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           }
           fprintf(actout, "</td>");
 
+          /* display button in the 'set catchall' column */
+          fprintf(actout, "<td align=\"center\">");
           if (bounced==0 && strncmp(pw->pw_name,TmpBuf3,sizeof(TmpBuf3)) == 0) {
-            fprintf(actout, "<td align=\"center\">");
             fprintf(actout, "<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
               IMAGEURL);
-            fprintf(actout, "</td>");
           } else if (AdminType==DOMAIN_ADMIN) {
-            fprintf(actout, "<td align=\"center\">");
             fprintf(actout, "<a href=\"%s/com/setdefault?user=%s&dom=%s&time=%d&deluser=%s&page=%s\">",
               CGIPATH,user,dom,mytime,pw->pw_name,Pagenumber);
             fprintf(actout, "<img src=\"%s/radio-off.png\" border=\"0\"></a>",
               IMAGEURL);
-            fprintf(actout, "</td>");
           } else {
-            fprintf(actout, "<td align=\"center\">");
             fprintf(actout, "<img src=\"%s/disabled.png\" border=\"0\">",
               IMAGEURL);
-            fprintf(actout, "</td>");
           }
+          fprintf(actout, "</td>");
 
           fprintf(actout, "</tr>\n");
         }        

@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: command.c,v 1.2.2.1 2004-10-01 19:45:31 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -272,15 +272,15 @@ setdefaultaccount()
  int i;
  int j;
 
-  if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
-    sprintf(StatusMessage,"%s", get_html_text("082"));
+  if ((pw = vauth_getpw( ActionUser, Domain )) == NULL) {
+    sprintf(StatusMessage,"%s %s@%s", get_html_text("223"), ActionUser, Domain);
   } else {
-    if ((pw = vauth_getpw( ActionUser, Domain )) == NULL) {
-      sprintf(StatusMessage,"%s %s@%s", get_html_text("223"), ActionUser, Domain);
+    if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
+      sprintf(StatusMessage,"%s", get_html_text("082"));
     } else {
       fprintf(fs, "| %s/bin/vdelivermail '' %s\n", VPOPMAILDIR, pw->pw_dir);
+      fclose(fs);
     }
-    fclose(fs);
   }
   show_users(Username, Domain, Mytime);
     vclose();

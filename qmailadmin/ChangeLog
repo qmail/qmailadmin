@@ -19,6 +19,8 @@ patch or information related to the entry.
 	  it's for a mailing list and isn't an alias.  Note that this only
 	  affects systems that don't store aliases in the valias table and
 	  reverts to pre-1.2.2 behavior. [992132]
+	- Fix error handling when attempting to set catchall (if
+	  vauth_getpw() failed, we'd end up with an empty .qmail-default).
 
 1.2.2 - released 25-Jun-04
 

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1.1.1 2003-09-10 21:38:41 tomcollins Exp $
+# $Id: Makefile.am,v 1.2 2003-09-12 22:55:40 tomcollins Exp $
 
 @SET_MAKE@
 
@@ -70,10 +70,11 @@ install-data-local:
 	rm -rf                   $(DESTDIR)@htmllibdir@/html
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/html 
 	cp -R $(srcdir)/html/*   $(DESTDIR)@htmllibdir@/html
+	chmod -R 755             $(DESTDIR)@htmllibdir@/html
 	rm -rf                   $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@htmllibdir@/lang 
 	cp -R $(srcdir)/lang/*   $(DESTDIR)@htmllibdir@/lang
-	chmod -R 755             $(DESTDIR)@htmllibdir@
+	chmod -R 755             $(DESTDIR)@htmllibdir@/lang
 	$(mkinstalldirs)         $(DESTDIR)@imagedir@
 	cp -R $(srcdir)/images/* $(DESTDIR)@imagedir@
 

@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.7 - unreleased
 
+	John Peacock
+	- template.c: Fix typo that broke autoresponder subject display.
+
 	Tom Collins
 	- Add Quick Links section to main menu.  Admins can now enter an
 	  email address and go directly to the modify or delete page,

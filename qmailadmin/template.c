@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.10 2004-12-31 01:38:33 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.11 2005-01-05 04:54:52 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -234,7 +234,7 @@ int send_template_now(char *filename)
 
               /* take off newline */
               i = strlen(TmpBuf2); --i; TmpBuf2[i] = 0;
-              printh ("         <td><input type=\"text\" size=40 name=\"alias\" maxlength=128 value=\"%h\"></td>\n",
+              printh ("         <td><input type=\"text\" size=40 name=\"alias\" maxlength=128 value=\"%H\"></td>\n",
                 &TmpBuf2[9]);
               printf ("         <td>&nbsp;</td>\n");
               printf ("        </tr>\n");

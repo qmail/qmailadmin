@@ -11,6 +11,11 @@ QA_VERSION=@QA_VERSION@
 PACKAGE=@QA_PACKAGE@
 VERSION=@QA_VERSION@
 
+#
+# Install qmailadmin setuid to @vpopuser@
+#
+AM_INSTALL_PROGRAM_FLAGS= -o @vpopuser@ -m 6755  -g @vpopgroup@
+
 bindir=@cgibindir@
 bin_PROGRAMS=@CGIBINTARGETS@
 EXTRA_PROGRAMS=qmailadmin
@@ -41,15 +46,6 @@ limits.o: config.h qmailadmin.h qmailadminx.h
 dotqmail.o: config.h qmailadmin.h qmailadminx.h 
 
 DEFS=-I. @auth_incs@ 
-
-#
-# Install qmailadmin setuid to @vpopuser@
-#
-
-install-exec-local:
-	chown @vpopuser@ $(DESTDIR)$(bindir)/@QA_PACKAGE@
-	chgrp @vpopgroup@ $(DESTDIR)$(bindir)/@QA_PACKAGE@
-	chmod u+s,g+s $(DESTDIR)$(bindir)/@QA_PACKAGE@
 
 # Maintainer stuff
 

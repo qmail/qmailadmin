@@ -84,6 +84,11 @@ QA_VERSION = @QA_VERSION@
 PACKAGE = @QA_PACKAGE@
 VERSION = @QA_VERSION@
 
+#
+# Install qmailadmin setuid to @vpopuser@
+#
+AM_INSTALL_PROGRAM_FLAGS = -o @vpopuser@ -m 6755  -g @vpopgroup@
+
 bindir = @cgibindir@
 bin_PROGRAMS = @CGIBINTARGETS@
 EXTRA_PROGRAMS = qmailadmin
@@ -312,7 +317,7 @@ installcheck: installcheck-am
 all-recursive-am: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
-install-exec-am: install-binPROGRAMS install-exec-local
+install-exec-am: install-binPROGRAMS
 install-exec: install-exec-am
 
 install-data-am: install-data-local
@@ -372,12 +377,11 @@ maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile tags mostlyclean-tags distclean-tags \
 clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-check-am installcheck-am installcheck all-recursive-am \
-install-exec-local install-exec-am install-exec install-data-local \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+check-am installcheck-am installcheck all-recursive-am install-exec-am \
+install-exec install-data-local install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 @SET_MAKE@
@@ -396,15 +400,6 @@ show.o: config.h qmailadmin.h qmailadminx.h
 cgi.o: config.h qmailadmin.h qmailadminx.h 
 limits.o: config.h qmailadmin.h qmailadminx.h 
 dotqmail.o: config.h qmailadmin.h qmailadminx.h 
-
-#
-# Install qmailadmin setuid to @vpopuser@
-#
-
-install-exec-local:
-	chown @vpopuser@ $(DESTDIR)$(bindir)/@QA_PACKAGE@
-	chgrp @vpopgroup@ $(DESTDIR)$(bindir)/@QA_PACKAGE@
-	chmod u+s,g+s $(DESTDIR)$(bindir)/@QA_PACKAGE@
 
 # Maintainer stuff
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.3 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.4 2003-11-20 23:38:19 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,8 +140,8 @@ main(argc,argv)
     /* get the real uid and gid and change to that user */
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
     if ( geteuid() == 0 ) {
-      if ( setegid(Gid) != 0 ) perror("setgid");
-      if ( seteuid(Uid) != 0 ) perror("setuid");
+      if ( setgid(Gid) != 0 ) perror("setgid");
+      if ( setuid(Uid) != 0 ) perror("setuid");
     }
 
     if ( chdir(RealDir) < 0 ) {
@@ -179,8 +179,8 @@ main(argc,argv)
 
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
     if ( geteuid() == 0 ) {
-      if ( setegid(Gid) != 0 ) perror("setgid");
-      if ( seteuid(Uid) != 0 ) perror("setuid");
+      if ( setgid(Gid) != 0 ) perror("setgid");
+      if ( setuid(Uid) != 0 ) perror("setuid");
     }
     vclose();
     exit(0);
@@ -209,8 +209,8 @@ main(argc,argv)
 
        vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
        if ( geteuid() == 0 ) {
-         if ( setegid(Gid) != 0 ) perror("setgid");
-         if ( seteuid(Uid) != 0 ) perror("setuid");
+         if ( setgid(Gid) != 0 ) perror("setgid");
+         if ( setuid(Uid) != 0 ) perror("setuid");
        }
 
        /* Authenticate a user and domain admin */

@@ -1,6 +1,14 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.0.29 - unreleased
+
+	Tom Collins
+	- Totally fix enable-htmllibdir option in configure.in. [812535]
+
+	Nikolai V. Ivanyushin
+	- Fix codepage name from koi-8r to koi8-r. [827792]
+
 1.0.28 - released 17-Oct-03
 
 	Oden Eriksson		- Updated Swedish translation.

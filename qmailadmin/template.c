@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.7 2004-01-26 00:41:07 tomcollins Exp $
+ * $Id: template.c,v 1.5 2003-12-24 05:22:05 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,11 +27,6 @@
 #include <dirent.h>
 #include <vpopmail.h>
 #include <vpopmail_config.h>
-/* undef some macros that get redefined in config.h below */
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
 #include <vauth.h>
 #include "config.h"
 #include "qmailadmin.h"
@@ -957,7 +952,7 @@ void get_calling_host() {
 char *get_session_val(char *session_var) {
    /* returns the value of session_var, first checking the .qw file for saved */
    /* value, or the TmpCGI if it's not yet been saved                         */
-   static char value[MAX_BUFF];
+   char value[MAX_BUFF];
    char dir[MAX_BUFF];
    char *retval;
    FILE *fs_qw;

@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.4 2004-04-24 01:12:50 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.5 2004-04-29 23:31:36 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,14 +167,8 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
   
   for (m=0; m<n; m++) {
     mydirent=namelist[m];
-    /*
-     *  don't read files that are really ezmlm-idx listowners,
-     *  i.e. .qmail-user-owner
-     *   
-     */ 
     if ( strncmp(".qmail-", mydirent->d_name, 7) == 0 ) {
-      if ( strstr(mydirent->d_name, "-owner") != NULL ) continue; 
-      if ( strstr(mydirent->d_name, "-default") != NULL ) continue; 
+      if ( strcmp(mydirent->d_name, ".qmail-default") == 0 ) continue; 
 
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
         fprintf(actout,"<tr><td colspan=4>");

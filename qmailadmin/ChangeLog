@@ -17,6 +17,8 @@ patch or information related to the entry.
 	- Display forwards even if they're all blackholes. [941083]
 	- Fixed bug where unrecognized .qmail-alias entries could throw
 	  QmailAdmin into an infinite loop (Modify Alias). [941082]
+	- Display non-ezmlm aliases with "-owner" in the name.
+	- Display aliases with "-default" in the name.
 
 1.2.1 - released 10-Feb-04
 

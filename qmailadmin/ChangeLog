@@ -11,6 +11,9 @@ patch or information related to the entry.
 	  retrieval limitations don't apply to ezmlm-cgi.
 	- mailinglist.c: Fix compile error with non-idx ezmlm installs.
 
+	L4nce1lot
+	- mailinglist.c: Fix Tom's fix for non-idx ezmlm installs. [1123809]
+
 1.2.7 - released 23-Jan-05
 
 	Tomas Kuliavas

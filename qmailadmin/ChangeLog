@@ -7,6 +7,10 @@ patch or information related to the entry.
 	- Remove unnecessary name attributes in SUBMIT buttons. [869292]
 	- When adding a mailing list, automatically subscribe the
 	  list owner and make them a moderator/remote admin. [892489]
+	- user.c: deliver mail to Maildir before sending vacation message
+	  in order to prevent autorespond from losing messages.
+	- Move .qmail parsing code from template.c to user.c.  Rewrite
+	  for more flexibility and to allow new format for vacation.
 	- configure.in: Compile with all warnings on.
 	- Add header files: alias.h auth.h autorespond.h cgi.h command.h 
 	  dotqmail.h forward.h limits.h mailinglist.h show.h template.h 

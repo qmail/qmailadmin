@@ -1,5 +1,5 @@
 /*
- * $Id: user.h,v 1.1.2.1 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: user.h,v 1.1.2.2 2004-11-27 17:18:06 tomcollins Exp $
  */
  
 void adduser();
@@ -15,6 +15,7 @@ int get_catchall();
 void moduser();
 void modusergo();
 void modusernow();
+void parse_users_dotqmail (char newchar);
 void setremotecatchall();
 void setremotecatchallnow();
 void show_users(char *Username, char *Domain, time_t Mytime);

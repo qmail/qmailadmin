@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.5 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.6 2004-11-27 17:18:06 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -933,14 +933,16 @@ ActionUser, Domain ); */
     /* open the .qmail file */
     snprintf(NewBuf,sizeof(NewBuf),"%s/.qmail", vpw->pw_dir);
     fs = fopen(NewBuf,"w+");
-    fprintf(fs, "| %s/autorespond 86400 3 %s/vacation/message %s/vacation\n",
-      AUTORESPOND_PATH, vpw->pw_dir, vpw->pw_dir );
 
     /* save a copy for the user (if checking for spam, it will keep a copy)*/
     if(spam_check==1)
        fprintf(fs, "%s\n", SPAM_COMMAND);
     else
       fprintf(fs,"%s/" MAILDIR "/\n", vpw->pw_dir);
+
+    fprintf(fs, "| %s/autorespond 86400 3 %s/vacation/message %s/vacation\n",
+      AUTORESPOND_PATH, vpw->pw_dir, vpw->pw_dir );
+
     fclose(fs);
 
     /* set up the message file */
@@ -989,3 +991,180 @@ ActionUser, Domain ); */
   call_hooks(HOOK_MODUSER, ActionUser, Domain, Password1, Gecos);
   moduser();
 }
+
+/* display ##i0 - ##i9 macros */
+void parse_users_dotqmail (char newchar)
+{
+  static struct vqpasswd *vpw = NULL;
+  static FILE *fs1=NULL; /* for the .qmail file */
+  static FILE *fs2=NULL; /* for the vacation message file */
+  int i;
+  char fn[500];
+  char linebuf[256];
+  int inheader;
+  
+  static unsigned int dotqmail_flags = 0;
+#define DOTQMAIL_STANDARD	(1<<0)
+#define DOTQMAIL_FORWARD	(1<<1)
+#define DOTQMAIL_SAVECOPY	(1<<3)
+#define DOTQMAIL_VACATION	(1<<4)
+#define DOTQMAIL_BLACKHOLE	(1<<8)
+#define DOTQMAIL_SPAMCHECK	(1<<9)
+#define DOTQMAIL_OTHERPGM	(1<<14)
+
+
+  if (vpw == NULL) vpw = vauth_getpw(ActionUser, Domain);
+  if (vpw == NULL) return;
+  
+  if (fs1 == NULL) {
+    
+    snprintf (fn, sizeof(fn), "%s/.qmail", vpw->pw_dir);
+    fs1 = fopen (fn, "r");
+    if (fs1 == NULL) {
+      /* no .qmail file, standard delivery */
+      dotqmail_flags = DOTQMAIL_STANDARD;
+    } else {
+      while (fgets (linebuf, sizeof(linebuf), fs1) != NULL) {
+        i = strlen (linebuf);
+        /* strip trailing newline if any */
+        if (i && linebuf[i-1] == '\n') linebuf[i-1] = '\0';
+
+        switch (*linebuf) {
+          case '\0':	/* blank line, ignore */
+            break;
+            
+          case '/':	/* maildir delivery */
+            /* see if it's the user's maildir */
+            if (1)
+              dotqmail_flags |= DOTQMAIL_SAVECOPY;
+            break;
+            
+          case '|':	/* program delivery */
+            /* in older versions of QmailAdmin, we used "|/bin/true delete"
+             * for blackhole accounts.  Since the path to true may vary,
+             * just check for the end of the string
+             */
+            if (strstr (linebuf, "/true delete") != NULL)
+              dotqmail_flags |= DOTQMAIL_BLACKHOLE;
+              
+            else if (strstr (linebuf, "/autorespond ") != NULL) {
+              dotqmail_flags |= DOTQMAIL_VACATION;
+              snprintf (fn, sizeof(fn), "%s/vacation/message", vpw->pw_dir);
+              fs2 = fopen (fn, "r");
+            }
+            
+            else if (strstr (linebuf, SPAM_COMMAND) != NULL )
+              dotqmail_flags |= DOTQMAIL_SPAMCHECK;
+            
+            else /* unrecognized program delivery, set a flag so we don't blackhole */
+              dotqmail_flags |= DOTQMAIL_OTHERPGM;
+                				
+            break;
+            
+          case '#':	/* comment */
+            /* ignore unless it's our 'blackhole' comment */
+            if (strcmp (linebuf, "# delete") == 0)
+              dotqmail_flags |= DOTQMAIL_BLACKHOLE;
+            break;
+
+          default:	/* email address delivery */
+            dotqmail_flags |= DOTQMAIL_FORWARD;
+            
+        }
+      }
+
+      /* if other flags were set, in addition to blackhole, clear blackhole flag */
+      if (dotqmail_flags & ~DOTQMAIL_BLACKHOLE)
+        dotqmail_flags &= ~DOTQMAIL_BLACKHOLE;
+      
+      /* if no flags were set (.qmail file without delivery), it's a blackhole */	
+      if (dotqmail_flags == 0)
+        dotqmail_flags = DOTQMAIL_BLACKHOLE;
+
+      /* if unrecognized programs were all that was set, consider it standard */
+      if (dotqmail_flags == DOTQMAIL_OTHERPGM)
+        dotqmail_flags = DOTQMAIL_STANDARD;
+        
+      /* clear OTHERPGM flag, as it tells us nothing at this point */
+      dotqmail_flags &= ~DOTQMAIL_OTHERPGM;
+      
+      /* if forward and save-a-copy are set, it will actually set the spam flag? */
+      if ((dotqmail_flags & DOTQMAIL_FORWARD) && (dotqmail_flags & DOTQMAIL_SPAMCHECK))
+        dotqmail_flags |= DOTQMAIL_SAVECOPY;
+
+      /* if vacation is set, it will set save a copy as well, so we clear it */
+      if (dotqmail_flags & DOTQMAIL_VACATION)
+        dotqmail_flags &= ~DOTQMAIL_SAVECOPY;
+    }
+    
+    /* if only spam detection was set, it's standard delivery */        
+    /* default to standard delivery */
+    if (! (dotqmail_flags & ~DOTQMAIL_SPAMCHECK))
+      dotqmail_flags |= DOTQMAIL_STANDARD;	
+  }  
+
+  switch (newchar) {
+    case '0':	/* standard delivery checkbox */
+    case '1':	/* forward delivery checkbox */
+    case '3':	/* save-a-copy checkbox */
+    case '4':	/* vacation checkbox */
+    case '8':	/* blackhole checkbox */
+    case '9':	/* spam check checkbox */
+      if (dotqmail_flags & (1 << (newchar - '0'))) printf ("checked ");
+      break;
+      
+    case '2':	/* forwarding addresses */
+      if (fs1 != NULL) {
+        rewind (fs1);
+        i = 0;
+        while (fgets (linebuf, sizeof(linebuf), fs1) != NULL) {
+          switch (*linebuf) {
+            case '\0':	/* blank line */
+            case '/':	/* maildir delivery */
+            case '|':	/* program delivery */
+            case '#':	/* comment */
+              /* ignore */
+              break;
+  
+            default:	/* email address delivery */
+              /* print address, skipping over '&' if necessary and removing newline */
+              if (i++) printf (", ");
+              printh ("%H", strtok(&linebuf[(*linebuf == '&' ? 1 : 0)], "\n"));
+          }
+        }
+      }
+      break;
+      
+    case '5':	/* vacation subject */
+      if (fs2 != NULL) {
+        rewind (fs2);
+
+        /* scan headers for Subject */
+        while (fgets (linebuf, sizeof(linebuf), fs2) != NULL) {
+          if (*linebuf == '\n') break;
+          if (strncasecmp (linebuf, "Subject: ", 9) == 0)
+            printh ("%H", &linebuf[9]);
+        }
+      }
+      break;
+      
+    case '6':	/* vacation message */
+      if (fs2 != NULL) {
+        rewind (fs2);
+
+        /* read from file, skipping headers (look for first blank line) */
+        inheader = 1;
+        while (fgets (linebuf, sizeof(linebuf), fs2) != NULL) {
+          if (!inheader) printh ("%H", linebuf);
+          if (*linebuf == '\n') inheader = 0;
+        }
+      }
+      break;
+      
+    case '7':	/* gecos (real name) */
+      printh ("%H", vpw->pw_gecos);
+      break;
+  }
+  
+}
+

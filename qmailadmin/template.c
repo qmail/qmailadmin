@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.6 2004-11-20 06:24:51 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.7 2004-11-27 17:18:06 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,6 @@
 #include "util.h"
 
 static char dchar[4];
-void check_user_forward_vacation(char newchar);
 void check_mailbox_flags(char newchar);
 void transmit_block(FILE *fs);
 void ignore_to_end_tag(FILE *fs);
@@ -278,7 +277,7 @@ int send_template_now(char *filename)
 
           /* check for user forward and forward/store vacation */
           case 'i':
-            check_user_forward_vacation(fgetc(fs));
+            parse_users_dotqmail( fgetc(fs) );
             break;
 
           /* show mailbox flag status */
@@ -719,147 +718,6 @@ void check_mailbox_flags(char newchar)
       break;
   }
 
-  return;
-}
-
-void check_user_forward_vacation(char newchar)
-{
- static struct vqpasswd *vpw = NULL;
- static FILE *fs1=NULL; /* for the .qmail file */
- static FILE *fs2=NULL; /* for the vacation message file */
- int i;
-
-  if (vpw==NULL) vpw = vauth_getpw(ActionUser, Domain); 
-  if (fs1== NULL) {
-    snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/.qmail", vpw->pw_dir);
-    fs1 = fopen(NTmpBuf,"r");
-  }
-
-  if ( newchar=='7') {
-    printh ("%H", vpw->pw_gecos);
-    return;
-  }
-
-  if (fs1 == NULL) {
-    if (newchar=='0'){
-      printf("checked ");
-    }
-    return;
-  } 
-
-  /* start at the begingin if second time thru */
-  rewind(fs1);
-
-  if (fgets(NTmpBuf,sizeof(NTmpBuf),fs1)!=NULL) {
-                           
-    /* if it is a forward to a program */
-    if (strstr(NTmpBuf, "autorespond")!=NULL ) {
-      if (newchar=='4') {
-        printf("checked ");
-      } else if (newchar=='5') {
-        if (fs2 == NULL) { 
-          snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/vacation/message", vpw->pw_dir);
-          fs2 = fopen(NTmpBuf,"r");
-        }
-        if (fs2 != NULL) {
-          rewind(fs2);
-          /*
-           *  it's a hack, the second line always has
-           *  the subject
-           */ 
-          fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
-          fgets(NTmpBuf,sizeof(NTmpBuf),fs2);
-          printh("%H", &NTmpBuf[9]);
-        }
-      } else if (newchar=='6') {
-        if (fs2 == NULL) { 
-          snprintf(NTmpBuf, sizeof(NTmpBuf), "%s/vacation/message", vpw->pw_dir);
-          fs2 = fopen(NTmpBuf,"r");
-        }
-        if (fs2 != NULL) {
-          rewind(fs2);
-          for(i = 0; i < 3 && fgets(NTmpBuf,sizeof(NTmpBuf),fs2) != NULL; ++i);
-          while (fgets(NTmpBuf,sizeof(NTmpBuf),fs2) != NULL) {
-            printf("%s", NTmpBuf);
-          }
-        }
-      }
-
-      i = 0;
-      do {
-        if (newchar == '3' && (NTmpBuf[0] == '/' ||
-                               strstr(NTmpBuf, SPAM_COMMAND)!=NULL) ) {
-          printf("checked ");
-          return;
-        }
-        if ( newchar == '2' ) {
-          if (NTmpBuf[0]=='/') continue;
-          if (NTmpBuf[0]=='|') continue;
-          if ( i>0 ) printf(", ");
-          if (NTmpBuf[0]=='&') {
-            printh("%H", strtok(&NTmpBuf[1], "\n"));
-          } else {
-            printh("%H", NTmpBuf[0]);
-          } 
-          ++i;
-        }
-        /* Jeff Hedlund (jeff.hedlund@matrixsi.com) 28 May 2003 */
-        /* i9: "checked" if spam filtering on */
-        if ( newchar == '9' && strstr(NTmpBuf, SPAM_COMMAND)!=NULL ) {
-           printf("checked ");
-           return;
-        }
-      } while(fgets(NTmpBuf,sizeof(NTmpBuf),fs1) != NULL );
-                   
-      
-      return;
-    } else {
-
-      /* James Raftery <james@now.ie>, 21 May 2003 */
-      /* i8: "checked" if blackhole */
-      if (strstr(NTmpBuf, " delete\n") != NULL) {
-        if (newchar == '8') {
-           printf("checked ");
-        }
-        return;
-      }
-
-      if (newchar == '1' || newchar == '0') {
-        if(strstr(NTmpBuf, SPAM_COMMAND)!=NULL) {
-          if(newchar == '0') printf("checked ");
-        } else {
-          if(newchar == '1') printf("checked ");
-        }
-        return;
-      }
-
-      i = 0;
-      do { 
-        if (newchar == '3' && (NTmpBuf[0] == '/' ||
-                               strstr(NTmpBuf, SPAM_COMMAND)!=NULL)) {
-          printf("checked "); 
-          return;
-        }
-
-        if (newchar == '9' && strstr(NTmpBuf, SPAM_COMMAND)!=NULL ) {
-          printf("checked ");
-          return;
-        }
-        
-        if (newchar == '2') {
-          if (NTmpBuf[0]=='/') continue;
-          if (strstr(NTmpBuf, SPAM_COMMAND)!=NULL) continue;
-          if (i > 0) printf(", ");
-          if (NTmpBuf[0] == '&') {
-            printh("%H", strtok(&NTmpBuf[1], "\n"));
-          } else {
-            printh("%H", NTmpBuf);
-          } 
-          ++i;
-        }
-      } while (fgets(NTmpBuf,sizeof(NTmpBuf),fs1) != NULL);
-    }
-  }
   return;
 }
 

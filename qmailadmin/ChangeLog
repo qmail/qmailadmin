@@ -9,6 +9,10 @@ patch or information related to the entry.
 	Tom Collins
 	- Before considering an alias/forward to be a 'blackhole', make
 	  sure it's only a single line.
+	- Ignore .qmail-alias files if 'alias' ends in '-owner'.  We assume
+	  it's for a mailing list and isn't an alias.  Note that this only
+	  affects systems that don't store aliases in the valias table and
+	  reverts to pre-1.2.2 behavior. [992132]
 
 1.2.2 - released 25-Jun-04
 

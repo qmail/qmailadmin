@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.6 2004-08-25 23:58:56 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.7 2004-08-26 00:12:03 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -188,6 +188,12 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
         alias_name[j] = mydirent->d_name[i] == ':' ? '.' : mydirent->d_name[i];
       }
       alias_name[j] = 0;
+
+      /* until there's a better solution, assume that all aliases ending
+       * with "-owner" are ezmlm lists and should be ignored.
+       */
+      if (strcmp ("-owner", &alias_name[j-6]) == 0) continue;
+
       memset(TmpBuf2, 0, sizeof(TmpBuf2));
       fgets(TmpBuf2, sizeof(TmpBuf2), fs);
       alias_name_from_command = dotqmail_alias_command(TmpBuf2);

@@ -1,5 +1,5 @@
 /* 
- * $Id: template.c,v 1.7.2.2 2004-09-07 05:07:45 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.3 2004-10-19 15:44:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -521,7 +521,7 @@ int send_template_now(char *filename)
               fprintf(actout, "<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
                 get_html_text("249"), get_html_text("253"), qconvert, qnote);
               fprintf(actout, "<br>%s ", get_html_text("254"));
-	      snprintf(path, sizeof(path), "%s/Maildir", vpw->pw_dir);
+	      snprintf(path, sizeof(path), "%s/" MAILDIR, vpw->pw_dir);
               readuserquota(path, &diskquota, &maxmsg);
               fprintf(actout, "%-2.2lf MB</font><br>", ((double)diskquota)/1048576.0);  /* Convert to MB */
              }
@@ -962,7 +962,7 @@ char *get_session_val(char *session_var) {
    memset(dir, 0, sizeof(dir));
    retval = "";
    if ( (vpw = vauth_getpw(Username, Domain)) != NULL ) {
-      sprintf(dir, "%s/Maildir/%d.qw", vpw->pw_dir, Mytime);
+      sprintf(dir, "%s/" MAILDIR "/%d.qw", vpw->pw_dir, Mytime);
       fs_qw = fopen(dir, "r");
       if ( fs_qw != NULL ) {
          memset(TmpBuf, 0, sizeof(TmpBuf));

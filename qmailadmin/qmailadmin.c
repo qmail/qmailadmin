@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.1 2004-04-24 01:06:40 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.2 2004-10-19 15:44:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -232,11 +232,11 @@ main(argc,argv)
            exit(0);
          }
 
-         sprintf(TmpBuf, "%s/Maildir", pw->pw_dir);
+         sprintf(TmpBuf, "%s/" MAILDIR, pw->pw_dir);
          del_id_files( TmpBuf);
 
          Mytime = time(NULL);
-         sprintf(TmpBuf, "%s/Maildir/%d.qw", pw->pw_dir, Mytime);
+         sprintf(TmpBuf, "%s/" MAILDIR "/%d.qw", pw->pw_dir, Mytime);
          fs = fopen(TmpBuf, "w");
          if ( fs == NULL ) {
            fprintf(actout,"%s %s<br>\n", get_html_text("144"), TmpBuf);

@@ -6,6 +6,8 @@ patch or information related to the entry.
 	Tom Collins
 	- Modify contrib/alias2forward.pl to work with '/Maildir' or
 	  '/.maildir' directory names.
+	- Add #define to qmailadmin.h for globally setting Maildir directory
+	  name (defaults to "/Maildir" but Gentoo can use ".maildir").
 
 1.2.3 - released 7-Oct-04
 

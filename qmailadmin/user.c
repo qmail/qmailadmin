@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.1 2004-06-12 21:28:04 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.2 2004-10-19 15:44:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           fprintf(actout, "<td align=\"left\">%s</td>", pw->pw_gecos);
 
           /* display user's quota */
-	  snprintf(path, sizeof(path), "%s/Maildir", pw->pw_dir);
+	  snprintf(path, sizeof(path), "%s/" MAILDIR, pw->pw_dir);
           readuserquota(path, &diskquota, &maxmsg);
           fprintf(actout, "<td align=\"right\">%-2.2lf&nbsp;/&nbsp;</td>", ((double)diskquota)/1048576.0);  /* Convert to MB */
           if (strncmp(pw->pw_shell, "NOQUOTA", 2) != 0) {
@@ -928,7 +928,7 @@ ActionUser, Domain ); */
         /* if spam check is enabled, that will save the message*/
         fprintf(fs, "%s\n", SPAM_COMMAND);
       } else {
-        fprintf(fs,"%s/Maildir/\n", vpw->pw_dir);
+        fprintf(fs,"%s/" MAILDIR "/\n", vpw->pw_dir);
       }
     } 
     fclose(fs);
@@ -962,7 +962,7 @@ ActionUser, Domain ); */
     if(spam_check==1)
        fprintf(fs, "%s\n", SPAM_COMMAND);
     else
-      fprintf(fs,"%s/Maildir/\n", vpw->pw_dir);
+      fprintf(fs,"%s/" MAILDIR "/\n", vpw->pw_dir);
     fclose(fs);
 
     /* set up the message file */

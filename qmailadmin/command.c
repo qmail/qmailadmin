@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2.2.1 2004-10-01 19:45:31 tomcollins Exp $
+ * $Id: command.c,v 1.2.2.2 2004-10-19 15:44:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,7 +253,7 @@ process_commands()
     delautorespondnow();
 
   } else if (strcmp(TmpBuf2, "logout") == 0 ) {
-    sprintf(TmpBuf, "%s/%s/Maildir", RealDir, Username );
+    sprintf(TmpBuf, "%s/%s/" MAILDIR, RealDir, Username );
     del_id_files(TmpBuf);
     show_login();
 

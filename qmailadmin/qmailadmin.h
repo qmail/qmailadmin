@@ -16,6 +16,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
+/* Some platforms use '.maildir' instead of 'Maildir' as the mail directory
+ * name.  Furture versions of Vpopmail might define it.  Until then, change
+ * it below.
+ */
+#ifndef MAILDIR
+#define MAILDIR "Maildir"
+#endif
 
 #define QMAILADMIN_TEMPLATEDIR "QMAILADMIN_TEMPLATEDIR"
 

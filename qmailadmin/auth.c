@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3.2.1 2004-09-06 17:29:23 tomcollins Exp $
+ * $Id: auth.c,v 1.3.2.2 2004-10-19 15:44:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ auth_system(ip_addr, pw)
     exit(0);
   }
 
-  sprintf(TmpBuf1, "%s/Maildir/%s.qw", pw->pw_dir, Time);
+  sprintf(TmpBuf1, "%s/" MAILDIR "/%s.qw", pw->pw_dir, Time);
 
   fs = fopen(TmpBuf1, "r");
   if ( fs == NULL ) {
@@ -103,7 +103,7 @@ auth_user_domain(ip_addr,pw)
     exit(0);
   }
 
-  sprintf(TmpBuf1, "%s/Maildir/%s.qw", pw->pw_dir, Time);
+  sprintf(TmpBuf1, "%s/" MAILDIR "/%s.qw", pw->pw_dir, Time);
 
   fs = fopen(TmpBuf1, "r");
   if ( fs == NULL ) {

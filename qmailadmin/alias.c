@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.7 2004-08-26 00:12:03 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.8 2004-10-19 15:44:40 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -664,11 +664,11 @@ char* dotqmail_alias_command(char* line)
     b = NULL;  /* pointer to mailbox name */
 
     if ((s = strrchr(user, '/')) == NULL) return NULL;
-    if (strcmp(s, "/Maildir") != 0) {
+    if (strcmp(s, "/" MAILDIR) != 0) {
       b = s + 2;  /* point to name of submailbox */
       *s = '\0';  /* add NULL */
       if ((s = strrchr(user, '/')) == NULL) return NULL;
-      if (strcmp(s, "/Maildir") != 0) return NULL;
+      if (strcmp(s, "/" MAILDIR) != 0) return NULL;
     }
 
     *s = '\0';

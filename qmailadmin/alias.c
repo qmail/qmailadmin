@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.2 2003-10-10 16:36:24 tomcollins Exp $
+ * $Id: alias.c,v 1.3 2003-12-26 18:56:33 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,7 +115,6 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
         fprintf(actout,"<tr><td colspan=4>");
         fprintf(actout,"%s %s", get_html_text("144"), mydirent->d_name);
         fprintf(actout,"</td></tr>\n");
-        fclose(fs);
         continue;
       }
       for(i=7,j=0;j<MAX_FILE_NAME-1&&mydirent->d_name[i]!=0;++i,++j) {

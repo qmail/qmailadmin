@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.6 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: mailinglist.c,v 1.7 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@ void default_options();
 
 int show_mailing_lists(char *user, char *dom, time_t mytime)
 {
+
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
     vclose();
@@ -73,6 +74,7 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
   FILE *fs;
   char *addr;
   char testfn[MAX_FILE_NAME];
+  char Buffer[MAX_BUFF];
   int i,j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -105,9 +107,9 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
         send_template_now("show_error_line.html");
         continue;
       }
-      fgets(TmpBuf2, sizeof(TmpBuf2), fs);
+      fgets(Buffer, sizeof(Buffer), fs);
       fclose(fs);
-      if ( strstr( TmpBuf2, "ezmlm-reject") != 0 ) {
+      if ( strstr( Buffer, "ezmlm-reject") != 0 ) {
         sort_add_entry (&mydirent->d_name[7], 0);
       }
     }
@@ -154,10 +156,12 @@ int show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
 
 int is_mailing_list(FILE *fs)
 {
+  char Buffer[MAX_BUFF];
+
        while (!feof(fs)) {
-               fgets( TmpBuf2, sizeof(TmpBuf2), fs);
-               if ( strstr( TmpBuf2, "ezmlm-reject") != 0 ||
-                    strstr( TmpBuf2, "ezmlm-send")   != 0 )
+               fgets( Buffer, sizeof(Buffer), fs);
+               if ( strstr( Buffer, "ezmlm-reject") != 0 ||
+                    strstr( Buffer, "ezmlm-send")   != 0 )
                        return -1;
        }
        return 0;
@@ -172,6 +176,7 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
  char *addr;
  int i,j;
  int listcount;
+ char Buffer[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -197,9 +202,9 @@ int show_mailing_list_line2(char *user, char *dom, time_t mytime, char *dir)
         fprintf(stderr,"SMLL3 %s %s\n", get_html_text("144"), mydirent->d_name);
         continue;
       }
-      fgets( TmpBuf2, sizeof(TmpBuf2), fs);
+      fgets( Buffer, sizeof(Buffer), fs);
       fclose(fs);
-      if ( strstr( TmpBuf2, "ezmlm-reject") != 0 ) {
+      if ( strstr( Buffer, "ezmlm-reject") != 0 ) {
         sort_add_entry (&mydirent->d_name[7], 0);
         listcount++;
       }
@@ -273,6 +278,8 @@ int delmailinglistnow(void)
  int pid;
  DIR *mydir;
  struct dirent *mydirent;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -292,28 +299,28 @@ int delmailinglistnow(void)
     if(dotqmail_name[dotnum]=='.') dotqmail_name[dotnum] = ':';
   }
 
-  sprintf(TmpBuf2, ".qmail-%s", dotqmail_name);
-  sprintf(TmpBuf3, ".qmail-%s-", dotqmail_name);
+  sprintf(Buffer2, ".qmail-%s", dotqmail_name);
+  sprintf(Buffer1, ".qmail-%s-", dotqmail_name);
   while( (mydirent=readdir(mydir)) != NULL ) {
 
     /* delete the main .qmail-"list" file */
-    if ( strcmp(TmpBuf2, mydirent->d_name) == 0 ) {
+    if ( strcmp(Buffer2, mydirent->d_name) == 0 ) {
       if ( unlink(mydirent->d_name) != 0 ) {
-        ack(get_html_text("185"), TmpBuf2);
+        ack(get_html_text("185"), Buffer2);
       }
 
     /* delete secondary .qmail-"list"-* files */
-    } else if ( strncmp(TmpBuf3, mydirent->d_name, strlen(TmpBuf3)) == 0 ) {
+    } else if ( strncmp(Buffer1, mydirent->d_name, strlen(Buffer1)) == 0 ) {
       if ( unlink(mydirent->d_name) != 0 ) {
-        ack(get_html_text("185"), TmpBuf2);
+        ack(get_html_text("185"), Buffer2);
       }
     }
   }
   closedir(mydir);
 
 
-  sprintf(TmpBuf2, "%s/%s", RealDir, ActionUser);
-  vdelfiles(TmpBuf2);
+  sprintf(Buffer2, "%s/%s", RealDir, ActionUser);
+  vdelfiles(Buffer2);
 
   sprintf(StatusMessage, "%s %s\n", get_html_text("186"), ActionUser);
     if ( CurMailingLists == 0 ) {
@@ -361,8 +368,12 @@ void ezmlm_setreplyto (char *filename, char *newtext)
 
 ezmlm_make (int newlist)
 {
-  FILE * file;
-  int pid;
+ FILE * file;
+ int pid;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
+ char Buffer3[MAX_BUFF];
+ char Buffer4[MAX_BUFF];
 
 #ifdef EZMLMIDX
   char list_owner[MAX_BUFF];
@@ -470,17 +481,17 @@ ezmlm_make (int newlist)
   }
   pid=fork();
   if (pid==0) {
-    sprintf(TmpBuf1, "%s/ezmlm-make", EZMLMDIR);
-    sprintf(TmpBuf2, "%s/%s", RealDir, ActionUser);
-    sprintf(TmpBuf3, "%s/.qmail-%s", RealDir, dotqmail_name);
+    sprintf(Buffer1, "%s/ezmlm-make", EZMLMDIR);
+    sprintf(Buffer2, "%s/%s", RealDir, ActionUser);
+    sprintf(Buffer3, "%s/.qmail-%s", RealDir, dotqmail_name);
 
-    arguments[argc++]=TmpBuf2;
-    arguments[argc++]=TmpBuf3;
+    arguments[argc++]=Buffer2;
+    arguments[argc++]=Buffer3;
     arguments[argc++]=ActionUser;
     arguments[argc++]=Domain;
     arguments[argc]=NULL;
 
-    execv(TmpBuf1, arguments);
+    execv(Buffer1, arguments);
     exit(127);
   } else {
     wait(&pid);
@@ -519,10 +530,10 @@ ezmlm_make (int newlist)
   while (*tmpstr == '[') tmpstr++;
 
   /* Create (or delete) the file as appropriate */
-  sprintf(TmpBuf, "%s/%s/prefix", RealDir, ActionUser);
+  sprintf(Buffer4, "%s/%s/prefix", RealDir, ActionUser);
   if (strlen(tmp) > 0)
   {
-    file=fopen(TmpBuf , "w");
+    file=fopen(Buffer4 , "w");
     if (file)
     {
       fprintf(file, "[%s]", tmpstr);
@@ -531,12 +542,12 @@ ezmlm_make (int newlist)
   }
   else
   {
-    unlink (TmpBuf);
+    unlink (Buffer4);
   }
 
   /* set Reply-To header */
-  GetValue (TmpCGI, TmpBuf, "replyto=", sizeof(TmpBuf));
-  replyto = atoi(TmpBuf);
+  GetValue (TmpCGI, Buffer4, "replyto=", sizeof(Buffer4));
+  replyto = atoi(Buffer4);
   if (replyto == REPLYTO_SENDER) {
     /* ezmlm shouldn't remove/add Reply-To header */
     ezmlm_setreplyto ("headeradd", "");
@@ -544,17 +555,17 @@ ezmlm_make (int newlist)
   } else {
     if (replyto == REPLYTO_ADDRESS) {
       GetValue (TmpCGI, replyto_addr, "replyaddr=", sizeof(replyto_addr));
-      sprintf (TmpBuf, "Reply-To: %s\n", replyto_addr);
+      sprintf (Buffer4, "Reply-To: %s\n", replyto_addr);
     } else {  /* REPLYTO_LIST */
-      strcpy (TmpBuf, "Reply-To: <#l#>@<#h#>\n");
+      strcpy (Buffer4, "Reply-To: <#l#>@<#h#>\n");
     }
-    ezmlm_setreplyto ("headeradd", TmpBuf);
+    ezmlm_setreplyto ("headeradd", Buffer4);
     ezmlm_setreplyto ("headerremove", "Reply-To");
   }
 
   /* update inlocal file */
-  sprintf(TmpBuf, "%s/%s/inlocal", RealDir, ActionUser);
-  if (file=fopen(TmpBuf, "w")) {
+  sprintf(Buffer4, "%s/%s/inlocal", RealDir, ActionUser);
+  if (file=fopen(Buffer4, "w")) {
     fprintf(file, "%s-%s", Domain, ActionUser);
     fclose(file);
   }
@@ -586,6 +597,10 @@ int addmailinglistnow(void)
 
 int show_list_group_now(int mod)
 {
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
+ char Buffer3[MAX_BUFF];
+
   /* mod = 0 for subscribers, 1 for moderators, 2 for digest users */
   
  FILE *fs;
@@ -606,15 +621,15 @@ int show_list_group_now(int mod)
   if (pid==0) {
     close(handles[0]);
     dup2(handles[1],fileno(stdout));
-    sprintf(TmpBuf1, "%s/ezmlm-list", EZMLMDIR);
+    sprintf(Buffer1, "%s/ezmlm-list", EZMLMDIR);
     if(mod == 1) {
-        sprintf(TmpBuf2, "%s/%s/mod", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/mod", RealDir, ActionUser);
     } else if(mod == 2) {
-        sprintf(TmpBuf2, "%s/%s/digest", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/digest", RealDir, ActionUser);
     } else {
-        sprintf(TmpBuf2, "%s/%s/", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/", RealDir, ActionUser);
     }
-    execl(TmpBuf1, "ezmlm-list", TmpBuf2, NULL);
+    execl(Buffer1, "ezmlm-list", Buffer2, NULL);
     exit(127);
   } else {
     close(handles[1]);
@@ -632,43 +647,43 @@ int show_list_group_now(int mod)
 
     /* Display subscriber/moderator/digest list, along with delete button */
     if(mod == 1) {
-        strcpy(TmpBuf, "228"); strcpy(TmpBuf1, "220");
-        /* strcpy(TmpBuf2, "087"); */
+        strcpy(Buffer3, "228"); strcpy(Buffer1, "220");
+        /* strcpy(Buffer2, "087"); */
     } else if(mod == 2) {
-        strcpy(TmpBuf, "244"); strcpy(TmpBuf1, "246");
-        /* strcpy(TmpBuf2, "245"); */
+        strcpy(Buffer3, "244"); strcpy(Buffer1, "246");
+        /* strcpy(Buffer2, "245"); */
     } else {
-        strcpy(TmpBuf, "230"); strcpy(TmpBuf1, "222");
-        /* strcpy(TmpBuf2, "084"); */
+        strcpy(Buffer3, "230"); strcpy(Buffer1, "222");
+        /* strcpy(Buffer2, "084"); */
     }
-    strcpy(TmpBuf2, "072");
+    strcpy(Buffer2, "072");
     fprintf(actout,"<TABLE border=0 width=\"100%%\">\n");
     fprintf(actout," <TR>\n");
-    fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(TmpBuf), subuser_count);
+    fprintf(actout,"  <TH align=left COLSPAN=4><B>%s</B> %d<BR><BR></TH>\n", get_html_text(Buffer3), subuser_count);
     fprintf(actout," </TR>\n");
     fprintf(actout," <TR align=center bgcolor=%s>\n", get_color_text("002"));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf2));
-    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(TmpBuf1));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer2));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer1));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer2));
+    fprintf(actout,"  <TH align=center><b><font size=2>%s</font></b></TH>\n", get_html_text(Buffer1));
     fprintf(actout," </TR>\n");
 
     if(mod == 1) {
-        strcpy(TmpBuf, "dellistmodnow");
+        strcpy(Buffer3, "dellistmodnow");
     } else if(mod == 2) {
-        strcpy(TmpBuf, "dellistdignow");
+        strcpy(Buffer3, "dellistdignow");
     } else {
-        strcpy(TmpBuf, "dellistusernow");
+        strcpy(Buffer3, "dellistusernow");
     }
     for(z = 0; addr = sort_get_entry(z); ++z) {
       fprintf(actout," <TR align=center>");
       fprintf(actout,"  <TD align=right><A href=\"%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
-        CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
+        CGIPATH, Buffer3, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       fprintf(actout,"  <TD align=left>%s</TD>\n", addr);
       ++z;
       if(addr = sort_get_entry(z)) {
         fprintf(actout,"  <TD align=right><A href=\"%s/com/%s?modu=%s&newu=%s&dom=%s&user=%s&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
-          CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
+          CGIPATH, Buffer3, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
       fprintf(actout,"  <TD align=left>%s</TD>\n", addr);
       } else {
         fprintf(actout,"  <TD COLSPAN=2> </TD>");
@@ -731,6 +746,9 @@ addlistdig() { addlistgroup( "add_listdig.html" ); }
 
 addlistgroupnow (int mod)
 {
+char Buffer1[MAX_BUFF];
+char Buffer2[MAX_BUFF];
+
   // mod = 0 for subscribers, 1 for moderators, 2 for digest subscribers
 
  int i, result;
@@ -759,15 +777,15 @@ addlistgroupnow (int mod)
 
   pid=fork();
   if (pid==0) {
-    sprintf(TmpBuf1, "%s/ezmlm-sub", EZMLMDIR);
+    sprintf(Buffer1, "%s/ezmlm-sub", EZMLMDIR);
     if(mod == 1) {
-        sprintf(TmpBuf2, "%s/%s/mod", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/mod", RealDir, ActionUser);
     } else if(mod == 2) {
-        sprintf(TmpBuf2, "%s/%s/digest", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/digest", RealDir, ActionUser);
     } else {
-        sprintf(TmpBuf2, "%s/%s/", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/", RealDir, ActionUser);
     }
-    execl(TmpBuf1, "ezmlm-sub", TmpBuf2, Newu, NULL);
+    execl(Buffer1, "ezmlm-sub", Buffer2, Newu, NULL);
     exit(127);
   } else wait(&pid);
 
@@ -809,10 +827,13 @@ dellistuser() { dellistgroup ( "del_listuser.html" ); }
 dellistmod() { dellistgroup ( "del_listmod.html" ); }
 dellistdig() { dellistgroup ( "del_listdig.html" ); }
 
+
 dellistgroupnow(int mod)
 {
  int i;
  int pid;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -824,15 +845,15 @@ dellistgroupnow(int mod)
 
   pid=fork();
   if (pid==0) {
-    sprintf(TmpBuf1, "%s/ezmlm-unsub", EZMLMDIR);
+    sprintf(Buffer1, "%s/ezmlm-unsub", EZMLMDIR);
     if(mod == 1) {
-        sprintf(TmpBuf2, "%s/%s/mod", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/mod", RealDir, ActionUser);
     } else if(mod == 2 ) {
-        sprintf(TmpBuf2, "%s/%s/digest", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/digest", RealDir, ActionUser);
     } else {
-        sprintf(TmpBuf2, "%s/%s/", RealDir, ActionUser);
+        sprintf(Buffer2, "%s/%s/", RealDir, ActionUser);
     }
-    execl(TmpBuf1, "ezmlm-unsub", TmpBuf2, Newu, NULL);
+    execl(Buffer1, "ezmlm-unsub", Buffer2, Newu, NULL);
     exit(127);
   } else wait(&pid);
 
@@ -860,8 +881,11 @@ dellistdignow() { dellistgroupnow(2); }
 modmailinglist()
 {
   /* name of list to modify is stored in ActionUser */
+
  int i;
  FILE *fs;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -874,12 +898,12 @@ modmailinglist()
   /* get the current listowner and copy it to Alias */
   strcpy (dotqmail_name, ActionUser);
   str_replace (dotqmail_name, '.', ':');
-  sprintf(TmpBuf, ".qmail-%s-owner", dotqmail_name);
-  if((fs=fopen(TmpBuf, "r"))!=NULL) {
-    while(fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-      if(strstr(TmpBuf2, "@")!=NULL) {
+  sprintf(Buffer1, ".qmail-%s-owner", dotqmail_name);
+  if((fs=fopen(Buffer1, "r"))!=NULL) {
+    while(fgets(Buffer2, sizeof(Buffer2), fs)) {
+      if(strstr(Buffer2, "@")!=NULL) {
         /* strip leading & if present */
-        sprintf(Alias, "%s", (*TmpBuf2 == '&' ? (TmpBuf2 + 1) : TmpBuf2) );
+        sprintf(Alias, "%s", (*Buffer2 == '&' ? (Buffer2 + 1) : Buffer2) );
         i = strlen(Alias); --i; Alias[i] = '\0'; /* strip newline */
       }
     }
@@ -889,17 +913,17 @@ modmailinglist()
   /* set default to "replies go to original sender" */
   replyto = REPLYTO_SENDER;  /* default */
   *replyto_addr = '\0';
-  sprintf(TmpBuf, "%s/headeradd", ActionUser);
+  sprintf(Buffer1, "%s/headeradd", ActionUser);
   /* get the Reply-To setting for the list */
-  if ((fs = fopen (TmpBuf, "r")) != NULL) {
-    while (fgets (TmpBuf2, sizeof(TmpBuf2), fs)) {
-      if (strncasecmp ("Reply-To: ", TmpBuf2, 10) == 0) {
-        i = strlen(TmpBuf2); --i; TmpBuf2[i] = '\0'; /* strip newline */
-        if (strcmp ("<#l#>@<#h#>", TmpBuf2 + 10) == 0) {
+  if ((fs = fopen (Buffer1, "r")) != NULL) {
+    while (fgets (Buffer2, sizeof(Buffer2), fs)) {
+      if (strncasecmp ("Reply-To: ", Buffer2, 10) == 0) {
+        i = strlen(Buffer2); --i; Buffer2[i] = '\0'; /* strip newline */
+        if (strcmp ("<#l#>@<#h#>", Buffer2 + 10) == 0) {
           replyto = REPLYTO_LIST;
         } else {
           replyto = REPLYTO_ADDRESS;
-          strcpy (replyto_addr, TmpBuf2 + 10);
+          strcpy (replyto_addr, Buffer2 + 10);
         }
       }
     }
@@ -989,6 +1013,8 @@ int get_ezmlmidx_line_arguments(char *line, char *program, char argument)
 void set_options() {
  char c;
  FILE *fs;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   /*
    * Note that with ezmlm-idx it might be possible to replace most
@@ -1005,28 +1031,28 @@ void set_options() {
   for (c = 'a'; c <= 'z'; checkopt[c++] = 0);
 
   // figure out some options in the -default file
-  sprintf(TmpBuf, ".qmail-%s-default", dotqmail_name);
-  if( (fs=fopen(TmpBuf, "r")) !=NULL ) {
-    while(fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-get", 'P')) > 0) {
+  sprintf(Buffer1, ".qmail-%s-default", dotqmail_name);
+  if( (fs=fopen(Buffer1, "r")) !=NULL ) {
+    while(fgets(Buffer2, sizeof(Buffer2), fs)) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-get", 'P')) > 0) {
         checkopt['b'] = 1;
       }
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-get", 's')) > 0) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-get", 's')) > 0) {
         checkopt['g'] = 1;
       }
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-manage", 'S')) > 0) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-manage", 'S')) > 0) {
         checkopt['h'] = 1;
       }
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-manage", 'U')) > 0) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-manage", 'U')) > 0) {
         checkopt['j'] = 1;
       }
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-manage", 'l')) > 0) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-manage", 'l')) > 0) {
         checkopt['l'] = 1;
       }
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-manage", 'e')) > 0) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-manage", 'e')) > 0) {
         checkopt['n'] = 1;
       }
-      if((strstr(TmpBuf2, "ezmlm-request")) != 0) {
+      if((strstr(Buffer2, "ezmlm-request")) != 0) {
         checkopt['q'] = 1;
       }
     }
@@ -1034,10 +1060,10 @@ void set_options() {
   }
 
   // figure out some options in the -accept-default file
-  sprintf(TmpBuf, ".qmail-%s-accept-default", dotqmail_name);
-  if( (fs=fopen(TmpBuf, "r")) !=NULL ) {
-    while(fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-      if(strstr(TmpBuf2, "ezmlm-archive") !=0) {
+  sprintf(Buffer1, ".qmail-%s-accept-default", dotqmail_name);
+  if( (fs=fopen(Buffer1, "r")) !=NULL ) {
+    while(fgets(Buffer2, sizeof(Buffer2), fs)) {
+      if(strstr(Buffer2, "ezmlm-archive") !=0) {
         checkopt['i'] = 1;
       }
     }
@@ -1045,45 +1071,45 @@ void set_options() {
   }
 
   // figure out some options in the qmail file
-  sprintf(TmpBuf, ".qmail-%s", dotqmail_name);
-  if( (fs=fopen(TmpBuf, "r")) !=NULL ) {
-    while(fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-      if((get_ezmlmidx_line_arguments(TmpBuf2, "ezmlm-store", 'P')) > 0) {
+  sprintf(Buffer1, ".qmail-%s", dotqmail_name);
+  if( (fs=fopen(Buffer1, "r")) !=NULL ) {
+    while(fgets(Buffer2, sizeof(Buffer2), fs)) {
+      if((get_ezmlmidx_line_arguments(Buffer2, "ezmlm-store", 'P')) > 0) {
         checkopt['o'] = 1;
       }
-      if((strstr(TmpBuf2, "ezmlm-gate")) != 0 || (strstr(TmpBuf2, "ezmlm-issubn")) != 0) {
+      if((strstr(Buffer2, "ezmlm-gate")) != 0 || (strstr(Buffer2, "ezmlm-issubn")) != 0) {
         checkopt['u'] = 1;
       }
-      if(strstr(TmpBuf2, "ezmlm-archive") !=0) {
+      if(strstr(Buffer2, "ezmlm-archive") !=0) {
         checkopt['i'] = 1;
       }
     }
     fclose(fs);
   }
 
-  sprintf(TmpBuf, ".qmail-%s-accept-default", dotqmail_name);
-  checkopt['m'] = file_exists(TmpBuf);
+  sprintf(Buffer1, ".qmail-%s-accept-default", dotqmail_name);
+  checkopt['m'] = file_exists(Buffer1);
 
-  sprintf(TmpBuf, "%s/archived", ActionUser);
-  checkopt['a'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/archived", ActionUser);
+  checkopt['a'] = file_exists(Buffer1);
   
-  sprintf(TmpBuf, "%s/digest/bouncer", ActionUser);
-  checkopt['d'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/digest/bouncer", ActionUser);
+  checkopt['d'] = file_exists(Buffer1);
   
-  sprintf(TmpBuf, "%s/prefix", ActionUser);
-  checkopt['f'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/prefix", ActionUser);
+  checkopt['f'] = file_exists(Buffer1);
 
-  sprintf(TmpBuf, "%s/public", ActionUser);
-  checkopt['p'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/public", ActionUser);
+  checkopt['p'] = file_exists(Buffer1);
   
-  sprintf(TmpBuf, "%s/remote", ActionUser);
-  checkopt['r'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/remote", ActionUser);
+  checkopt['r'] = file_exists(Buffer1);
   
-  sprintf(TmpBuf, "%s/modsub", ActionUser);
-  checkopt['s'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/modsub", ActionUser);
+  checkopt['s'] = file_exists(Buffer1);
   
-  sprintf(TmpBuf, "%s/text/trailer", ActionUser);
-  checkopt['t'] = file_exists(TmpBuf);
+  sprintf(Buffer1, "%s/text/trailer", ActionUser);
+  checkopt['t'] = file_exists(Buffer1);
   
   /* update the uppercase option letters (just the opposite of the lowercase) */
   for (c = 'A'; c <= 'Z'; c++)
@@ -1146,6 +1172,10 @@ show_current_list_values() {
  char checked1[MAX_BUFF] = "";
  char listname[128];
  int checked;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
+ char Buffer3[MAX_BUFF];
+ char Buffer4[MAX_BUFF];
    
   /* Note that we do not support the following list options:
    *   k - posts from addresses in listname/deny are rejected
@@ -1185,8 +1215,8 @@ show_current_list_values() {
   fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("268"));
   /* this next option isn't necessary since we use the edit box to
    * set/delete the prefix
-  sprintf (TmpBuf, get_html_text("269"), listname);
-  build_option_str ("CHECKBOX", "opt3", "f", TmpBuf);
+  sprintf (Buffer4, get_html_text("269"), listname);
+  build_option_str ("CHECKBOX", "opt3", "f", Buffer4);
   fprintf(actout, "<BR>\n");
   */
   fprintf(actout, "<TABLE><TR><TD ROWSPAN=3 VALIGN=TOP>%s</TD>",
@@ -1203,14 +1233,14 @@ show_current_list_values() {
   build_option_str ("CHECKBOX", "opt4", "t", get_html_text("270"));
   fprintf(actout, "<BR>\n");
   build_option_str ("CHECKBOX", "opt5", "d", get_html_text("271"));
-  sprintf (TmpBuf, get_html_text("272"), listname);
-  fprintf(actout, "<SMALL>(%s)</SMALL>", TmpBuf);
+  sprintf (Buffer4, get_html_text("272"), listname);
+  fprintf(actout, "<SMALL>(%s)</SMALL>", Buffer4);
   fprintf(actout, "<BR>\n");
-  sprintf (TmpBuf, get_html_text("273"), listname);
-  build_option_str ("CHECKBOX", "opt6", "q", TmpBuf);
+  sprintf (Buffer4, get_html_text("273"), listname);
+  build_option_str ("CHECKBOX", "opt6", "q", Buffer4);
   fprintf(actout, "<BR>\n");
-  sprintf (TmpBuf, get_html_text("274"), listname, listname, listname);
-  fprintf(actout, "&nbsp; &nbsp; <SMALL>(%s)</SMALL></P>", TmpBuf);
+  sprintf (Buffer4, get_html_text("274"), listname, listname, listname);
+  fprintf(actout, "&nbsp; &nbsp; <SMALL>(%s)</SMALL></P>", Buffer4);
 
   /* Remote Administration */
   fprintf(actout, "<P><B><U>%s</U></B><BR>\n", get_html_text("275"));
@@ -1258,13 +1288,13 @@ show_current_list_values() {
 
   /* See if sql is turned on */
   checked = 0;
-  sprintf(TmpBuf, "%s/sql", ActionUser);
-  if( (fs=fopen(TmpBuf, "r")) !=NULL ) {
+  sprintf(Buffer4, "%s/sql", ActionUser);
+  if( (fs=fopen(Buffer4, "r")) !=NULL ) {
     checked = 1;
-    while(fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
-      strcpy(TmpBuf1, TmpBuf2);
-      i = strlen(TmpBuf1); --i; TmpBuf1[i] = 0; /* take off newline */
-      if((strstr(TmpBuf1, ":")) != NULL) { 
+    while(fgets(Buffer2, sizeof(Buffer2), fs)) {
+      strcpy(Buffer1, Buffer2);
+      i = strlen(Buffer1); --i; Buffer1[i] = 0; /* take off newline */
+      if((strstr(Buffer1, ":")) != NULL) { 
         sqlfileok = 1;
       }
     }
@@ -1286,9 +1316,9 @@ show_current_list_values() {
   /* get hostname */
   strcpy(checked1, "localhost");
   if(usesql == 1 && sqlfileok == 1) {
-    strncpy(TmpBuf3, TmpBuf1, 1);       
-    if((strstr(TmpBuf3, ":")) == NULL) { 
-      for(i=0,j=0;TmpBuf1[i]!=':'&&TmpBuf1[i]!='\0';++j,++i) checked1[j] = TmpBuf1[i];
+    strncpy(Buffer3, Buffer1, 1);       
+    if((strstr(Buffer3, ":")) == NULL) { 
+      for(i=0,j=0;Buffer1[i]!=':'&&Buffer1[i]!='\0';++j,++i) checked1[j] = Buffer1[i];
       checked1[j] = '\0'; 
     }       
   }       
@@ -1305,9 +1335,9 @@ show_current_list_values() {
   /* get port */
   strcpy(checked1, "3306");
   if(usesql == 1 && sqlfileok == 1) {
-    strncpy(TmpBuf3, &TmpBuf1[++i], 1);       
-    if((strstr(TmpBuf3, ":")) == NULL) { 
-      for(j=0;TmpBuf1[i]!=':'&&TmpBuf1[i]!='\0';++j,++i) checked1[j] = TmpBuf1[i];
+    strncpy(Buffer3, &Buffer1[++i], 1);       
+    if((strstr(Buffer3, ":")) == NULL) { 
+      for(j=0;Buffer1[i]!=':'&&Buffer1[i]!='\0';++j,++i) checked1[j] = Buffer1[i];
       checked1[j] = '\0'; 
     }       
   }       
@@ -1323,9 +1353,9 @@ show_current_list_values() {
   /* get user */
   strcpy(checked1, "");
   if(usesql == 1 && sqlfileok == 1) {
-    strncpy(TmpBuf3, &TmpBuf1[++i], 1);       
-    if((strstr(TmpBuf3, ":")) == NULL) { 
-      for(j=0;TmpBuf1[i]!=':'&&TmpBuf1[i]!='\0';++j,++i) checked1[j] = TmpBuf1[i];
+    strncpy(Buffer3, &Buffer1[++i], 1);       
+    if((strstr(Buffer3, ":")) == NULL) { 
+      for(j=0;Buffer1[i]!=':'&&Buffer1[i]!='\0';++j,++i) checked1[j] = Buffer1[i];
       checked1[j] = '\0'; 
     }       
   }       
@@ -1341,9 +1371,9 @@ show_current_list_values() {
   /* get password */
   strcpy(checked1, "");
   if(usesql == 1 && sqlfileok == 1) {
-    strncpy(TmpBuf3, &TmpBuf1[++i], 1);
-    if((strstr(TmpBuf3, ":")) == NULL) {
-      for(j=0;TmpBuf1[i]!=':'&&TmpBuf1[i]!='\0';++j,++i) checked1[j] = TmpBuf1[i];
+    strncpy(Buffer3, &Buffer1[++i], 1);
+    if((strstr(Buffer3, ":")) == NULL) {
+      for(j=0;Buffer1[i]!=':'&&Buffer1[i]!='\0';++j,++i) checked1[j] = Buffer1[i];
       checked1[j] = '\0';
     }
   }
@@ -1359,9 +1389,9 @@ show_current_list_values() {
   /* get database name */
   strcpy(checked1, "");
   if(usesql == 1 && sqlfileok == 1) {
-    strncpy(TmpBuf3, &TmpBuf1[++i], 1);       
-    if((strstr(TmpBuf3, ":")) == NULL) { 
-      for(j=0;TmpBuf1[i]!=':'&&TmpBuf1[i]!='\0';++j,++i) checked1[j] = TmpBuf1[i];
+    strncpy(Buffer3, &Buffer1[++i], 1);       
+    if((strstr(Buffer3, ":")) == NULL) { 
+      for(j=0;Buffer1[i]!=':'&&Buffer1[i]!='\0';++j,++i) checked1[j] = Buffer1[i];
       checked1[j] = '\0'; 
     }       
   }       
@@ -1378,8 +1408,8 @@ show_current_list_values() {
   strcpy(checked1, "ezmlm");
   if(usesql == 1 && sqlfileok == 1) {
     ++i;
-    if(strlen(TmpBuf1) != i) {
-      for(j=0;TmpBuf1[i]!=':'&&TmpBuf1[i]!='\0';++j,++i) checked1[j] = TmpBuf1[i];
+    if(strlen(Buffer1) != i) {
+      for(j=0;Buffer1[i]!=':'&&Buffer1[i]!='\0';++j,++i) checked1[j] = Buffer1[i];
       checked1[j] = '\0'; 
     }       
   }       
@@ -1404,8 +1434,7 @@ int get_mailinglist_prefix(char* prefix)
   sprintf(buffer, "%s/%s/prefix", RealDir, ActionUser);
   file=fopen(buffer , "r");
 
-  if (file)
-  {
+  if (file) {
     fgets(buffer, sizeof(buffer), file);
     fclose(file);
 

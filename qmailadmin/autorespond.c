@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.5 2004-01-30 06:45:08 rwidmer Exp $
+ * $Id: autorespond.c,v 1.6 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,7 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
  struct dirent *mydirent;
  FILE *fs;
  char *addr;
+ char Buffer[MAX_BUFF];
  int i,j;
 
   if ( (mydir = opendir(".")) == NULL ) {
@@ -75,10 +76,10 @@ int show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
         continue;
       }
 
-      fgets( TmpBuf2, sizeof(TmpBuf2), fs);
+      fgets( Buffer, sizeof(Buffer), fs);
       fclose(fs);
 
-      if ( strstr( TmpBuf2, "autorespond") != 0 ) {
+      if ( strstr( Buffer, "autorespond") != 0 ) {
         sort_add_entry (&mydirent->d_name[7], 0);
       }
     }
@@ -123,6 +124,8 @@ addautorespondnow()
  FILE *fs;
  int i;
  struct vqpasswd *vpw;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -184,21 +187,21 @@ addautorespondnow()
   /*
    * Make the autorespodner directory
    */
-  memset(TmpBuf2,0,sizeof(TmpBuf2));
-  strncpy(TmpBuf2, ActionUser, sizeof(TmpBuf2));
-  upperit(TmpBuf2);
-  mkdir(TmpBuf2, 0750);
+  memset(Buffer2,0,sizeof(Buffer2));
+  strncpy(Buffer2, ActionUser, sizeof(Buffer2));
+  upperit(Buffer2);
+  mkdir(Buffer2, 0750);
 
   /*
    * Make the autoresponder .qmail file
    */
-  sprintf(TmpBuf, ".qmail-%s", ActionUser);
-  for(i=6;TmpBuf[i]!=0;++i) if ( TmpBuf[i] == '.' ) TmpBuf[i] = ':';
+  sprintf(Buffer1, ".qmail-%s", ActionUser);
+  for(i=6;Buffer1[i]!=0;++i) if ( Buffer1[i] == '.' ) Buffer1[i] = ':';
 
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
+  if ( (fs = fopen(Buffer1, "w")) == NULL ) ack("123", 123);
 
   fprintf(fs, "|%s/autorespond 10000 5 %s/%s/message %s/%s\n",
-    AUTORESPOND_PATH, RealDir, TmpBuf2, RealDir, TmpBuf2);
+    AUTORESPOND_PATH, RealDir, Buffer2, RealDir, Buffer2);
 
   if ( strlen(Newu) > 0 ) {
     fprintf(fs, "&%s\n", Newu);
@@ -208,8 +211,8 @@ addautorespondnow()
   /*
     * Make the autoresponder message file
    */
-  sprintf(TmpBuf, "%s/message", TmpBuf2);
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
+  sprintf(Buffer1, "%s/message", Buffer2);
+  if ( (fs = fopen(Buffer1, "w")) == NULL ) ack("123", 123);
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
   fprintf(fs, "Subject: %s\n\n", Alias);
   fprintf(fs, "%s", Message);
@@ -238,6 +241,8 @@ delautorespondnow()
 {
  int i;
  int pid;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -246,22 +251,22 @@ delautorespondnow()
   }
 
   for(i=0;ActionUser[i]!=0;++i) if (ActionUser[i]=='.') ActionUser[i] = ':';
-  sprintf(TmpBuf2, ".qmail-%s", ActionUser);
-  if ( unlink(TmpBuf2) != 0 ) ack( get_html_text("181"), 345);
+  sprintf(Buffer2, ".qmail-%s", ActionUser);
+  if ( unlink(Buffer2) != 0 ) ack( get_html_text("181"), 345);
 
-  memset(TmpBuf2,0,sizeof(TmpBuf2));
+  memset(Buffer2,0,sizeof(Buffer2));
   for(i=0;ActionUser[i]!=0;++i) {
     if(islower(ActionUser[i])) {
-      TmpBuf2[i]=toupper(ActionUser[i]);
+      Buffer2[i]=toupper(ActionUser[i]);
     } else {
-      TmpBuf2[i]=ActionUser[i];
+      Buffer2[i]=ActionUser[i];
     }
   }
 
-        for(i=0;TmpBuf2[i]!=0;++i) if (TmpBuf2[i]==':') TmpBuf2[i] = '.';
+        for(i=0;Buffer2[i]!=0;++i) if (Buffer2[i]==':') Buffer2[i] = '.';
         for(i=0;ActionUser[i]!=0;++i) if (ActionUser[i]==':') ActionUser[i] = '.';
-  sprintf(TmpBuf, "%s/%s", RealDir, TmpBuf2);
-  vdelfiles(TmpBuf);
+  sprintf(Buffer1, "%s/%s", RealDir, Buffer2);
+  vdelfiles(Buffer1);
   sprintf(StatusMessage, "%s %s\n", get_html_text("182"), ActionUser);
 
   if(CurAutoResponders == 0) {
@@ -360,7 +365,7 @@ int display_robot_message()
 {
  char Buffer[MAX_BUFF];
 
-  while (fgets(Buffer, sizeof(TmpBuf2), MessageFile)) {
+  while (fgets(Buffer, sizeof(Buffer), MessageFile)) {
     fprintf(actout, "%s", Buffer);
   }
 }
@@ -371,6 +376,9 @@ modautorespondnow()
  FILE *fs;
  int i;
  struct vqpasswd *vpw;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
+ char Buffer3[MAX_BUFF];
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
@@ -410,23 +418,23 @@ modautorespondnow()
   /*
    * Make the autoresponder directory
    */
-        strcpy(TmpBuf2,ActionUser);
-        upperit(TmpBuf2);
-        mkdir(TmpBuf2, 0750);
+        strcpy(Buffer2,ActionUser);
+        upperit(Buffer2);
+        mkdir(Buffer2, 0750);
 
   /*
    * Make the autoresponder .qmail file
    */
-  sprintf(TmpBuf, ".qmail-%s", ActionUser);
-  for(i=6;TmpBuf[i]!=0;++i) if ( TmpBuf[i] == '.' ) TmpBuf[i] = ':';
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
+  sprintf(Buffer1, ".qmail-%s", ActionUser);
+  for(i=6;Buffer1[i]!=0;++i) if ( Buffer1[i] == '.' ) Buffer1[i] = ':';
+  if ( (fs = fopen(Buffer1, "w")) == NULL ) ack("123", 123);
 
   fprintf(fs, "|%s/autorespond 10000 5 %s/%s/message %s/%s\n",
-    AUTORESPOND_PATH, RealDir, TmpBuf2, RealDir, TmpBuf2);
+    AUTORESPOND_PATH, RealDir, Buffer2, RealDir, Buffer2);
 
   if ( strlen(Newu) > 0 ) {
-    for(i=0;Newu[i]!='@';TmpBuf3[i] = Newu[i],++i);
-    if((vpw=vauth_getpw(TmpBuf3, Domain))!=NULL && (strstr(Newu,Domain)!= 0)){
+    for(i=0;Newu[i]!='@';Buffer3[i] = Newu[i],++i);
+    if((vpw=vauth_getpw(Buffer3, Domain))!=NULL && (strstr(Newu,Domain)!= 0)){
       fprintf(fs, "%s/Maildir/\n", vpw->pw_dir);
     } else {
       fprintf(fs, "&%s\n", Newu);
@@ -439,8 +447,8 @@ modautorespondnow()
   /*
    * Make the autoresponder message file
    */
-  sprintf(TmpBuf, "%s/message", TmpBuf2);
-  if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("123", 123);
+  sprintf(Buffer1, "%s/message", Buffer2);
+  if ( (fs = fopen(Buffer1, "w")) == NULL ) ack("123", 123);
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
   fprintf(fs, "Subject: %s\n\n", Alias);
   fprintf(fs, "%s", Message);

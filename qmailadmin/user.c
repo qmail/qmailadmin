@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.12 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: user.c,v 1.13 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -261,6 +261,8 @@ addusernow()
  char spamvalue[50];
  static char NewBuf[156];
  FILE *fs;
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   c_num = malloc(MAX_BUFF);
   email = malloc(128);
@@ -348,9 +350,9 @@ addusernow()
         pid=fork();
 
         if (pid==0) {
-          sprintf(TmpBuf1, "%s/ezmlm-sub", EZMLMDIR);
-          sprintf(TmpBuf2, "%s/%s", RealDir, mailingListNames[cnt]);
-          execl(TmpBuf1, "ezmlm-sub", TmpBuf2, email, NULL);
+          sprintf(Buffer1, "%s/ezmlm-sub", EZMLMDIR);
+          sprintf(Buffer2, "%s/%s", RealDir, mailingListNames[cnt]);
+          execl(Buffer1, "ezmlm-sub", Buffer2, email, NULL);
           exit(127);
         } else {
           wait(&pid);
@@ -453,6 +455,7 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
  char *cmd = NULL;
  char *tmpstr;
  int error;
+ char Buffer[MAX_BUFF];
     
   hooks_path = malloc(MAX_BUFF);
 
@@ -466,9 +469,9 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
     }
   }
 
-  while(fgets(TmpBuf, sizeof(TmpBuf), fs) != NULL) {
-    if ( (*TmpBuf == '#') || (*TmpBuf == '\0')) continue;
-    tmpstr = strtok(TmpBuf, " :\t\n");
+  while(fgets(Buffer, sizeof(Buffer), fs) != NULL) {
+    if ( (*Buffer == '#') || (*Buffer == '\0')) continue;
+    tmpstr = strtok(Buffer, " :\t\n");
     if (tmpstr == NULL) continue;
 
     if ( strcmp(tmpstr, hook_type) == 0) {

@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.6 2004-01-30 06:45:08 rwidmer Exp $
+ * $Id: alias.c,v 1.7 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,9 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
  DIR *mydir;
  struct dirent *mydirent;
  FILE *fs;
- char Buffer[MAX_BUFF];
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
+ char Buffer3[MAX_BUFF];
  char alias_user[MAX_BUFF];
  char alias_name[MAX_FILE_NAME];
  char *alias_domain;
@@ -110,9 +112,9 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
         alias_name[j] = mydirent->d_name[i] == ':' ? '.' : mydirent->d_name[i];
       }
       alias_name[j] = 0;
-      memset(TmpBuf2, 0, sizeof(TmpBuf2));
-      fgets(TmpBuf2, sizeof(TmpBuf2), fs);
-      alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+      memset(Buffer2, 0, sizeof(Buffer2));
+      fgets(Buffer2, sizeof(Buffer2), fs);
+      alias_name_from_command = dotqmail_alias_command(Buffer2);
 
       /* Note that the current system fails for multi-line .qmail-user files
          where the first line starts with a '#' or is invalid.
@@ -120,33 +122,33 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
          on program delivery that contains ezmlm) but bad for people who
          may have complex .qmail-user files that start with a comment. */
 
-      if ( alias_name_from_command != NULL || *TmpBuf2 == '#') {
+      if ( alias_name_from_command != NULL || *Buffer2 == '#') {
         stop=0;
 
         qmail_button(uBufA, "deldotqmail", alias_name, "trash.png");
 
-        if (*TmpBuf2 == '#')
+        if (*Buffer2 == '#')
           strcpy( uBufB, "&nbsp;");
         else
           qmail_button(uBufB, "moddotqmail", alias_name, "modify.png");
 
         sprintf(uBufC, "%s", alias_name);
 
-        if (*TmpBuf2 == '#') {
+        if (*Buffer2 == '#') {
           /* this is a blackhole account */
-          sprintf (Buffer, "%s", get_html_text("303"));
+          sprintf (Buffer1, "%s", get_html_text("303"));
           stop = 1;
         }
         while (!stop) {
-          strcpy(Buffer, "");
+          strcpy(Buffer1, "");
 
-          alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+          alias_name_from_command = dotqmail_alias_command(Buffer2);
                 
           /* check to see if it is an invalid line , 
            * if so skip to next
            */
           if (alias_name_from_command == NULL ) {
-            if (fgets(TmpBuf2, sizeof(TmpBuf2), fs)==NULL) { 
+            if (fgets(Buffer2, sizeof(Buffer2), fs)==NULL) { 
               stop=1;
             }
             continue;
@@ -160,11 +162,11 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
           alias_domain++;
           if(strcmp(alias_domain, Domain)==0) {
              /* if a local user, exclude the domain */
-             strcpy(TmpBuf3, alias_user);
-             for(j=0; TmpBuf3[j]!=0 && TmpBuf3[j]!='@';j++);
-             TmpBuf3[j]=0;
-             if (check_local_user(TmpBuf3)) {
-                strcpy(alias_user, TmpBuf3);
+             strcpy(Buffer3, alias_user);
+             for(j=0; Buffer3[j]!=0 && Buffer3[j]!='@';j++);
+             Buffer3[j]=0;
+             if (check_local_user(Buffer3)) {
+                strcpy(alias_user, Buffer3);
              } else {
                 /* make it red so it jumps out -- this is no longer a valid forward */
                 sprintf(alias_user, "<font color=\"red\">%s</font>", 
@@ -172,16 +174,16 @@ show_dotqmail_lines(char *user, char *dom, time_t mytime, char *dir)
              }
           }
                 
-          if (fgets(TmpBuf2, sizeof(TmpBuf2), fs) == NULL) {
+          if (fgets(Buffer2, sizeof(Buffer2), fs) == NULL) {
             stop=1;
-            sprintf(Buffer, "%s%s ", Buffer, alias_user);
+            sprintf(Buffer1, "%s%s ", Buffer1, alias_user);
           } else {
-            sprintf(Buffer, "%s%s, ", Buffer, alias_user);
+            sprintf(Buffer1, "%s%s, ", Buffer1, alias_user);
           }
 
         }
-        strcpy(uBufD, Buffer);
-        strcpy(Buffer, "");
+        strcpy(uBufD, Buffer1);    
+        strcpy(Buffer1, "");   
         send_template_now("show_forwards_line.html");
       }
       fclose(fs);
@@ -208,6 +210,8 @@ int show_dotqmail_file(char *user)
  char *alias_domain;
  char *alias_name_from_command;
  char *dot_file;
+ char Buffer2[MAX_BUFF];
+ char Buffer3[MAX_BUFF];
  int l,j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -230,10 +234,10 @@ int show_dotqmail_file(char *user)
     return(144);
   }
                 
-  memset(TmpBuf2, 0, sizeof(TmpBuf2));
+  memset(Buffer2, 0, sizeof(Buffer2));
 
-  while (fgets( TmpBuf2, sizeof(TmpBuf2), fs) != NULL) {
-    alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+  while (fgets( Buffer2, sizeof(Buffer2), fs) != NULL) {
+    alias_name_from_command = dotqmail_alias_command(Buffer2);
                         
     /* check to see if it is an invalid line , if so skip to next*/
     if (alias_name_from_command == NULL ) continue;
@@ -246,11 +250,11 @@ int show_dotqmail_file(char *user)
     alias_domain++;
     if(strcmp(alias_domain, Domain)==0) {
        /* if a local user, exclude the domain */
-       strcpy(TmpBuf3, alias_user);
-       for(j=0; TmpBuf3[j]!=0 && TmpBuf3[j]!='@';j++);
-       TmpBuf3[j]=0;
-       if (check_local_user(TmpBuf3)) {
-          strcpy(alias_user, TmpBuf3);
+       strcpy(Buffer3, alias_user);
+       for(j=0; Buffer3[j]!=0 && Buffer3[j]!='@';j++);
+       Buffer3[j]=0;
+       if (check_local_user(Buffer3)) {
+          strcpy(alias_user, Buffer3);
        } else {
           /* make it red so it jumps out -- this is no longer a valid forward */
           sprintf(alias_user, "<font color=\"red\">%s</font>", 
@@ -265,6 +269,7 @@ int onevalidonly(char *user) {
  FILE *fs;
  char *alias_name_from_command;
  char *dot_file;
+ char Buffer[MAX_BUFF];
  int l,j;
 
   l = strlen(user);
@@ -283,8 +288,8 @@ int onevalidonly(char *user) {
   }
             
   j=0;
-  while( fgets( TmpBuf2, sizeof(TmpBuf2), fs) != NULL ) {
-    alias_name_from_command = dotqmail_alias_command(TmpBuf2);
+  while( fgets( Buffer, sizeof(Buffer), fs) != NULL ) {
+    alias_name_from_command = dotqmail_alias_command(Buffer);
     /* check to see if it is an invalid line , if so skip to next */
     if (alias_name_from_command == NULL ) continue;
         
@@ -299,17 +304,19 @@ int onevalidonly(char *user) {
 
 
 
-moddotqmail()
+void moddotqmail()
 {
+
   if ( AdminType!=DOMAIN_ADMIN ) {
     sprintf(StatusMessage,"%s", get_html_text("142"));
     vclose();
     exit(0);
   }
+
   send_template("mod_dotqmail.html");
 }
 
-moddotqmailnow() 
+void moddotqmailnow() 
 {
  struct vqpasswd *pw;
 
@@ -371,6 +378,7 @@ adddotqmail()
 
 adddotqmailnow()
 {
+ char Buffer[MAX_BUFF];
  struct vqpasswd *pw;
 
   if (AdminType!=DOMAIN_ADMIN && 
@@ -401,6 +409,8 @@ adddotqmailnow()
 }
 
 int adddotqmail_shared(char *forwardname, char *dest, int create) {
+ char Buffer[MAX_BUFF];
+
    /* adds line to .qmail for forwardname to dest             */
    /* (if create is 0, this is modifying an existing forward) */
    /* returns -1 if error orccured, 0 if successful           */
@@ -439,8 +449,8 @@ int adddotqmail_shared(char *forwardname, char *dest, int create) {
      return(-1);
   }
 
-  sprintf(TmpBuf2, "&%s\n", dest);
-  if (dotqmail_add_line(forwardname, TmpBuf2)) {
+  sprintf(Buffer, "&%s\n", dest);
+  if (dotqmail_add_line(forwardname, Buffer)) {
      sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 2);
      return(-1);
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: forward.c,v 1.4 2004-01-30 06:45:08 rwidmer Exp $
+ * $Id: forward.c,v 1.5 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,12 +37,13 @@ int show_forwards(char *user, char *dom, time_t mytime, char *dir)
 {
 
   if (AdminType != DOMAIN_ADMIN) {
-    fprintf(stderr,"%s", get_html_text("142"));
+    fprintf(stderr, "%s", get_html_text("142"));
     vclose();
     exit(0);
   }
 
   if(CurForwards == 0) {
+    fprintf(stderr, "%s", get_html_text("232"));
     sprintf(StatusMessage,"%s", get_html_text("232"));
     show_menu(Username, Domain, Mytime);
     vclose();

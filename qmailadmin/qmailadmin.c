@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.8 2004-01-30 06:45:08 rwidmer Exp $
+ * $Id: qmailadmin.c,v 1.9 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,11 +59,6 @@ char Pagenumber[MAX_BUFF]="";
 char SearchUser[MAX_BUFF];
 time_t Mytime;
 char *TmpCGI = NULL;
-char TmpBuf[MAX_BIG_BUFF];
-char TmpBuf1[MAX_BUFF];
-char TmpBuf2[MAX_BUFF];
-char TmpBuf3[MAX_BUFF];
-char TempBuf[MAX_BUFF];
 int Compressed;
 FILE *actout;
 
@@ -133,6 +128,11 @@ main(argc,argv)
  char returnhttp[MAX_BUFF];
  char returntext[MAX_BUFF];
 
+ char TmpBuf[MAX_BIG_BUFF];
+ char TmpBuf1[MAX_BUFF];
+ char TmpBuf2[MAX_BUFF];
+ char TmpBuf3[MAX_BUFF];
+
   init_globals();
 
   if (x_forward) ip_addr = x_forward;
@@ -174,7 +174,6 @@ main(argc,argv)
       fprintf(stderr, "MAIN %s %s\n", get_html_text("171"), RealDir );
     }
     set_admin_type();
-    fprintf( stderr, "in main before count_stuff\n" );
     count_stuff();
 
     if ( AdminType == USER_ADMIN || AdminType == DOMAIN_ADMIN ) {
@@ -183,9 +182,7 @@ main(argc,argv)
       auth_system(ip_addr, pw);
     }
 
-    fprintf( stderr, "in main before process_commands\n" );
-    process_commands();
-    fprintf( stderr, "in main after process_commands\n" );
+    process_commands(TmpBuf2);
 
   } else {
    char *rm;
@@ -316,10 +313,6 @@ init_globals()
   memset(Crypted, 0, sizeof(Crypted));
   memset(Alias, 0, sizeof(Alias));
   memset(Message, 0, sizeof(Message));
-  memset(TmpBuf, 0, sizeof(TmpBuf));
-  memset(TmpBuf1, 0, sizeof(TmpBuf1));
-  memset(TmpBuf2, 0, sizeof(TmpBuf2));
-  memset(TmpBuf3, 0, sizeof(TmpBuf3));
 
   AdminType = NO_ADMIN;
 
@@ -399,14 +392,15 @@ void del_id_files( char *dirname )
  DIR *mydir;
  struct dirent *mydirent;
  struct stat statbuf;
+ char Buffer[MAX_BUFF];
 
   mydir = opendir(dirname);
   if ( mydir == NULL ) return;
 
   while((mydirent=readdir(mydir))!=NULL){
     if ( strstr(mydirent->d_name,".qw")!=0 ) {
-      sprintf(TmpBuf3, "%s/%s", dirname, mydirent->d_name);
-      unlink(TmpBuf3);
+      sprintf(Buffer, "%s/%s", dirname, mydirent->d_name);
+      unlink(Buffer);
     }
   }
   closedir(mydir);

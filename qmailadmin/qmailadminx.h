@@ -40,11 +40,6 @@ extern char Pagenumber[MAX_BUFF];
 extern char SearchUser[MAX_BUFF];
 extern time_t Mytime;
 extern char *TmpCGI;
-extern char TmpBuf[MAX_BIG_BUFF];
-extern char TmpBuf1[MAX_BUFF];
-extern char TmpBuf2[MAX_BUFF];
-extern char TmpBuf3[MAX_BUFF];
-extern char TempBuf[MAX_BUFF];
 extern int Compressed;
 extern FILE *actout;
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.6 2004-01-30 06:45:08 rwidmer Exp $
+ * $Id: util.c,v 1.7 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,6 +140,7 @@ int count_stuff(void)
     fprintf( stderr, "show_user_lines can't open default file\n" );
     sprintf( CurCatchall, "Can't open .qmail-default file" );
     
+
   } else {
     fgets( Buffer, sizeof(Buffer), fs);
     fclose(fs);
@@ -167,6 +168,7 @@ int count_stuff(void)
       for(j=0,++i;Buffer[i]!=0;++j,++i) CurCatchall[j] = Buffer[i];
       CurCatchall[j]=0;
     }
+
   }
 
   fprintf( stderr, "Blackholes: %d Lists; %d Robots: %d Forwards: %d Users %d Catchall: %s\n", CurBlackholes, CurMailingLists, CurAutoResponders, CurForwards, CurPopAccounts, CurCatchall);
@@ -264,15 +266,16 @@ check_local_user( user )
 {
  struct stat buf;
  int i,j;
+ char Buffer[MAX_BUFF];
 
-  strcpy(TmpBuf, ".qmail-");
+  strcpy(Buffer, ".qmail-");
   for(i=0,j=7;user[i]!=0;++i,++j){
-    if ( user[i] == '.' ) TmpBuf[j] = ':'; 
-    else TmpBuf[j] = user[i];
+    if ( user[i] == '.' ) Buffer[j] = ':'; 
+    else Buffer[j] = user[i];
   }
-  TmpBuf[j] = 0;
+  Buffer[j] = 0;
 
-  if ( stat(TmpBuf, &buf) == 0 ) return(-1);
+  if ( stat(Buffer, &buf) == 0 ) return(-1);
   if ( vauth_getpw(user, Domain)) return(-1);
 
   return(0);
@@ -280,8 +283,6 @@ check_local_user( user )
 
 show_counts()
 {
-  fprintf(stderr, "show_counts\n" );
-
   sprintf(uBufA, "%d", CurPopAccounts);
   sprintf(uBufB, "%d", CurForwards);
   sprintf(uBufC, "%d", CurAutoResponders);

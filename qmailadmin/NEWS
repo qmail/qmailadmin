@@ -11,6 +11,18 @@ batches, in the same order they were created.
 
 #################################################################
 
+Changes from  040109 :
+
+Change from global TmpBuf* to function local Buffer*
+
+Start using more parms instead of globals.
+
+Remove some authentication checking deep within the program
+because the limits will be enforced in command.c instead.
+
+
+#################################################################
+
 Changes from  040108 :
 
 Remove show_aliases from alias.c.  (obsolete)

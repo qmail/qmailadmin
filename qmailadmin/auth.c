@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.4 2004-01-30 03:28:19 rwidmer Exp $
+ * $Id: auth.c,v 1.5 2004-01-30 08:30:58 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,8 @@ auth_system(ip_addr, pw)
  time_t time1; 
  time_t time2;
  char ip_value[MAX_BUFF];
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
  
   if( chdir(RealDir) < 0 ){
     sprintf(StatusMessage, "%s %s\n", get_html_text("171"), RealDir);
@@ -49,9 +51,9 @@ auth_system(ip_addr, pw)
     exit(0);
   }
 
-  sprintf(TmpBuf1, "%s/Maildir/%s.qw", pw->pw_dir, Time);
+  sprintf(Buffer1, "%s/Maildir/%s.qw", pw->pw_dir, Time);
 
-  fs = fopen(TmpBuf1, "r");
+  fs = fopen(Buffer1, "r");
   if ( fs == NULL ) {
     sprintf(StatusMessage, "%s\n", get_html_text("172"));
     show_login();
@@ -59,7 +61,7 @@ auth_system(ip_addr, pw)
     exit(0);
   } 
 
-  if ( fgets(TmpBuf, sizeof(TmpBuf), fs) == NULL ) {
+  if ( fgets(Buffer2, sizeof(Buffer2), fs) == NULL ) {
     sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 4);
     vclose();
     exit(0);
@@ -67,9 +69,9 @@ auth_system(ip_addr, pw)
   fclose(fs);
 
 #ifdef IPAUTH
-  GetValue(TmpBuf, ip_value, "ip_addr=", sizeof(ip_value)); 
+  GetValue(Buffer2, ip_value, "ip_addr=", sizeof(ip_value)); 
   if ( strcmp(ip_addr, ip_value) != 0 ) {
-    unlink(TmpBuf1);
+    unlink(Buffer1);
     sprintf(StatusMessage,"invalid\n");
     show_login();
     vclose();
@@ -79,7 +81,7 @@ auth_system(ip_addr, pw)
 
   time1 = atoi(Time); time2 = time(NULL);
   if ( time2 > time1 + 7200 ) {
-    unlink(TmpBuf1);
+    unlink(Buffer1);
     sprintf(StatusMessage, "%s\n", get_html_text("173"));
     show_login();
     vclose();
@@ -95,6 +97,8 @@ auth_user_domain(ip_addr,pw)
  time_t time1; 
  time_t time2;
  char ip_value[MAX_BUFF];
+ char Buffer1[MAX_BUFF];
+ char Buffer2[MAX_BUFF];
 
   if ( chdir(RealDir) < 0 ) {
     sprintf(StatusMessage, "%s %s\n", get_html_text("171"), RealDir );
@@ -103,9 +107,9 @@ auth_user_domain(ip_addr,pw)
     exit(0);
   }
 
-  sprintf(TmpBuf1, "%s/Maildir/%s.qw", pw->pw_dir, Time);
+  sprintf(Buffer1, "%s/Maildir/%s.qw", pw->pw_dir, Time);
 
-  fs = fopen(TmpBuf1, "r");
+  fs = fopen(Buffer1, "r");
   if ( fs == NULL ) {
     sprintf(StatusMessage, "%s\n", get_html_text("172"));
     show_login();
@@ -113,7 +117,7 @@ auth_user_domain(ip_addr,pw)
     exit(0);
   } 
 
-  if ( fgets(TmpBuf, sizeof(TmpBuf), fs) == NULL ) {
+  if ( fgets(Buffer2, sizeof(Buffer2), fs) == NULL ) {
     sprintf(StatusMessage, "%s %d\n", get_html_text("150"), 5);
     vclose();
     exit(0);
@@ -121,10 +125,10 @@ auth_user_domain(ip_addr,pw)
   fclose(fs);
 
 #ifdef IPAUTH
-  GetValue(TmpBuf, ip_value, "ip_addr=", sizeof(ip_value)); 
+  GetValue(Buffer2, ip_value, "ip_addr=", sizeof(ip_value)); 
   if ( strcmp(ip_addr, ip_value) != 0 ) {
-    unlink(TmpBuf1);
-    sprintf(StatusMessage, "%s %d (%s != %s .. %s)\n", get_html_text("150"), 6, ip_addr, ip_value, TmpBuf);
+    unlink(Buffer1);
+    sprintf(StatusMessage, "%s %d (%s != %s .. %s)\n", get_html_text("150"), 6, ip_addr, ip_value, Buffer2);
     show_login();
     vclose();
     exit(0);
@@ -133,7 +137,7 @@ auth_user_domain(ip_addr,pw)
 
   time1 = atoi(Time); time2 = time(NULL);
   if ( time2 > time1 + 7200 ) {
-    unlink(TmpBuf1);
+    unlink(Buffer1);
     sprintf(StatusMessage, "%s\n", get_html_text("173"));
     show_login();
     vclose();

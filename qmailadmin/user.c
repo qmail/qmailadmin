@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.5 2003-12-02 15:38:07 tomcollins Exp $
+ * $Id: user.c,v 1.6 2003-12-08 18:47:47 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,16 +37,17 @@
 #define HOOKS 1
 
 #ifdef HOOKS
-#define HOOK_ADDUSER 0
-#define HOOK_DELUSER 1
-#define HOOK_MODUSER 2
-#define HOOK_ADDMAILLIST 3
-#define HOOK_DELMAILLIST 4
-#define HOOK_MODMAILLIST 5
-#define HOOK_LISTADDUSER 6
-#define HOOK_LISTDELUSER 7
+/* note that as of December 2003, only the first three hooks are 
+implemented */
+#define HOOK_ADDUSER     "adduser"
+#define HOOK_DELUSER     "deluser"
+#define HOOK_MODUSER     "moduser"
+#define HOOK_ADDMAILLIST "addmaillist"
+#define HOOK_DELMAILLIST "delmaillist"
+#define HOOK_MODMAILLIST "modmaillist"
+#define HOOK_LISTADDUSER "addlistuser"
+#define HOOK_LISTDELUSER "dellistuser"
 #endif
-
 
 int show_users(char *Username, char *Domain, time_t Mytime)
 {
@@ -538,7 +539,7 @@ addusernow()
       get_html_text("002"), Newu, Domain, Gecos, get_html_text("120"));
   }
 
-  call_hooks( HOOK_ADDUSER );
+  call_hooks(HOOK_ADDUSER, Newu, Domain, Password1, Gecos);
 
   /* After we add the user, show the user page
    * people like to visually verify the results
@@ -547,24 +548,14 @@ addusernow()
 
 }
 
-int call_hooks( int hook_type )
+int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
 {
  FILE *fs = NULL;
  int pid;
  char *hooks_path;
- char *cmd;
+ char *cmd = NULL;
  char *tmpstr;
- int len = 0;
  int error;
- static char *hooks[15] = {
-   "adduser",
-   "deluser",
-   "moduser",
-   "addmaillist",
-   "delmaillist",
-   "modmaillist",
-   "listadduser",
-   "listdeluser"};
     
   hooks_path = malloc(MAX_BUFF);
 
@@ -579,34 +570,34 @@ int call_hooks( int hook_type )
   }
 
   while(fgets(TmpBuf, sizeof(TmpBuf), fs) != NULL) {
+    if ( (*TmpBuf == '#') || (*TmpBuf == '\0')) continue;
     tmpstr = strtok(TmpBuf, " :\t\n");
-    if ( (tmpstr[0] == '#') || (tmpstr == NULL)) continue;
+    if (tmpstr == NULL) continue;
 
-    if ( strncmp(tmpstr, hooks[hook_type], strlen(hooks[hook_type])) == 0) {
+    if ( strcmp(tmpstr, hook_type) == 0) {
       tmpstr = strtok(NULL, " :\t\n");
 
-      if ( tmpstr == NULL) continue;
-        
-       len = strlen(tmpstr);
-       if (!(cmd = malloc(len + 1))) {
-         return (0);
-       } else {
-         snprintf(cmd, len + 1, "%s", tmpstr);
-       }
+      if ((tmpstr == NULL) || (*tmpstr == '\0')) continue;
 
-       break;
-     }
+      cmd = strdup(tmpstr);        
+
+      break;
+    }
   }
 
   fclose(fs);
+
+  if (cmd == NULL) return 0;   /* don't have a hook for this type */
     
   pid = fork();
 
   if (pid == 0) {
-    error =    execl(cmd, Newu, Domain, Password1, Gecos, NULL);
+    /* Second param to execl should actually be just the program name,
+       without the path information.  Add a pointer to point into cmd
+       at the start of the program name only.    BUG 2003-12 */
+    error = execl(cmd, cmd, p1, p2, p3, p4, NULL);
     sprintf(StatusMessage, "%s, \"%s\", %s, %s, %s, %s\n",
-      get_html_text("202"), cmd, hooks[hook_type], 
-      Newu, Domain, Password1, Gecos);
+      get_html_text("202"), cmd, hook_type, p1, p2, p3, p4);
     if (error == -1) return (-1);
     exit(127);
   } else {
@@ -623,8 +614,8 @@ deluser()
 
 delusergo()
 {
- static char forward[200];
- static char forwardto[200];
+ static char forward[200] = "";
+ static char forwardto[200] = "";
  FILE *fs;
  int i;
  struct vqpasswd *pw;
@@ -652,7 +643,7 @@ delusergo()
     }
   } 
 
-  call_hooks(HOOK_DELUSER);
+  call_hooks(HOOK_DELUSER, ActionUser, Domain, forwardto, "");
   show_users(Username, Domain, Mytime);
 }
 
@@ -1042,6 +1033,6 @@ ActionUser, Domain ); */
     printf("nothing\n");
   }
 
-  call_hooks(HOOK_MODUSER);
+  call_hooks(HOOK_MODUSER, ActionUser, Domain, Password1, Gecos);
   moduser();
 }

@@ -268,4 +268,16 @@
 300 Flag1
 301 Flag2
 302 Flag3
-303 excluir
+303 excluído
+304 Deteção de Spam?
+305 Destino
+306 encaminhar para
+307 Quota inválida
+308 Quota definida como ilimitada
+309 Quota definida em %s bytes
+310 As respostas devem ir para
+311 o remetente original
+312 a lista toda
+313 o endereço
+314 Quota inválida informada
+315 Usuário excluído. Não foi possível definir o encaminhamento para '%s'.

@@ -15,6 +15,8 @@ patch or information related to the entry.
 	- Allow user to create a 'blackhole' address by entering "#" as 
 	  the forwarding address when creating a new alias.
 	- Display forwards even if they're all blackholes. [941083]
+	- Fixed bug where unrecognized .qmail-alias entries could throw
+	  QmailAdmin into an infinite loop (Modify Alias). [941082]
 
 1.2.1 - released 10-Feb-04
 

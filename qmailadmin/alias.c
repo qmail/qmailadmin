@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.3 2004-04-24 01:06:40 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.4 2004-04-24 01:12:50 tomcollins Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -342,10 +342,10 @@ int show_dotqmail_file(char *user)
   while (alias_line != NULL) {
     alias_name_from_command = dotqmail_alias_command(alias_line);
                         
-    /* check to see if it is an invalid line , if so skip to next */
-    if (alias_name_from_command == NULL ) continue;
+    /* Make sure it is valid before displaying it. */
+    if (alias_name_from_command != NULL )
+      add_alias_entry (user, alias_line);
 
-    add_alias_entry (user, alias_line);
     alias_line = valias_select_next();
   }
   

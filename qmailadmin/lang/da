@@ -1,0 +1,271 @@
+000 iso-8859-1
+001 Hovedmenu
+002 E-postkonto
+003 Tilføj e-postrobot:
+004 E-postrobot navn:
+005 Send kopi til:
+006 Emne (Subject): 
+007 Tilføj eftersendelseskonto:
+008 Eftersendelsesadresse: 
+009 Lokalt navn:
+010 Eftersendelsesadresse skal skrives på formen: <b>bruger@domæne.dk</b>.<br>Lokalt navn skal være på formen: <b>postkontonavn</b><p>F.eks:<br>Eftersendelse: <b>bruger@domæne.dk</b><br>Lokalt navn: <b>lokalbruger</b><br>All e-post sendt til <b>lokalbruger</b> vil blive eftersendt til <b>bruger@domæne.dk</b>
+011 Tilføj moderator
+012 Tilføj moderator til e-postliste
+013 E-postadresse:
+014 Tilføj medlem til e-postliste 
+015 Tilføj e-postliste
+016 E-postlistenavn:
+017 Listeejers e-postadresse: 
+018 Arkiveret
+039 Svar administrative forespørgsler og tillad at hente arkiv via e-post.
+053 Tilføj SQL-understøttelse
+054 Vært
+055 Port
+056 Brugernavn
+057 Kodeord (Password)
+058 Database
+059 Tabel
+060 Tilføj
+061 E-post konti
+062 Fang-alt-konto:
+063 Kommentar
+064 Skift<br>brugernavn
+065 Slet<br>konto
+066 Fang-alt-<br>konto
+067 Opret e-postkonto
+068 Alias konto
+069 Alias
+070 E-post konto
+071 Redigér
+072 Slet
+073 Tilføj nyt alias
+074 Eftersendelses konto 
+075 Eftersend
+076 Tilføj ny eftersendelseskonto 
+077 Postrobotter
+078 Postrobot
+079 Ny postrobot
+080 E-postlister
+081 Liste
+082 Kunne ikke åbne .qmail-default
+083 Tilføj<br>medlem
+084 Slet<br>medlem
+085 Vis<br>abonnenter
+086 Tilføj<br>moderator
+087 Slet<br>moderator
+088 Vis<br>moderatorer
+089 Ny e-postliste
+090 Tilføj e-postkonto
+091 Kodeord (Password)(igen):
+092 Navn 
+093 Listenavn
+094 Bruger abonnement 
+095 Lad bruger abonnere på følgende lister
+096 Slet alias
+097 Bekræft sletning
+098 Slet postrobot
+099 SQL-indstillinger
+100 Slet eftersend
+101 Slet postliste
+102 Slet bruger
+103 Eftersend e-post
+104 Ja, eftersend til:
+105 Rediger e-postrobot
+106 Navn
+107 Indhold
+108 Tilføj e-postadresse
+109 Rediger bruger
+110 Nyt kodeord (password)
+111 Rediger bruger
+112 Bruger konto
+113 Domænenavn 
+114 Login
+115 Omdirrigering for bruger
+116 Nuværende omdirrigeringer
+117 Tilføj/erstat omdirrigeringsadresse
+118 Slet omdirrigering
+119 succesfuldt tilføjet
+120 kunne ikke tilføjes
+121 Alias
+122 Eftersendelse
+123 Vis omdirrigering
+124 Kvik-links
+125 Nye e-postkonti
+126 Nye alias'er
+127 Nye eftersendelser
+128 Ny post-robot
+129 Nye e-postlister
+130 Fang-alt-konto: Tilbagesend
+131 Ikke flere brugere at vise - vent tilbage til foregående side
+132 Standard
+133 Indeks:
+134 Fang-alt-konto: Tilbagesend mail
+135 Foregående side
+136 Opfrisk side
+137 Næste side 
+138 Indtast kodeord (password)
+139 E-postkonto kodeord ændret
+140 Kunne ikke ændre kodeord.
+141 bruger slettet
+142 Ingen adgang
+143 katalog fejl mht. tilladelse
+144 fil fejl mht. tilladlelse
+145 Ugyldig bruger, intern fejl
+146 Kan ikke omdirrigere
+147 Omdirriger nu
+148 Ugyldig e-postadresse
+149 Kan ikke slette seneste indtastning
+150 Fil fejl
+151 Linie slettet
+152 Eftersendelse tilføjet
+153 Brugernavn findes ikke
+154 Alias tilføjet
+155 Ugyldig handling
+156 Maksimalt antal aliaskonti er nået
+157 Maksimalt antal videresendelser er nået
+158 Maksimalt antal postrobotter er nået
+159 Ugyldig DotQmail type: adddotqmail()
+160 Ugyldigt alias
+161 Kunne ikke tilføje alias. E-postkonto skal være en eksisterende E-postkonto.
+162 Ugyldig e-post kontonavn
+163 Ugyldigt lokalt navn
+164 Ugyldig alias type : adddotqmailnow()
+165 Kunne ikke tilføje alias for e-postkonto
+166 Alias for e-post konto tilføjet
+167 Fejl ved sletning af alias/eftersendelse for e-post konto.
+168 Alias/eftersendelse for e-postkonto slettet. 
+169 Fejl ved sletning af omdirrigering/eftersendelse for e-postkonto
+170 Omdirrigering/Eftersendelse for e-postkonto slettet
+171 Fejl: kunne ikke skifte til katalog 
+172 Kun en person ad gangen kan logge ind som postmaster. En anden har logget ind. Sørg venligst for kun at logge ind en ad gangen.
+173 login udløb, log venligst ind igen
+174 Ugyldigt postrobotnavn 
+175 Navnet er allerede i brug
+176 Udfyld venligst postrobotnavn
+177 Ugyldig e-postadresse for ejer
+178 Udfyld venligst emnelinie
+179 Udfyld venligst besked
+180 Postrobottilføjet
+181 Kunne ikke slette postrobot
+182 Postrobot slettet
+183 Postrobot ændret
+184 Maksimalt antal postlister er nået
+185 Kunne ikke slette fil
+186 Postliste er slettet
+187 Postliste er tilføjet
+188 Ugyldig e-post listenavn
+189 Listning af e-postadresser på postlisten
+190 Slut på liste
+191 Liste af moderatorers e-postadresser på postliste
+192 Tilbage til hovedmenu
+193 Tilføjet til postliste
+194 E-postadresse tilføjet som moderator på postlisten
+195 Slet abonnent fra postliste
+196 Slet moderator fra postliste
+197 Moderater slettet fra postliste
+198 Ugyldigt login
+199 Maksimalt antal e-postadresser er nået
+200 Kodeord er ikke ens, prøv igen
+201 Hukommelsesfejl
+202 Hvor parametrene er:
+203 slettet fra postliste 
+204 Gå til bruger
+205 Deaktiver eftersendelse/ferie
+206 Indstil fjern-fang-alt-konto
+207 Indstil fjern-fang-alt-konto
+208 Fjern-fang-alt e-postadresse:
+209 Aktiver eftersendelse
+210 Aktiver gem-kopi og eftersend
+211 Forward Email Til:
+212 Aktiver ferie
+213 Ferie emne:
+214 Ferie besked:
+215 Eftersendelsesadresse skal udfyldes
+216 Emnelinie skal udfyldes
+217 Opfrisk menu
+218 Log ud
+219 Vis moderatorer
+220 Moderator adresse
+221 List abonnenter
+222 Abonnent adresse
+223 Kunne ikke finde bruger
+224 (klik for at redigere)
+225 Rediger postliste
+226 Postliste ændret
+227 Summering
+228 Total:
+229 ubegrænset
+230 Abonnenter totalt:
+231 Ingen postlister at vise
+232 Ingen aliaser/videresendelser at vise
+233 Ingen postrobotter at vise
+234 Please type in password
+235 Fang-alt-konto: Ingen
+236 Fang-alt-konto: Ingen
+237 Tilføj<br>Oversigts Abonnent
+238 Slet<br>Oversigts Abonnent
+239 Vis<br>Oversigts Abonnenter
+240 er tilføjet som oversigts abbonent til listen
+241 Tilføj oversigts abonnent til mail listen
+242 slettet som oversigts abonnent
+243 Slet oversigts abonnent fra mail listen
+244 Abonnenter totalt:
+245 Slet<br>abonnent
+246 Abonnent addresse
+247 Liste oversigts abonnenter
+248 Liste over oversigts abonnenter på postlisten 
+249 Grænse (MB)
+250 Brugt
+251 (NOQUOTA for ubegrænset)
+252 (Blank for ubegrænset)
+253 Grænse:
+254 Brugt:
+255 Total Accounts
+256 Prefix i emmne linien på udgående mails:
+257 Bruger Vejledning
+258 Administrator Vejledning
+259 Help Index
+260 Vidersendelse
+261 Listenavn
+262 Posting Messages
+263 Alle kan poste.
+264 Kun abonnenter kan poste.
+265 Kun abonnenter kan poste, alle andre sendes til moderatorene for godkendelse.
+266 Kun moderatorer kan poste.
+267 Kun moderatorer kan poste, alle andre sendes til moderatorene for godkendelse.
+268 Liste Indstillinger
+269 Prefix i emmne linien på udgående mails <B>[%s]</B>.
+270 Include a trailer at the end of each message.
+271 Opret en oversigts version af postlisten.
+272 kaldes %s-digest.
+273 Service skal sendes til %s-kommando.
+274 In addition to %s-subscribe, %s-unsubscribe, etc. brugerne kan sende kommandoer til %s-request.
+275 Fjern Administration
+276 Tilad moderatorne at køre fjernadministration.
+277 Gør den her liste privat.
+278 Kun admins kan tilføje og slette brugere, har adgang til indexet, osv.
+279 Fjern administratore kan:
+280 Vise og søge i abonnents listen.
+281 Redigere filer i tekst biblioteket.
+282 e.g., message trailer, help files, etc.
+283 Subscription Requests
+284 Requests to subscribe to the list:
+285 Require confirmation by a reply to a message sent to the subscription address.
+286 Require the approval of a moderator.
+287 Requests to unsubscribe from the list:
+288 Advarsel: if you do not require sender confirmation, it will be possible for people to forge email to subscribe or unsubscribe someone from this list without their authorization.
+289 Mails arkivering
+290 Arkiver listens mails.
+291 Akriver listens mails så de kan bruges i ezmlm-cgi.
+292 Adgang til arkivet er
+293 Åben for alle
+294 Begrænset til abonnenter
+295 Begrænset til moderatorne
+296 Mailbox flags
+297 on
+298 off
+299 Flag0
+300 Flag1
+301 Flag2
+302 Flag3
+303 Ingen

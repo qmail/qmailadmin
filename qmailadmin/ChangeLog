@@ -1,7 +1,7 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.4 - unreleased
+1.2.4 - released 15-Nov-04
 
 	Tom Collins
 	- Modify contrib/alias2forward.pl to work with '/Maildir' or

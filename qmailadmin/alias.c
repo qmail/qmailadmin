@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.9 2004-02-07 09:22:36 rwidmer Exp $
+ * $Id: alias.c,v 1.10 2004-04-29 06:07:25 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,6 @@
 #include <pwd.h>
 #include <errno.h>
 #include <dirent.h>
-#include <vpopmail.h>
-#include <vauth.h>
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"

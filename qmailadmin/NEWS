@@ -7,6 +7,22 @@ not over, as you can see in TODO.
 
 #################################################################
 
+040428
+
+Qmailadmin now requires vpopmail CVS from today or later.  The key
+change is moving MAX_BUFF to a global position where it is now visible
+to qmailadmin.
+
+This update to qmailadmin makes it compile with the latest vpopmail.
+
+The latest vpopmail already includes all my patches, so currently there
+is nothing you have to add.
+
+See TODO for a list of things I have found that need to be fixed before
+release.  I am moving to the extension now, and will add access to new
+vpopmail features before fixing the things I've found here.
+
+
 040207 
 
 get_html_text now takes an int instead of a string.

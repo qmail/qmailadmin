@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.16 2004-02-07 09:22:36 rwidmer Exp $
+ * $Id: user.c,v 1.17 2004-04-29 06:07:26 rwidmer Exp $
  * Copyright (C) 1999-2002 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,8 +35,6 @@
 #include "config.h"
 #include "qmailadmin.h"
 #include "qmailadminx.h"
-#include "vpopmail.h"
-#include "vauth.h"
 
 
 #define HOOKS 1

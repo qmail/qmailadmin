@@ -23,7 +23,6 @@
 
 #define MAX_FILE_NAME 100
 
-#define MAX_BUFF 500
 #define MAX_BIG_BUFF 5000
 
 #define QMAILADMIN_UNLIMITED -1

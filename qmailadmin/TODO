@@ -3,6 +3,29 @@
 
 Rick's todo list:
 
+Jumping to the top of the list are these buglets found in recent
+testing.
+
+1. When adding the first forward, the program jumps to the menu
+instead of the forwards page.
+
+2. When adding a mail robot, rwidmer was not allowed as a forward 
+address, and I was presented with a blank screen, and an error
+message.  It did go to the right next page though.  Email address
+in the form user@domain.test was accepted.  If only addresses are
+allowed, say so.  Better yet, allow users within the domain to
+be specified by name only, and maybe use direct to mailbox deliveries
+for that.
+
+3.  Delete of user did not actually work.  Confirm screen was given 
+and delete was confirmed, but delete did not actually happen.
+
+4.  Catchall account has delete option.  It should not be deleteable, and
+the lack of a trash can should show it.
+
+5.  Create email account is not showing its button to add the user.
+
+
 Add jump to first field javascript to templates.
 
 TMDA checkbox.

@@ -76,7 +76,7 @@ AC_SUBST(htmldir)
 
 cgibindir=""
 
-for f in /home/httpd /usr/local/apache /usr/local/www /var/lib/httpd /var/www /usr/local/www 
+for f in /home/httpd /usr/local/apache /usr/local/www /var/lib/httpd /var/www /usr/local/www $htmldir
 do
     if test -d $f/cgi-bin
     then
@@ -95,7 +95,7 @@ AC_ARG_ENABLE(cgibindir, [  --enable-cgibindir={dir}  HTTP server's cgi-bin dire
 AC_SUBST(cgibindir)
 
 imagedir=""
-for f in /home/httpd/html /usr/local/apache/htdocs /usr/local/www/data /var/www/html
+for f in /home/httpd/html /usr/local/apache/htdocs /usr/local/www/data /var/www/html $htmldir
 do
     if test -d $f
     then

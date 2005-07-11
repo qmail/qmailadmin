@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4.2.5 2005-01-23 17:35:12 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.6 2005-07-11 06:08:46 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,6 +93,10 @@ char *sort_get_entry(int index)
 void sort_cleanup()
 {
   while (memindex) { free (sort_block[--memindex]); }
+  if (sort_list) {
+    free (sort_list);
+    sort_list = NULL;
+  }
 }
 /* Comparison routine used in qsort for multiple functions */
 static int sort_compare (const void *p1, const void *p2)

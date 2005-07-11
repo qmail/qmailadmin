@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.9 - unreleased
 
+	Luis Gonzalo Constantini Von Rickel
+	- util.c: free sort_list in sort_cleanup(). [1182347]
+
 1.2.8 - released 4-Jul-05
 
 	Tom Collins

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.8 2005-01-23 17:35:12 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.9 2005-08-08 20:53:03 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -304,6 +304,7 @@ void load_lang (char *lang)
   size_t bytes_read;
   char *lang_entries;
   char *id;
+  char *p;
 
   open_lang (lang);
   fseek (lang_fs, 0, SEEK_END);
@@ -318,7 +319,9 @@ void load_lang (char *lang)
 
   id = strtok (lang_entries, " \t");
   while (id) {
-    html_text[atoi(id)] = strtok (NULL, "\n");
+    p = strtok (NULL, "\n");
+    if (p == NULL) break;
+    html_text[atoi(id)] = p;
     id = strtok (NULL, " \t");
   }
 

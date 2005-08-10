@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.9 2005-08-08 20:53:03 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.10 2005-08-10 17:42:49 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -522,7 +522,14 @@ void quickAction (char *username, int action)
   } else if (vauth_getpw (username, Domain)) {
     /* POP/IMAP account */
     if (action == ACTION_MODIFY) moduser();
-    else if (action == ACTION_DELETE) deluser();
+    else if (action == ACTION_DELETE) {
+      // don't allow deletion of postmaster account
+      if (strcasecmp (username, "postmaster") == 0) {
+        snprinth (StatusMessage, sizeof(StatusMessage), "%s", html_text[317]);
+        show_menu(Username, Domain, Mytime);
+        vclose();
+      } else deluser();
+    }
   } else {
     /* check for mailing list on SQL backend (not in valias_select) */
     snprintf (dotqmailfn, sizeof(dotqmailfn), ".qmail-%s", username);

@@ -282,3 +282,4 @@
 314 Bad quota supplied
 315 User deleted.  Unable to set forward to '%s'.
 316 Change Password
+317 You cannot delete the postmaster account.

@@ -9,6 +9,8 @@ patch or information related to the entry.
 	Tom Collins
 	- qmailadmin.c: fix problem parsing language files that could
 	  result in SIGSEGV. [1242317]
+	- qmailadmin.c: disable ability to delete postmaster account
+	  from Quick Links on main menu. [1255845]
 
 1.2.8 - released 4-Jul-05
 

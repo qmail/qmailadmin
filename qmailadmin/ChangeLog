@@ -6,6 +6,9 @@ patch or information related to the entry.
 	Luis Gonzalo Constantini Von Rickel
 	- util.c: free sort_list in sort_cleanup(). [1182347]
 
+	HA van Tilborg
+	- Added Dutch translations for strings 316 and 317. [1255845]
+
 	Tom Collins
 	- qmailadmin.c: fix problem parsing language files that could
 	  result in SIGSEGV. [1242317]

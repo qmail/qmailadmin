@@ -9,6 +9,9 @@ patch or information related to the entry.
 	HA van Tilborg
 	- Added Dutch translations for strings 316 and 317. [1255845]
 
+	Kimmo Hedman [by way of Bill Shupp]
+	- Update Finnish translations of strings 114 & 137, add 316.
+
 	Tom Collins
 	- qmailadmin.c: fix problem parsing language files that could
 	  result in SIGSEGV. [1242317]

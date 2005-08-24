@@ -79,7 +79,7 @@
 111 Muokkaa laatikkoa
 112 K&auml;ytt&auml;j&auml;n laatikko
 113 Verkkotunnus (domain) 
-114 K&auml;ytt&auml;j&auml;tunnus
+114 Kirjaudu
 115 Ohjaukset k&auml;ytt&auml;j&auml;lle
 116 Voimassa olevat ohjaukset
 117 Lis&auml;&auml;/korvaa postin ohjaus
@@ -102,7 +102,7 @@
 134 Palauta haaviin j&auml;&auml;v&auml;t 
 135 Edellinen sivu
 136 P&auml;ivit&auml; n&auml;kym&auml;
-137 Edellinen sivu 
+137 Seuraava sivu
 138 Kirjoita salasana
 139 Laatikon salasana vaihdettu
 140 Salasanaa ei vaihdettu.
@@ -281,3 +281,4 @@
 313 osoitteeseen
 314 Annettu kiinti&ouml; ei kelpaa
 315 K&auml;ytt&auml;j&auml; poistettu.  Edelleenl&auml;hetyst&auml; osoitteeseen '%s' ei asetettu.
+316 Vaihda salasana

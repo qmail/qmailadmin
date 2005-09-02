@@ -1,7 +1,7 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.9 - unreleased
+1.2.9 - released 1-Sep-05
 
 	Luis Gonzalo Constantini Von Rickel
 	- util.c: free sort_list in sort_cleanup(). [1182347]

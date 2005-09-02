@@ -1647,7 +1647,7 @@ host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
 QA_PACKAGE="qmailadmin"
-QA_VERSION="1.2.9"
+QA_VERSION="1.2.10"
 
 
 cat >>confdefs.h <<_ACEOF

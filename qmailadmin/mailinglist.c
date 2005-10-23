@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.7 2005-02-16 16:10:37 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.8 2005-10-23 18:52:34 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1307,7 +1307,7 @@ void show_current_list_values() {
   printf ("<BR>\n");
   /* note that if user doesn't have ezmlm-cgi installed, it might be
      a good idea to default to having option i off. */
-  build_option_str ("CHECKBOX", "opt15", "i", html_text[291]);
+  build_option_str ("CHECKBOX", "opt16", "i", html_text[291]);
   printf ("</P>\n");
 
   /***********************/

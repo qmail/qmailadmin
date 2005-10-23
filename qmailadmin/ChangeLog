@@ -3,6 +3,10 @@ patch or information related to the entry.
 
 1.2.10 - unreleased
 
+	Tom Collins
+	- mailinglist.c: Fix problem with enable/disable ezmlm-cgi access
+	  to archives.
+
 1.2.9 - released 1-Sep-05
 
 	Luis Gonzalo Constantini Von Rickel

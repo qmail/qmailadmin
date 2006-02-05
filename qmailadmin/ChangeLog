@@ -13,6 +13,8 @@ patch or information related to the entry.
 	- alias.c: Add index and user search to the aliases page.  When
 	  deleting an alias, return to the page that alias would have been
 	  on.  This feature was sponsored by Marko Lerota. [894823, 877895]
+	- qmailadmin.h: undef MAX_BUFF if previously defined (too small) by 
+	  vpopmail.h.
 
 1.2.9 - released 1-Sep-05
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.10 2005-08-10 17:42:49 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.11 2006-02-05 17:03:44 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ int main(argc,argv)
   pi=getenv("PATH_INFO");
   if ( pi )  pi = strdup(pi);
 
-  if (pi) strcpy (TmpBuf2, pi+5);
+  if (pi) snprintf (TmpBuf2, sizeof(TmpBuf2), "%s", pi + 5);
   rm = getenv("REQUEST_METHOD");
   rm = (rm == NULL ? "" : strdup(rm));
 

@@ -4,7 +4,8 @@ patch or information related to the entry.
 1.2.10 - unreleased
 
 	Peter Pentchev
-	- Update Bulgarian translation.
+	- Update Bulgarian translation. [1421770]
+	- qmailadmin.c: Fix potential buffer overflow.
 
 	Tom Collins
 	- mailinglist.c: Fix problem with enable/disable ezmlm-cgi access

@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.12 2005-01-23 17:35:11 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.13 2006-02-05 16:49:08 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -130,9 +130,28 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
   if (page == 0) page = 1;
 
   startnumber = MAXALIASESPERPAGE * (page - 1);
-  k=0;
-
+  k = 0;
+  
 #ifdef VALIAS
+  if (*SearchUser) {
+    startnumber = 0
+    alias_line = valias_select_all(alias_name, Domain);
+    while (alias_line != NULL) {
+      strcpy (this_alias, alias_name);
+      alias_name_from_command = dotqmail_alias_command(alias_line);
+      if ( alias_name_from_command != NULL || *alias_line == '#') {
+        if (strcasecmp (SearchUser, alias_name) <= 0) break;
+        startnumber++;
+      }      
+      /* burn through remaining lines for this alias, if necessary */
+      while ((alias_line != NULL) && (strcmp (this_alias, alias_name) == 0)) {
+        alias_line = valias_select_all_next(alias_name);
+      }
+    }
+    page = startnumber / MAXALIASESPERPAGE + 1;
+    sprintf (Pagenumber, "%d", page);
+  }
+
   alias_line = valias_select_all(alias_name, Domain);
   while (alias_line != NULL) {
     strcpy (this_alias, alias_name);
@@ -174,6 +193,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
     }
   }
 #else
+
   /* We can't use valias code here, because it doesn't return a sorted
      list of aliases.  If we update vpopmail's vpalias.c to do that,
      then qmailadmin could use the single set of valias_ functions above.
@@ -216,14 +236,31 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
       if ( alias_name_from_command != NULL || *TmpBuf2 == '#') {
         k++;
       
-        if ( k >MAXALIASESPERPAGE + startnumber) {
-          moreusers=1;
-          fclose(fs);
-          break;
-        }
-        if (k <= startnumber) {
-          fclose (fs);
-          continue;
+        if (*SearchUser) {
+          if (strcasecmp (SearchUser, alias_name) <= 0) {
+            if (startnumber == 0) {
+              startnumber = k;
+              page = (k/MAXALIASESPERPAGE)+1;
+            }
+            if (k >= MAXALIASESPERPAGE + startnumber) {
+              moreusers = 1;
+              fclose (fs);
+              break;
+            }
+          } else {
+            fclose (fs);
+            continue;
+          }
+        } else {
+          if ( k >MAXALIASESPERPAGE + startnumber) {
+            moreusers=1;
+            fclose(fs);
+            break;
+          }
+          if (k <= startnumber) {
+            fclose (fs);
+            continue;
+          }
         }
 
         if (*TmpBuf2 == '#') {
@@ -252,6 +289,10 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
   /* free memory allocated by bkscandir */
   for (m=0; m<n; m++) free(namelist[m]);
   free(namelist);
+  
+  if (*SearchUser && (startnumber == 0)) {
+  	page = (k/MAXALIASESPERPAGE)+1;
+  }
 #endif
 
   curalias = firstalias;
@@ -321,21 +362,37 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
   }
 
   if (AdminType == DOMAIN_ADMIN) {
+
+    print_user_index ("showforwards", 4, user, dom, mytime);
+    
     printf ("<tr><td align=\"right\" colspan=\"4\">");
     printf ("[&nbsp;");
-    if(page > 1 ) {
+	/* When searching for a user on systems using .qmail files, we make things
+	 * easy by starting the page with the first matching address.  As a result,
+	 * the previous page will be 'page' and not 'page-1'.  Refresh is accomplished
+	 * by repeating the search.
+	 */
+    if (*SearchUser && ((startnumber % MAXALIASESPERPAGE) != 1)) {
       printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,page - 1, html_text[135]);
+        CGIPATH, user, dom, mytime, page, html_text[135]);
       printf ("&nbsp;|&nbsp;");
-    }
-    printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-      CGIPATH,user,dom,mytime,page, html_text[136]);
-    printf ("&nbsp;|&nbsp;");
-    if (moreusers) {
+      printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&searchuser=%C\">%s</a>",
+        CGIPATH, user, dom, mytime, SearchUser, html_text[136]);
+    } else {
+      if (page > 1) {
+        printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
+          CGIPATH, user, dom, mytime, page - 1, html_text[135]);
+        printf ("&nbsp;|&nbsp;");
+      }
       printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH,user,dom,mytime,page+1, html_text[137]);    
-      printf ("&nbsp;]");
+        CGIPATH, user, dom, mytime, page, html_text[136]);
     }
+    if (moreusers) {
+      printf ("&nbsp;|&nbsp;");
+      printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
+        CGIPATH, user, dom, mytime, page + 1, html_text[137]);    
+    }
+    printf ("&nbsp;]");
     printf ("</td></tr>");                                    
   }
 }
@@ -638,6 +695,7 @@ void deldotqmailnow()
   if(CurForwards == 0 && CurBlackholes == 0) {
     show_menu(Username, Domain, Mytime);
   } else {
+  	snprintf (SearchUser, sizeof(SearchUser), "%s", ActionUser);
     show_forwards(Username,Domain,Mytime);
   }
 }

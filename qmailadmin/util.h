@@ -1,5 +1,5 @@
 /* 
- * $Id: util.h,v 1.1.2.1 2004-11-20 01:10:41 tomcollins Exp $
+ * $Id: util.h,v 1.1.2.2 2006-02-05 16:49:08 tomcollins Exp $
  */
 
 int check_local_user( char *user );
@@ -27,3 +27,5 @@ void qmail_button(char *modu, char *command, char *user, char *dom, time_t mytim
 
 int quota_to_bytes(char[], char*);     //jhopper prototype
 int quota_to_megabytes(char[], char*); //jhopper prototype
+
+void print_user_index (char *action, int colspan, char *user, char *dom, time_t mytime);

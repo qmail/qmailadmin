@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4.2.6 2005-07-11 06:08:46 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.7 2006-02-05 16:49:08 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -388,6 +388,43 @@ int quota_to_megabytes(char *returnval, char *quota) {
     }
     sprintf(returnval, "%.2lf", tmp);
     return 0;
+}
+
+void print_user_index (char *action, int colspan, char *user, char *dom, time_t mytime)
+{
+#ifdef USER_INDEX
+  int k;
+
+  printf ("<tr bgcolor=%s>", get_color_text("000"));
+  printf ("<td colspan=%d align=\"center\">", colspan);
+  printf ("<hr>");
+  printf ("<b>%s</b> &nbsp; ", html_text[133]);
+  for (k = 0; k < 10; k++) {
+	printh ("<a href=\"%s/com/%s?user=%C&dom=%C&time=%d&searchuser=%d\">%d</a>\n",
+	  CGIPATH, action, user, dom, mytime, k, k);
+  }
+  for (k = 'a'; k <= 'z'; k++) {
+	printh ("<a href=\"%s/com/%s?user=%C&dom=%C&time=%d&searchuser=%c\">%c</a>\n",
+	  CGIPATH, action, user, dom, mytime, k, k);
+  }
+  printf ("</td>");
+  printf ("</tr>\n");
+
+  printf ("<tr bgcolor=%s>", get_color_text("000"));
+  printf ("<td colspan=%d>", colspan);
+  printf ("<table border=0 cellpadding=3 cellspacing=0 width=\"100%%\"><tr><td align=\"center\"><br>");
+  printf ("<form method=\"get\" action=\"%s/com/%s\">", CGIPATH, action);
+  printh ("<input type=\"hidden\" name=\"user\" value=\"%H\">", user);
+  printh ("<input type=\"hidden\" name=\"dom\" value=\"%H\">", dom);
+  printf ("<input type=\"hidden\" name=\"time\" value=\"%u\">", (unsigned int) mytime);
+  printh ("<input type=\"text\" name=\"searchuser\" value=\"%H\">&nbsp;", SearchUser);
+  printf ("<input type=\"submit\" value=\"%s\">", html_text[204]);
+  printf ("</form>");
+  printf ("</td></tr></table>");
+  printf ("<hr>");
+  printf ("</td></tr>\n");
+
+#endif
 }
 
 /*

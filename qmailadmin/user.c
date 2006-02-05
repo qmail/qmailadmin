@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.11 2005-01-23 17:35:12 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.12 2006-02-05 16:49:08 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -244,38 +244,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
     }
 
     if (AdminType == DOMAIN_ADMIN) {
-#ifdef USER_INDEX
-      printf ("<tr bgcolor=%s>", get_color_text("000"));
-      printf ("<td colspan=\"%i\" align=\"center\">", colspan);
-      printf ("<hr>");
-      printf ("<b>%s</b>", html_text[133]);
-      printf ("<br>");
-      for (k = 'a'; k <= 'z'; k++) {
-        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&searchuser=%c\">%c</a>\n",
-          CGIPATH,user,dom,mytime,k,k);
-      }
-      printf ("<br>");
-      for (k = 0; k < 10; k++) {
-        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&searchuser=%d\">%d</a>\n",
-          CGIPATH,user,dom,mytime,k,k);
-      }
-      printf ("</td>");
-      printf ("</tr>\n");
-
-      printf ("<tr bgcolor=%s>", get_color_text("000"));
-      printf ("<td colspan=%i>", colspan);
-      printf ("<table border=0 cellpadding=3 cellspacing=0 width=\"100%%\"><tr><td align=\"center\"><br>");
-      printf ("<form method=\"get\" action=\"%s/com/showusers\">", CGIPATH);
-      printh ("<input type=\"hidden\" name=\"user\" value=\"%H\">", user);
-      printh ("<input type=\"hidden\" name=\"dom\" value=\"%H\">", dom);
-      printf ("<input type=\"hidden\" name=\"time\" value=\"%u\">", (unsigned int) mytime);
-      printh ("<input type=\"text\" name=\"searchuser\" value=\"%H\">&nbsp;", SearchUser);
-      printf ("<input type=\"submit\" value=\"%s\">", html_text[204]);
-      printf ("</form>");
-      printf ("</td></tr></table>");
-      printf ("<hr>");
-      printf ("</td></tr>\n");
-#endif
+      print_user_index ("showusers", colspan, user, dom, mytime);
 
       printf ("<tr bgcolor=%s>", get_color_text("000"));
       printf ("<td colspan=\"%i\" align=\"right\">", colspan);

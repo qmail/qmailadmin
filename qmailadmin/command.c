@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2.2.6 2005-01-23 17:35:11 tomcollins Exp $
+ * $Id: command.c,v 1.2.2.7 2006-02-05 16:49:08 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,7 @@ void process_commands()
 
   } else if (strcmp(TmpBuf2, "showforwards") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
+    GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
     show_forwards(Username, Domain, Mytime);
 
   } else if (strcmp(TmpBuf2, "showmailinglists") == 0) {

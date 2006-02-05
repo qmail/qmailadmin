@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.10 - unreleased
 
+	Peter Pentchev
+	- Update Bulgarian translation.
+
 	Tom Collins
 	- mailinglist.c: Fix problem with enable/disable ezmlm-cgi access
 	  to archives.

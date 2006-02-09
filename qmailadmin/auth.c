@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3.2.5 2005-01-23 17:35:11 tomcollins Exp $
+ * $Id: auth.c,v 1.3.2.6 2006-02-09 05:09:53 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,9 +26,9 @@
 #include <pwd.h>
 #include <dirent.h>
 #include "config.h"
+#include <vpopmail.h>
 #include "qmailadmin.h"
 #include "qmailadminx.h"
-#include <vpopmail.h>
 #include <vauth.h>
 #include "cgi.h"
 #include "show.h"

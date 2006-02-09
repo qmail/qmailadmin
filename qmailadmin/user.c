@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.12 2006-02-05 16:49:08 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.13 2006-02-09 05:09:53 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <vpopmail_config.h>
+#include "vpopmail.h"
 /* undef some macros that get redefined in config.h below */
 #undef PACKAGE_NAME  
 #undef PACKAGE_STRING 
@@ -45,7 +46,6 @@
 #include "template.h"
 #include "user.h"
 #include "util.h"
-#include "vpopmail.h"
 #include "vauth.h"
 
 

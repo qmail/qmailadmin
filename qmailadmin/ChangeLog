@@ -6,6 +6,8 @@ patch or information related to the entry.
 	Peter Pentchev
 	- Update Bulgarian translation. [1421770]
 	- qmailadmin.c: Fix potential buffer overflow.
+	- alias.c: missing semicolon when using VALIAS, eliminate unused
+	  variable warnings when using VALIAS.
 
 	Tom Collins
 	- mailinglist.c: Fix problem with enable/disable ezmlm-cgi access

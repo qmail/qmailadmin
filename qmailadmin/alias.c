@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.13 2006-02-05 16:49:08 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.14 2006-02-09 05:02:55 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,22 +103,23 @@ struct aliasentry *get_alias_entry()
 void show_dotqmail_lines(char *user, char *dom, time_t mytime)
 {
  int moreusers=0;
- DIR *mydir;
- struct dirent *mydirent;
- FILE *fs;
  char alias_user[MAX_BUFF];
  char alias_name[MAX_FILE_NAME];
  char *alias_domain;
  char *alias_name_from_command;
- int i,j,stop,k,startnumber;
- int m,n;
+ int stop,k,startnumber;
  int page;
- struct dirent **namelist;
  char this_alias[MAX_FILE_NAME];
 #ifdef VALIAS
  char *alias_line;
-#endif
+#else
+ DIR *mydir;
+ struct dirent *mydirent;
+ FILE *fs;
+ int i,j,m,n;
+ struct dirent **namelist;
  struct stat sbuf;
+#endif
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf(StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
@@ -134,7 +135,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
   
 #ifdef VALIAS
   if (*SearchUser) {
-    startnumber = 0
+    startnumber = 0;
     alias_line = valias_select_all(alias_name, Domain);
     while (alias_line != NULL) {
       strcpy (this_alias, alias_name);

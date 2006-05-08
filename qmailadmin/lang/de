@@ -1,7 +1,7 @@
 000 iso-8859-1
 001 Hauptmenü
-002 POP Account
-003 Mail Robot hinzufügen:
+002 POP-Account
+003 Mail-Robot hinzufügen:
 004 Name des Robots:
 005 Kopie an:
 006 Betreff: 
@@ -9,16 +9,16 @@
 008 Zieladresse: 
 009 Lokale Adresse:
 010 Die Zieladresse sollte das Format: <b>benutzer@domain.com</b> haben.<br>Die lokale Adresse sollte die Form: <b>popaccount</b> haben<p>Beispiel:<br>Zieladresse: <b>joe@domain.com</b><br>Lokale Adresse: <b>sales</b><br>Dann würden alle Mails <b>sales@ihredomain.com</b> an <b>joe@domain.com</b> weitergeleitet werden.
-011 Mailinglist Moderator hinzufügen
-012 Moderator zur Mailinglist hinzufügen
-013 Email Adresse:
-014 Abonnent zur Mailinglist hinzufügen:
-015 Mailinglist hinzufügen
-016 Name der Mailinglist:
+011 Mailinglisten-Moderator hinzufügen
+012 Moderator zur Mailingliste hinzufügen
+013 Email-Adresse:
+014 Abonnent zur Mailingliste hinzufügen:
+015 Mailingliste hinzufügen
+016 Name der Mailingliste:
 017 Adresse des Verwalters der Adresse: 
 018 archiviert
-039 Antworte auf administrative Anfragen und erlaube Zugriff auf das Archiv für remote Administratoren per Mail.
-053 SQL Support aktivieren.
+039 Antworte auf administrative Anfragen und erlaube Zugriff auf das Archiv für Fern-Administratoren per Mail.
+053 SQL-Support aktivieren.
 054 Host
 055 Port
 056 User
@@ -26,25 +26,25 @@
 058 Database
 059 Tabelle
 060 Hinzufügen
-061 POP Accounts
+061 POP-Accounts
 062 CatchAll:
-063 Kommentare
+063 Name
 064 User bearbeiten
 065 Account löschen
-066 CatchAll Account
-067 POP Account hinzufügen
-068 Alias Accounts
+066 CatchAll-Account
+067 POP-Account hinzufügen
+068 Alias-Accounts
 069 Alias
-070 POP Account
+070 POP-Account
 071 Bearbeiten
 072 Löschen
 073 Neuen Alias hinzufügen
 074 Weiterleitung
 075 Weiterleiten
 076 Neue Weiterleitung hinzufügen
-077 Mail Robots
-078 Mail Robot
-079 Neuen Mail Robot hinzufügen
+077 Mail-Robots
+078 Mail-Robot
+079 Neuen Mail-Robot hinzufügen
 080 Mailinglisten
 081 Liste
 082 Fehler beim Öffnen von .qmail-default
@@ -55,30 +55,30 @@
 087 Moderator löschen
 088 Moderatoren anzeigen
 089 Neue Mailingliste hinzufügen
-090 POP Account hinzufügen
-091 Passwort (nochmals):
+090 POP-Account hinzufügen
+091 Passwort bestätigen:
 092 Name
-093 Name der Mailinglist
+093 Name der Mailingliste
 094 User anmelden
 095 Den neuen Benutzer für die folgenden Mailinglisten anmelden
 096 Alias löschen
 097 Löschen bestätigen
-098 Mail Robot löschen
-099 SQL Einstellungen
+098 Mail-Robot löschen
+099 SQL-Einstellungen
 100 Weiterleitung löschen
-101 Mailinglist löschen
+101 Mailingliste löschen
 102 User löschen
 103 Email weiterleiten
 104 Ja, weiterleiten an:
-105 Mail Robot bearbeiten
+105 Mail-Robot bearbeiten
 106 Name
 107 Inhalte
-108 Email Adresse hinzufügen
+108 Email-Adresse hinzufügen
 109 User bearbeiten
 110 Neues Passwort
 111 User bearbeiten
 112 Benutzername
-113 Domain Name 
+113 Domain 
 114 Login
 115 Redirects für den User
 116 Aktuelle redirects
@@ -89,13 +89,13 @@
 121 Aliases
 122 Weiterleitungen
 123 Redirects anzeigen
-124 Quick Links
-125 Neuer POP Account
+124 Quick-Links
+125 Neuer POP-Account
 126 Neues Alias
 127 Neue Weiterleitung
-128 Neuer Mail Robot
-129 Neue Mailinglist
-130 CatchAll: Ist deaktiviert, d.h. Mails an unbekannte User werden zurückgesendet.
+128 Neuer Mail-Robot
+129 Neue Mailingliste
+130 CatchAll: Ist deaktiviert, Mails an unbekannte User werden abgewiesen.
 131 Keine weiteren User, bitte kehren Sie zur vorhergehenden Seite zurück.
 132 Standard
 133 Index:
@@ -104,17 +104,17 @@
 136 Seite aktualisieren
 137 Nächste Seite
 138 Passwort eingeben:
-139 Das POP Account Passwort wurde erfolgreich geändert.
-140 Das Ändern des POP Account Passworts schlug fehl.
+139 Das Passwort wurde erfolgreich geändert.
+140 Das Ändern des Passworts schlug fehl.
 141 Der User wurde gelöscht.
 142 Nicht authorisiert.
-143 Directory permission Fehler
-144 File permission Fehler
+143 "Directory permission"-Fehler
+144 "File permission"-Fehler
 145 Ungültiger User - Interner Fehler
 146 Redirect nicht möglich
 147 Redirect Now
 148 Ungültige Emailadresse
-149 Letzer Eintrag kann nicht gelöscht werden.
+149 Letzter Eintrag kann nicht gelöscht werden.
 150 File error
 151 Zeile erfolgreich gelöscht.
 152 Weiterleitung hinzugefügt.
@@ -123,12 +123,12 @@
 155 Ungültige Aktion
 156 Die maximale Anzahl an Aliases wurde erreicht.
 157 Die maximale Anzahl an Weiterleitungen wurde erreicht.
-158 Die maximale Anzahl Mail Robots wurde erreicht.
+158 Die maximale Anzahl an Mail-Robots wurde erreicht.
 159 Invalid DotQmail Type: adddotqmail()
 160 Ungültiger Alias
-161 Konnte den Alias nicht hinzufügen. POP Account muss ein gültiger POP Account sein!
-162 Ungültiger POP Account Name
-163 Ungültiger lokaler Name
+161 Konnte den Alias nicht hinzufügen. POP-Account muss ein gültiger POP-Account sein!
+162 Ungültiger Name für POP-Account
+163 Ungültiger Name für Alias
 164 Invalid Alias Type : adddotqmailnow()
 165 Das Hinzufügen des Aliases schlug fehl.
 166 Der Alias wurde hinzugefügt.
@@ -136,105 +136,105 @@
 168 Alias/Weiterleitung wurde gelöscht.
 169 Der Alias/Redirect konnte nicht gelöscht werden.
 170 Der Alias/Redirect wurde gelöscht.
-171 Fehler: Konnte ins Directory nicht wechseln.
-172 Es kann sich nur jeweils eine Person einloggen. Leider ist bereits jemand eingeloggt, bitte versuchen Sie es später noch einmal.
+171 Fehler: Konnte nicht in das Verzeichnis wechseln.
+172 Es kann sich nur jeweils eine Person als Postmaster einloggen. Leider ist bereits jemand eingeloggt, bitte versuchen Sie es später noch einmal.
 173 Ihr Sitzung ist abgelaufen, bitte loggen Sie sich nochmals ein.
-174 Ungültiger Mail Robot Name 
+174 Ungültiger Name für Mail-Robot 
 175 Name wird bereits benutzt.
-176 Bitte den Mail Robot Namen eingeben
-177 Ungültige Owner Email Adresse
-178 Bitte ein Betreff eingeben
+176 Bitte Namen für Mail-Robot eingeben
+177 Ungültige Email-Adresse für Verwalter
+178 Bitte einen Betreff eingeben
 179 Bitte eine Nachricht eingeben
-180 Mail Robot erfolgreich hinzugefügt.
-181 Mail Robot konnte nicht gelöscht werden.
-182 Mail Robot wurde gelöscht.
-183 Mail Robot wurde angepasst.
-184 Die maximale Anzahl Mailinglists wurde erreicht.
-185 Konnte File nicht löschen.
-186 Mailinglist wurde gelöscht.
-187 Mailinglist wurde hinzugefügt.
-188 Ungültiger Name für die Mailignlist.
-189 Liste der Abonnenten der Mailinglist.
+180 Mail-Robot erfolgreich hinzugefügt.
+181 Mail-Robot konnte nicht gelöscht werden.
+182 Mail-Robot wurde gelöscht.
+183 Mail-Robot wurde geändert.
+184 Die maximale Anzahl an Mailinglisten wurde erreicht.
+185 Konnte Datei nicht löschen.
+186 Mailingliste wurde gelöscht.
+187 Mailingliste wurde hinzugefügt.
+188 Ungültiger Name für die Mailingliste.
+189 Liste der Abonnenten der Mailingliste.
 190 Ende der Liste
-191 Liste der Moderatoren der Mailinglist.
+191 Liste der Moderatoren der Mailingliste.
 192 Zurück zum Hauptmenü
-193 wurde zur Mailinglist hinzugefügt.
-194 Die Emailadresse wurde als Moderator zur Mailinglist hinzugefügt.
-195 Abonnent von der Mailinglist löschen
-196 Moderator von der Mailinglist löschen
-197 als Mailinglist Moderator entfernt.
-198 Ungültiges Login.
-199 Die maximale Anzahl POP Accounts wurde erreicht.
+193 wurde zur Mailingliste hinzugefügt.
+194 Die Email-Adresse wurde als Moderator zur Mailingliste hinzugefügt.
+195 Abonnent von der Mailingliste löschen
+196 Moderator von der Mailingliste löschen
+197 als Mailinglisten-Moderator entfernt.
+198 Ungültiger Login.
+199 Die maximale Anzahl an POP-Accounts wurde erreicht.
 200 Die beiden Passwörter sind nicht identisch, bitte versuchen Sie es nochmals.
 201 Out of memory
 202 Mit folgenden Parametern:
-203 von der Mailinglist entfernt
+203 von der Mailingliste entfernt
 204 Zu User:
-205 Weiterleitung/Abwesenheitsnotiz deaktivieren<br>
+205 Standard (keine Weiterleitung)
 206 Remote CatchAll aktivieren
 207 Remote CatchAll aktivieren
-208 Remote CatchAll Address:
+208 Remote CatchAll-Addresse:
 209 Weiterleitung aktivieren
 210 Kopie und Weiterleitung
 211 Weiterleiten an:
 212 Abwesenheitsnotiz aktivieren
-213 Subjekt der Abwesenheitsnotiz:
+213 Betreff der Abwesenheitsnotiz:
 214 Abwesenheitsnotiz:
 215 Es muss eine Zieladresse eingegeben werden.
-216 Es muss ein Subjekt angegeben werden.
+216 Es muss ein Betreff angegeben werden.
 217 Menü aktualisieren
-218 Log Out
-219 Mailinglist Moderatoren
-220 Moderator Adress
-221 Mailinglist Abonnenten
+218 Abmelden
+219 Mailinglisten-Moderatoren
+220 Moderator-Adresse
+221 Mailinglisten-Abonnenten
 222 Abonnenten Adresse
 223 Konnte den User nicht finden.
 224 (zum Bearbeiten klicken)
-225 Mailinglist bearbeiten
-226 Die Änderungen an der Mailinglist wurden gespeichert.
+225 Mailingliste bearbeiten
+226 Die Änderungen an der Mailingliste wurden gespeichert.
 227 Digest
-228 Total:
+228 Anzahl:
 229 unbegrenzt
-230 Abonnenten total:
+230 Anzahl Abonnenten:
 231 Keine Mailinglisten gefunden
 232 Keine Aliases/Weiterleitungen gefunden
-233 Keine Mail Robots gefunden
+233 Keine Mail-Robots gefunden
 234 Bitte Passwort eingeben
 235 CatchAll-Emails löschen 
 236 CatchAll: gelöscht 
-237 Digest Abonnent<br>hinzufügen
-238 Digest Abonnent<br>löschen
-239 Digest Abonnenten<br>anzeigen
-240 Emailadresse als Digest Abonnent zur Mailinglist hinzugefügt.
-241 Digest Abonnent zur Mailinglist hinzufügen
-242 von Digest Mailinglist entfernt 
-243 Digest Abonnent von Mailinglist löschen
-244 Summe Digest Abonnenten:
-245 Digest Abonnent<br>löschen
-246 Digest Abonnent Adresse
-247 Liste der Digest Abonnenten
-248 Liste der Digest Emailadressen der Mailingliste
+237 Digest-Abonnent<br>hinzufügen
+238 Digest-Abonnent<br>löschen
+239 Digest-Abonnenten<br>anzeigen
+240 Emailadresse als Digest-Abonnent zur Mailingliste hinzugefügt.
+241 Digest-Abonnent zur Mailingliste hinzufügen
+242 von Digest-Mailingliste entfernt 
+243 Digest-Abonnent von Mailingliste löschen
+244 Anzahl Digest Abonnenten:
+245 Digest-Abonnent<br>löschen
+246 Digest-Abonnent Adresse
+247 Liste der Digest-Abonnenten
+248 Liste der Digest-Emailadressen der Mailingliste
 249 Quota (MB)
 250 Verbraucht
 251 (NOQUOTA für unlimitierte Quota)
-252 (Leer lassen, für unlimitierte Quota)
+252 (Für unlimitierte Quota leer lassen)
 253 Limit:
 254 Verbraucht:
-255 Total Accounts
-256 Prefix
-257 Users Guide
-258 Admin Guide
-259 Help Index
+255 Anzahl Accounts
+256 Vorspann für Betreffzeile:
+257 Anleitung für Benutzer
+258 Anleitung für Administratoren
+259 Hilfe-Index
 260 Routing
-261 listname
+261 Listenname
 262 Nachrichten abschicken
 263 Keine Einschränkung.
 264 Nur Abonnenten dürfen, Nachrichten von Nicht-Abonnenten werden abgewiesen.
 265 Nur Abonnenten dürfen, Nachrichten von Nicht-Abonnenten müssen vom Moderator akzeptiert werden.
 266 Nur Moderatoren dürfen, Nachrichten von Nicht-Moderatoren werden abgewiesen.
 267 Nur Moderatoren dürfen, Nachrichten von Nicht-Moderatoren müssen vom Moderator akzeptiert werden.
-268 Mailinglist Optionen
-269 Prefix outgoing subject headers with <B>[%s]</B>.
+268 Mailinglisten-Optionen
+269 Vorspann für Betreffzeile lautet <B>[%s]</B>.
 270 Fußzeile an das Ende jeder Nachricht anhängen.
 271 Anlegen einer Digest-Version der Liste.
 272 mit dem Namen: %s-digest.
@@ -245,8 +245,8 @@
 277 Als private Liste konfigurieren.
 278 Nur Administratoren können Benutzer hinzufügen/löschen/etc.
 279 Fern-Administratoren können:
-280 Auflisten und durchsuchen der Abonnentenliste.
-281 Text-Directory verändern.
+280 Abonnentenliste anzeigen und durchsuchen.
+281 Dateien im Text-Verzeichnis ändern
 282 z.B. Fußzeilen, Hilfe-Text, usw.
 283 Abonnement-Ansuchen
 284 Ansuchen, um eine Liste zu abonnieren:
@@ -254,10 +254,10 @@
 286 benötigen die Genehmigung eines Moderators.
 287 Ansuchen, um von einer Liste gelöscht zu werden:
 288 Achtung: Ohne jegliche Bestätigung können beliebige Personen Abonnenten von der Liste löschen lassen (oder hinzufügen), indem sie gefälschte Absenderadressen angeben!
-289 Nachrichten Archiv
-290 Archivieren von Mailinglistnachrichten.
+289 Nachrichten-Archiv
+290 Archivieren von Mailinglisten-Nachrichten.
 291 Archiv indizieren via ezmlm-cgi (für Webzugang).
-292 Archivzugang  ist
+292 Archivzugang ist
 293 für alle offen
 294 nur für Abonnenten
 295 nur für Moderatoren
@@ -268,8 +268,8 @@
 300 Flag1
 301 Flag2
 302 Flag3
-303 gelöscht
-304 Spam Erkennung?
+303 Alle eingehenden Mails löschen
+304 Spam-Erkennung?
 305 Zieladresse
 306 weiterleiten an
 307 Ungültige Quota
@@ -281,3 +281,5 @@
 313 die Adresse
 314 Fehlerhafte Quota-Angabe
 315 Benutzer gelöscht. Kann keine Weiterleitung an '%s' erstellen.
+316 Passwort ändern
+317 Der Postmaster-Account kann nicht gelöscht werden.

@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.13 2006-02-09 05:09:53 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.14 2006-05-08 05:22:34 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -466,7 +466,11 @@ void addusernow()
     if(strcmp(spamvalue, "on") == 0) {
        snprintf(NewBuf, sizeof(NewBuf), "%s/.qmail", mypw->pw_dir);
        fs = fopen(NewBuf, "w+");
+#ifdef MODIFY_SPAM_NEED_EMAIL
+       fprintf(fs, "%s %s\n", SPAM_COMMAND, email);
+#else  
        fprintf(fs, "%s\n", SPAM_COMMAND);
+#endif
        fclose(fs);
     }
 #endif
@@ -940,7 +944,11 @@ ActionUser, Domain ); */
       fprintf (fs, "# delete\n");
       emptydotqmail = 0;
     } else if (spam_check == 1) {
+#ifdef MODIFY_SPAM_NEED_EMAIL
+       fprintf(fs, "%s %s@%s\n", SPAM_COMMAND, ActionUser, Domain);
+#else  
       fprintf (fs, "%s\n", SPAM_COMMAND);
+#endif
       emptydotqmail = 0;
     } else {
       fprintf (fs, "%s/" MAILDIR "/\n", vpw->pw_dir);

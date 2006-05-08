@@ -121,6 +121,9 @@
 #undef MODIFY_SPAM
 
 /* "" */
+#undef MODIFY_SPAM_NEED_EMAIL
+
+/* "" */
 #undef NO_CACHE
 
 /* Define to the address where bug reports for this package should be sent. */

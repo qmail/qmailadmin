@@ -350,6 +350,21 @@ case $DOMAIN_AUTOFILL in
       ;;
 esac
 
+AC_ARG_ENABLE(spamcmd-needs-email, [  --enable-spamcmd-needs-email  Append the user's email to the end of the spam command.],
+    SPAM_NEED_EMAIL="$enableval",)
+
+case $SPAM_NEED_EMAIL in
+1*|y*|Y*)
+      SPAM_NEED_EMAIL=yes
+      AC_DEFINE_UNQUOTED(MODIFY_SPAM_NEED_EMAIL,1,"")
+      echo "checking whether to append the email to the end of the spam command... yes"
+      ;;
+*)
+      SPAM_NEED_EMAIL=no
+      echo "checking whether to append the email to the end of the spam command... no"
+      ;;
+esac
+
 AC_ARG_ENABLE(modify-spam, [  --enable-modify-spam  Allow users to enable/disable spam checking.],
     MODIFY_SPAM="$enableval",)
 

@@ -16,6 +16,11 @@ patch or information related to the entry.
 	Oden Eriksson
 	- Add string 316 to Swedish translation.
 
+	Dave Steinberg
+	- Add --enable-spamcmd-needs-email option to configure to have 
+	  QmailAdmin include the user's email address as the last 
+	  parameter to --enable-spam-command.
+
 1.2.10 - released 20-Feb-06
 
 	Peter Pentchev

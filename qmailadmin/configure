@@ -853,6 +853,7 @@ Optional Features:
   --disable-user-index   Don't display user index on show users page.
   --enable-modify-quota  Allow domain admin (postmaster) to modify user quotas.
   --enable-domain-autofill  Autofill the domain on login page based on the hostname that accesses qmailadmin.
+  --enable-spamcmd-needs-email  Append the user's email to the end of the spam command.
   --enable-modify-spam  Allow users to enable/disable spam checking.
   --enable-spam-command=CMD     Remember to use '|preline' at the beginning, |preline /usr/local/bin/maildrop /etc/mailfilter.
   --enable-help  Display help links on login page.
@@ -4499,6 +4500,28 @@ _ACEOF
 *)
       DOMAIN_AUTOFILL=no
       echo "checking whether to autofill domain name on login page... no"
+      ;;
+esac
+
+# Check whether --enable-spamcmd-needs-email or --disable-spamcmd-needs-email was given.
+if test "${enable_spamcmd_needs_email+set}" = set; then
+  enableval="$enable_spamcmd_needs_email"
+  SPAM_NEED_EMAIL="$enableval"
+fi;
+
+case $SPAM_NEED_EMAIL in
+1*|y*|Y*)
+      SPAM_NEED_EMAIL=yes
+
+cat >>confdefs.h <<_ACEOF
+#define MODIFY_SPAM_NEED_EMAIL 1
+_ACEOF
+
+      echo "checking whether to append the email to the end of the spam command... yes"
+      ;;
+*)
+      SPAM_NEED_EMAIL=no
+      echo "checking whether to append the email to the end of the spam command... no"
       ;;
 esac
 

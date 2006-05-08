@@ -232,7 +232,7 @@
 264 Seulement les abonn&eacute;s peuvent poster, tous les autres sont rejet&eacute;s.
 265 Seulement les abonn&eacute;s peuvent poster, tous les autres vont aux mod&eacute;rateurs pour approbation.
 266 Seulement les mod&eacute;rateurs peuvent poster, tous les autres sont rejet&eacute;s.
-267 Seulement les mod&eacute;rateurs peuvent poster, tous les autres passent par les mod&eacute;rateurs pour approbation.
+267 Seulement les mod&eacute;rateurs peuvent poster, tous les messages passent par les mod&eacute;rateurs pour approbation.
 268 Liste des options
 269 En-t&ecirc;tes sujet des mails sortants pr&eacute;fix&eacute;s avec <B>[%s]</B>.
 270 Inclure un pied de page à la fin de chaque message.
@@ -281,3 +281,6 @@
 313 l'adresse
 314 Quota invalide
 315 Utilisateur supprim&eacute;. Impossible de redirig&eacute; vers '%s'.
+316 Modifier le mot de passe
+317 Suppression du compte Postmaster impossible.
+

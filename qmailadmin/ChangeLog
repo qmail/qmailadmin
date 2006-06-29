@@ -21,6 +21,10 @@ patch or information related to the entry.
 	  QmailAdmin include the user's email address as the last 
 	  parameter to --enable-spam-command.
 
+	Tom Collins
+	- Create autoresponder message before creating its .qmail file.
+	- Deliver copy before autoresponding to ensure delivery.
+
 1.2.10 - released 20-Feb-06
 
 	Peter Pentchev

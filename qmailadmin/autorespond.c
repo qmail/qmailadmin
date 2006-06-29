@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.3.2.4 2005-01-23 17:35:11 tomcollins Exp $
+ * $Id: autorespond.c,v 1.3.2.5 2006-06-29 19:30:05 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -168,18 +168,6 @@ void addautorespondnow()
   mkdir(TmpBuf2, 0750);
 
   /*
-   * Make the autoresponder .qmail file
-   */
-  valias_delete (ActionUser, Domain);
-  sprintf(TmpBuf, "|%s/autorespond 10000 5 %s/%s/message %s/%s",
-    AUTORESPOND_PATH, RealDir, TmpBuf2, RealDir, TmpBuf2);
-  valias_insert (ActionUser, Domain, TmpBuf);
-  if ( strlen(Newu) > 0 ) {
-    sprintf(TmpBuf, "&%s", Newu);
-    valias_insert (ActionUser, Domain, TmpBuf);
-  } 
-
-  /*
     * Make the autoresponder message file
    */
   sprintf(TmpBuf, "%s/message", TmpBuf2);
@@ -188,6 +176,18 @@ void addautorespondnow()
   fprintf(fs, "Subject: %s\n\n", Alias);
   fprintf(fs, "%s", Message);
   fclose(fs);
+
+  /*
+   * Make the autoresponder .qmail file
+   */
+  valias_delete (ActionUser, Domain);
+  if ( strlen(Newu) > 0 ) {
+    sprintf(TmpBuf, "&%s", Newu);
+    valias_insert (ActionUser, Domain, TmpBuf);
+  } 
+  sprintf(TmpBuf, "|%s/autorespond 10000 5 %s/%s/message %s/%s",
+    AUTORESPOND_PATH, RealDir, TmpBuf2, RealDir, TmpBuf2);
+  valias_insert (ActionUser, Domain, TmpBuf);
 
   /*
    * Report success

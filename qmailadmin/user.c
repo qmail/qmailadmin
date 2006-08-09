@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.14 2006-05-08 05:22:34 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.15 2006-08-09 21:45:25 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -257,26 +257,26 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           CGIPATH,user,dom,mytime,
           atoi(Pagenumber)-1 ? atoi(Pagenumber)-1 : atoi(Pagenumber), 
           html_text[135]);
-        printf ("&nbsp;|&nbsp");
+        printf ("&nbsp;|&nbsp;");
       }
 
       if (moreusers && atoi(Pagenumber) < totalpages) {
         printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
           CGIPATH,user,dom,mytime,atoi(Pagenumber)+1,
           html_text[137]);
-        printf ("&nbsp;|&nbsp");
+        printf ("&nbsp;|&nbsp;");
       }
-/*        printf ("&nbsp;|&nbsp");*/
+/*        printf ("&nbsp;|&nbsp;");*/
 #endif
       printh ("<a href=\"%s/com/deleteall?user=%C&dom=%C&time=%d\">%s</a>", 
         CGIPATH,user,dom,mytime,html_text[235]);
-      printf ("&nbsp;|&nbsp");
+      printf ("&nbsp;|&nbsp;");
       printh ("<a href=\"%s/com/bounceall?user=%C&dom=%C&time=%d\">%s</a>", 
         CGIPATH,user,dom,mytime,html_text[134]);
-      printf ("&nbsp;|&nbsp");
+      printf ("&nbsp;|&nbsp;");
       printh ("<a href=\"%s/com/setremotecatchall?user=%C&dom=%C&time=%d\">%s</a>", 
         CGIPATH,user,dom,mytime,html_text[206]);
-      printf ("&nbsp]");
+      printf ("&nbsp;]");
       printf ("</b></font>");
       printf ("</td></tr>\n");
   }

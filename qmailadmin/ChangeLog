@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.11 - unreleased
 
+	Brandon
+	- Add missing semi-colons to &nbsp; tags in user.c. [1537587]
+
 	Andreas Tolfsen
 	- Added Norwegian translation for strings 316 and 317.
 

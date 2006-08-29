@@ -27,6 +27,8 @@ patch or information related to the entry.
 	Tom Collins
 	- Create autoresponder message before creating its .qmail file.
 	- Deliver copy before autoresponding to ensure delivery.
+	- On Modify User page, add current domain to fowarding address
+	  if it doesn't already include a domain.
 
 1.2.10 - released 20-Feb-06
 

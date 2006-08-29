@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.15 2006-08-09 21:45:25 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.16 2006-08-29 16:57:35 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -928,7 +928,11 @@ ActionUser, Domain ); */
       count=0;
       while( tmpstr != NULL && count < MAX_FORWARD_PER_USER) {
         if ((*tmpstr != '|') && (*tmpstr != '/')) {
-          fprintf(fs, "&%s\n", tmpstr);
+          if (strchr (tmpstr, '@') == NULL) {
+            fprintf(fs, "&%s@%s\n", tmpstr, Domain);
+          } else {
+            fprintf(fs, "&%s\n", tmpstr);
+          }
           emptydotqmail = 0;
           ++count;
         }

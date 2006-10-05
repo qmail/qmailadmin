@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.8 2005-10-23 18:52:34 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.9 2006-10-05 16:14:11 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -601,8 +601,10 @@ void ezmlm_make (int newlist)
   /* if this is a new list, add owner as subscriber */
   if (newlist && (*list_owner != '\0')) {
     ezmlm_sub ("", list_owner);
-    /* add owner as moderator/remote admin as well */
-    ezmlm_sub ("mod", list_owner);
+    if (listopt['M'-'A'] == 'm') { /* moderation on */
+      /* add owner as moderator/remote admin as well */
+      ezmlm_sub ("mod", list_owner);
+    }
   }
 #endif
 }

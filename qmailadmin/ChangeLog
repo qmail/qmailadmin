@@ -29,6 +29,7 @@ patch or information related to the entry.
 	- Deliver copy before autoresponding to ensure delivery.
 	- On Modify User page, add current domain to forwarding address
 	  if it doesn't already include a domain.
+	- Don't try to add list owner as moderator of new unmoderated list.
 
 1.2.10 - released 20-Feb-06
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadminx.h,v 1.2.2.3 2005-01-23 17:35:12 tomcollins Exp $
+ * $Id: qmailadminx.h,v 1.2.2.4 2006-12-30 01:31:49 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,6 @@ extern char Password1[MAX_BUFF];
 extern char Password2[MAX_BUFF];
 extern char Crypted[MAX_BUFF];
 extern char Alias[MAX_BUFF];
-extern char AliasType[MAX_BUFF];
 extern char LineData[MAX_BUFF];
 extern char Action[MAX_BUFF];
 extern char Message[MAX_BIG_BUFF];

@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2.2.7 2006-02-05 16:49:08 tomcollins Exp $
+ * $Id: command.c,v 1.2.2.8 2006-12-30 01:31:49 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -175,35 +175,29 @@ void process_commands()
 
   } else if (strcmp(TmpBuf2, "moddotqmail") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
     moddotqmail();
 
   } else if (strcmp(TmpBuf2, "moddotqmailnow") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
     GetValue(TmpCGI, Newu, "newu=", sizeof(Newu));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
     GetValue(TmpCGI, LineData, "linedata=", sizeof(LineData));
     GetValue(TmpCGI, Action, "action=", sizeof(Action));
     moddotqmailnow();
 
   } else if (strcmp(TmpBuf2, "deldotqmail") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
     deldotqmail();
 
   } else if (strcmp(TmpBuf2, "deldotqmailnow") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
     deldotqmailnow();
 
   } else if (strcmp(TmpBuf2, "adddotqmail") == 0 ) {
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
     adddotqmail();
 
   } else if (strcmp(TmpBuf2, "adddotqmailnow") == 0 ) {
     GetValue(TmpCGI, ActionUser, "newu=", sizeof(ActionUser));
     GetValue(TmpCGI, Alias, "alias=", sizeof(Alias));
-    GetValue(TmpCGI, AliasType, "atype=", sizeof(AliasType));
     adddotqmailnow();
 
   } else if (strcmp(TmpBuf2, "addmailinglist") == 0 ) {

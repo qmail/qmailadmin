@@ -1,5 +1,5 @@
 /* 
- * $Id: autorespond.c,v 1.3.2.5 2006-06-29 19:30:05 tomcollins Exp $
+ * $Id: autorespond.c,v 1.3.2.6 2006-12-30 01:28:22 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,14 +78,12 @@ void show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
     printf ("<tr>");
     
     printf ("<td align=\"center\">");
-    printh ("<a href=\"%s/com/delautorespond?user=%C&dom=%C&time=%d&modu=%C\">",
-      CGIPATH, user, dom, mytime, addr);
+    printh ("<a href=\"%s&modu=%C\">", cgiurl("delautorespond"), addr);
     printf ("<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
     printf ("</td>");
 
     printf ("<td align=\"center\">");
-    printh ("<a href=\"%s/com/modautorespond?user=%C&dom=%C&time=%d&modu=%C\">",
-      CGIPATH, user, dom, mytime, addr);
+    printh ("<a href=\"%s&modu=%C\">", cgiurl("modautorespond"), addr);
     printf ("<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
     printf ("</td>");
 

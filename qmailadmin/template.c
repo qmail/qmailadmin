@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.13 2005-01-23 17:35:12 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.14 2006-12-30 01:28:22 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -501,36 +501,28 @@ int send_template_now(char *filename)
             if (AdminType==DOMAIN_ADMIN){
 
               if (MaxPopAccounts != 0) {
-                printh (
-       "<a href=\"%s/com/showusers?user=%C&time=%i&dom=%C&\">",
-                  CGIPATH,Username,Mytime,Domain); 
+                printh ("<a href=\"%s\">", cgiurl("showusers")); 
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                   html_text[61]);
               }
 
               if (MaxForwards != 0 || MaxAliases != 0) {
-                printh (
-       "<a href=\"%s/com/showforwards?user=%C&time=%i&dom=%C&\">",
-                  CGIPATH,Username,Mytime,Domain);
+                printh ("<a href=\"%s\">", cgiurl("showforwards")); 
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                   html_text[122]);
               }
 
               if (MaxAutoResponders != 0) {
-                printh (
-       "<a href=\"%s/com/showautoresponders?user=%C&time=%i&dom=%C&\">",
-                  CGIPATH,Username,Mytime,Domain);
+                printh ("<a href=\"%s\">", cgiurl("showautoresponders")); 
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
                   html_text[77]);
               }
 
               if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
-                printh (
-       "<a href=\"%s/com/showmailinglists?user=%C&time=%i&dom=%C&\">",
-                  CGIPATH, Username,Mytime,Domain);
+                printh ("<a href=\"%s\">", cgiurl("showmailinglists")); 
                 printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                   html_text[80]);
@@ -545,9 +537,7 @@ int send_template_now(char *filename)
 	      char path[256];
               vpw = vauth_getpw(Username, Domain);
 
-               printh (
-       "<a href=\"%s/com/moduser?user=%C&time=%i&dom=%C&moduser=%C\">",
-                 CGIPATH,Username,Mytime,Domain,Username);
+               printh ("<a href=\"%s&moduser=%C\">", cgiurl("moduser"), Username);
                printh (
        "<font size=\"2\" color=\"#000000\"><b>%s %H</b></font></a><br><br>",
                  html_text[111], Username);
@@ -568,36 +558,28 @@ int send_template_now(char *filename)
                printf ("<br>");
 
                if (MaxPopAccounts != 0) {
-                 printh (
-       "<a href=\"%s/com/adduser?user=%C&time=%i&dom=%C&\">",
-                   CGIPATH,Username,Mytime,Domain);
+                 printh ("<a href=\"%s\">", cgiurl("adduser"));
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                    html_text[125]);
                }
 
                if (MaxForwards != 0) {
-                 printh (
-       "<a href=\"%s/com/adddotqmail?atype=forward&user=%C&time=%i&dom=%C&\">",
-                   CGIPATH, Username,Mytime,Domain);
+                 printh ("<a href=\"%s\">", cgiurl("adddotqmail"));
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                    html_text[127]);
                }
 
                if (MaxAutoResponders != 0) {
-                 printh (
-       "<a href=\"%s/com/addautorespond?user=%C&time=%i&dom=%C&\">",
-                   CGIPATH, Username,Mytime,Domain);
+                 printh ("<a href=\"%s\">", cgiurl("addautorespond"));
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></a></font><br>",
                    html_text[128]);
                }
 
                if (*EZMLMDIR != 'n' && MaxMailingLists != 0) {
-                 printh (
-       "<a href=\"%s/com/addmailinglist?user=%C&time=%i&dom=%C&\">",
-                   CGIPATH, Username,Mytime,Domain);
+                 printh ("<a href=\"%s\">", cgiurl("addmailinglist"));
                  printf (
        "<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>",
                    html_text[129]);
@@ -621,14 +603,11 @@ int send_template_now(char *filename)
 
           /* exit / logout link/text */
           case 'x':
-            printf("<a href=\"");
             strcpy (value, get_session_val("returntext="));
             if(strlen(value) > 0) {
-               printh("%s\">%H", 
-                      get_session_val("returnhttp="), value);
+               printh("<a href=\"%s\">%H", get_session_val("returnhttp="), value);
             } else {
-               printh("%s/com/logout?user=%C&dom=%C&time=%d&\">%s",
-                      CGIPATH, Username, Domain, Mytime, html_text[218]);
+               printh("<a href=\"%s\">%s", cgiurl("logout"), html_text[218]);
             }
             printf("</a>\n");
             break;

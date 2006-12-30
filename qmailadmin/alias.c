@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.14 2006-02-09 05:02:55 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.15 2006-12-30 01:28:22 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -374,24 +374,24 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
 	 * by repeating the search.
 	 */
     if (*SearchUser && ((startnumber % MAXALIASESPERPAGE) != 1)) {
-      printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH, user, dom, mytime, page, html_text[135]);
+      printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
+        page, html_text[135]);
       printf ("&nbsp;|&nbsp;");
-      printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&searchuser=%C\">%s</a>",
-        CGIPATH, user, dom, mytime, SearchUser, html_text[136]);
+      printh ("<a href=\"%s&searchuser=%C\">%s</a>", cgiurl("showforwards"),
+        SearchUser, html_text[136]);
     } else {
       if (page > 1) {
-        printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-          CGIPATH, user, dom, mytime, page - 1, html_text[135]);
+        printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
+          page - 1, html_text[135]);
         printf ("&nbsp;|&nbsp;");
       }
-      printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH, user, dom, mytime, page, html_text[136]);
+      printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
+        page, html_text[136]);
     }
     if (moreusers) {
       printf ("&nbsp;|&nbsp;");
-      printh ("<a href=\"%s/com/showforwards?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-        CGIPATH, user, dom, mytime, page + 1, html_text[137]);    
+      printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
+        page + 1, html_text[137]);    
     }
     printf ("&nbsp;]");
     printf ("</td></tr>");                                    

@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.9 2006-10-05 16:14:11 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.10 2006-12-30 01:28:22 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -713,13 +713,13 @@ void show_list_group_now(int mod)
     }
     for(z = 0; (addr = sort_get_entry(z)); ++z) {
       printf (" <TR align=center>");
-      printh ("  <TD align=right><A href=\"%s/com/%s?modu=%C&newu=%C&dom=%C&user=%C&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
-        CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
+      printh ("  <TD align=right><A href=\"%s&modu=%C&newu=%C\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
+        cgiurl(TmpBuf), ActionUser, addr, IMAGEURL);
       printh ("  <TD align=left>%H</TD>\n", addr);
       ++z;
       if( (addr = sort_get_entry(z)) ) {
-        printh ("  <TD align=right><A href=\"%s/com/%s?modu=%C&newu=%C&dom=%C&user=%C&time=%d\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
-          CGIPATH, TmpBuf, ActionUser, addr, Domain, Username, Mytime, IMAGEURL);
+        printh ("  <TD align=right><A href=\"%s&modu=%C&newu=%C\"><IMG src=\"%s/trash.png\" border=0></A></TD>\n",
+          cgiurl(TmpBuf), ActionUser, addr, IMAGEURL);
       printh ("  <TD align=left>%H</TD>\n", addr);
       } else {
         printf ("  <TD COLSPAN=2> </TD>");

@@ -1,5 +1,5 @@
 /* 
- * $Id: util.c,v 1.4.2.7 2006-02-05 16:49:08 tomcollins Exp $
+ * $Id: util.c,v 1.4.2.8 2006-12-30 01:28:23 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,8 +119,7 @@ void str_replace (char *s, char orig, char repl)
 void qmail_button(char *modu, char *command, char *user, char *dom, time_t mytime, char *png)    
 {
   printf ("<td align=center>");
-  printh ("<a href=\"%s/com/%s?user=%C&dom=%C&time=%d&modu=%C\">",
-    CGIPATH, command, user, dom, mytime, modu);
+  printh ("<a href=\"%s&modu=%C\">", cgiurl(command), modu);
   printf ("<img src=\"%s/%s\" border=0></a>", IMAGEURL, png);
   printf ("</td>\n");
 }
@@ -400,12 +399,10 @@ void print_user_index (char *action, int colspan, char *user, char *dom, time_t 
   printf ("<hr>");
   printf ("<b>%s</b> &nbsp; ", html_text[133]);
   for (k = 0; k < 10; k++) {
-	printh ("<a href=\"%s/com/%s?user=%C&dom=%C&time=%d&searchuser=%d\">%d</a>\n",
-	  CGIPATH, action, user, dom, mytime, k, k);
+	printh ("<a href=\"%s&searchuser=%d\">%d</a>\n", cgiurl(action), k, k);
   }
   for (k = 'a'; k <= 'z'; k++) {
-	printh ("<a href=\"%s/com/%s?user=%C&dom=%C&time=%d&searchuser=%c\">%c</a>\n",
-	  CGIPATH, action, user, dom, mytime, k, k);
+	printh ("<a href=\"%s&searchuser=%c\">%c</a>\n", cgiurl(action), k, k);
   }
   printf ("</td>");
   printf ("</tr>\n");
@@ -425,6 +422,16 @@ void print_user_index (char *action, int colspan, char *user, char *dom, time_t 
   printf ("</td></tr>\n");
 
 #endif
+}
+
+char *cgiurl (char *action)
+{
+  static char url[256];
+  
+  snprinth (url, sizeof(url), "%s/com/%s?user=%C&dom=%C&time=%d",
+    CGIPATH, action, Username, Domain, Mytime);
+    
+  return url;
 }
 
 /*

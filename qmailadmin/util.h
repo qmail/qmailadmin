@@ -1,5 +1,5 @@
 /* 
- * $Id: util.h,v 1.1.2.2 2006-02-05 16:49:08 tomcollins Exp $
+ * $Id: util.h,v 1.1.2.3 2006-12-30 01:28:23 tomcollins Exp $
  */
 
 int check_local_user( char *user );
@@ -29,3 +29,4 @@ int quota_to_bytes(char[], char*);     //jhopper prototype
 int quota_to_megabytes(char[], char*); //jhopper prototype
 
 void print_user_index (char *action, int colspan, char *user, char *dom, time_t mytime);
+char *cgiurl (char *action);

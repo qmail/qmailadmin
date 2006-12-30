@@ -3,6 +3,9 @@ patch or information related to the entry.
 
 1.2.12 - unreleased
 
+	Tom Collins
+	- Use function to generate cgi URLs.
+
 1.2.11 - released 29-Dec-06
 
 	Brandon

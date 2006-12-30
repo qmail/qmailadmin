@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.16 2006-08-29 16:57:35 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.17 2006-12-30 01:28:22 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -191,8 +191,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
 
           /* display button to modify user */
           printf ("<td align=\"center\">");
-          printh ("<a href=\"%s/com/moduser?user=%C&dom=%C&time=%d&moduser=%C\">",
-            CGIPATH,user,dom,mytime,pw->pw_name);
+          printh ("<a href=\"%s&moduser=%C\">", cgiurl("moduser"), pw->pw_name);
           printf ("<img src=\"%s/modify.png\" border=\"0\"></a>", IMAGEURL);
           printf ("</td>");
             
@@ -212,8 +211,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           /* display trashcan for delete, or nothing if delete not allowed */
           printf ("<td align=\"center\">");
           if (allowdelete) {
-            printh ("<a href=\"%s/com/deluser?user=%C&dom=%C&time=%d&deluser=%C\">",
-              CGIPATH,user,dom,mytime,pw->pw_name);
+            printh ("<a href=\"%s&deluser=%C\">", cgiurl("deluser"), pw->pw_name);
             printf ("<img src=\"%s/trash.png\" border=\"0\"></a>", IMAGEURL);
           } else {
             /* printf ("<img src=\"%s/disabled.png\" border=\"0\">", IMAGEURL); */
@@ -226,8 +224,8 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
             printf ("<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
               IMAGEURL);
           } else if (AdminType==DOMAIN_ADMIN) {
-            printh ("<a href=\"%s/com/setdefault?user=%C&dom=%C&time=%d&deluser=%C&page=%s\">",
-              CGIPATH,user,dom,mytime,pw->pw_name,Pagenumber);
+            printh ("<a href=\"%s&deluser=%C&page=%s\">",
+              cgiurl("setdefault"), pw->pw_name, Pagenumber);
             printf ("<img src=\"%s/radio-off.png\" border=\"0\"></a>",
               IMAGEURL);
           } else {
@@ -253,29 +251,24 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
       printf ("[&nbsp;");
       /* only display "previous page" if pagenumber > 1 */
       if (atoi(Pagenumber) > 1) {
-        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-          CGIPATH,user,dom,mytime,
+        printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl ("showusers"),
           atoi(Pagenumber)-1 ? atoi(Pagenumber)-1 : atoi(Pagenumber), 
           html_text[135]);
         printf ("&nbsp;|&nbsp;");
       }
 
       if (moreusers && atoi(Pagenumber) < totalpages) {
-        printh ("<a href=\"%s/com/showusers?user=%C&dom=%C&time=%d&page=%d\">%s</a>",
-          CGIPATH,user,dom,mytime,atoi(Pagenumber)+1,
-          html_text[137]);
+        printh ("<a href=\"%s&page=%d\">%s</a>",
+          cgiurl("showusers"), atoi(Pagenumber)+1, html_text[137]);
         printf ("&nbsp;|&nbsp;");
       }
 /*        printf ("&nbsp;|&nbsp;");*/
 #endif
-      printh ("<a href=\"%s/com/deleteall?user=%C&dom=%C&time=%d\">%s</a>", 
-        CGIPATH,user,dom,mytime,html_text[235]);
+      printh ("<a href=\"%s\">%s</a>", cgiurl ("deleteall"), html_text[235]);
       printf ("&nbsp;|&nbsp;");
-      printh ("<a href=\"%s/com/bounceall?user=%C&dom=%C&time=%d\">%s</a>", 
-        CGIPATH,user,dom,mytime,html_text[134]);
+      printh ("<a href=\"%s\">%s</a>", cgiurl ("bounceall"), html_text[134]);
       printf ("&nbsp;|&nbsp;");
-      printh ("<a href=\"%s/com/setremotecatchall?user=%C&dom=%C&time=%d\">%s</a>", 
-        CGIPATH,user,dom,mytime,html_text[206]);
+      printh ("<a href=\"%s\">%s</a>", cgiurl("setremotecatchall"), html_text[206]);
       printf ("&nbsp;]");
       printf ("</b></font>");
       printf ("</td></tr>\n");

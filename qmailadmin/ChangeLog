@@ -6,6 +6,7 @@ patch or information related to the entry.
 	Tom Collins
 	- Use function to generate cgi URLs.
 	- Remove unused AliasType variable.
+	- Use email address instead of maildir for catchall.
 
 1.2.11 - released 29-Dec-06
 

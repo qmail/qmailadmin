@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.10 2006-12-30 01:28:22 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.11 2007-08-17 23:46:36 rwidmer Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -572,23 +572,23 @@ void ezmlm_make (int newlist)
     unlink (TmpBuf);
   }
 
-  /* set Reply-To header */
-  GetValue (TmpCGI, TmpBuf, "replyto=", sizeof(TmpBuf));
-  replyto = atoi(TmpBuf);
-  if (replyto == REPLYTO_SENDER) {
-    /* ezmlm shouldn't remove/add Reply-To header */
-    ezmlm_setreplyto ("headeradd", "");
-    ezmlm_setreplyto ("headerremove", "");
-  } else {
-    if (replyto == REPLYTO_ADDRESS) {
-      GetValue (TmpCGI, replyto_addr, "replyaddr=", sizeof(replyto_addr));
-      sprintf (TmpBuf, "Reply-To: %s\n", replyto_addr);
-    } else {  /* REPLYTO_LIST */
-      strcpy (TmpBuf, "Reply-To: <#l#>@<#h#>\n");
+    /* set Reply-To header */
+    GetValue (TmpCGI, TmpBuf, "replyto=", sizeof(TmpBuf));
+    replyto = atoi(TmpBuf);
+    if (replyto == REPLYTO_SENDER) {
+        /* ezmlm shouldn't remove/add Reply-To header */
+        ezmlm_setreplyto ("headeradd", "");
+        ezmlm_setreplyto ("headerremove", "");
+    } else {
+        if (replyto == REPLYTO_ADDRESS) {
+            GetValue (TmpCGI, replyto_addr, "replyaddr=", sizeof(replyto_addr));
+            sprintf (TmpBuf, "Reply-To: %s\n", replyto_addr);
+        } else {  /* REPLYTO_LIST */
+            strcpy (TmpBuf, "Reply-To: <#l#>@<#h#>\n");
+            }
+        ezmlm_setreplyto ("headeradd", TmpBuf);
+        ezmlm_setreplyto ("headerremove", "Reply-To");
     }
-    ezmlm_setreplyto ("headeradd", TmpBuf);
-    ezmlm_setreplyto ("headerremove", "Reply-To");
-  }
 
   /* update inlocal file */
   sprintf(TmpBuf, "%s/%s/inlocal", RealDir, ActionUser);

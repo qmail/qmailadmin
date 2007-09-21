@@ -1,5 +1,5 @@
 /* 
- * $Id: alias.c,v 1.4.2.15 2006-12-30 01:28:22 tomcollins Exp $
+ * $Id: alias.c,v 1.4.2.16 2007-09-21 23:16:45 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@
 #include "qmailadmin.h"
 #include "qmailadminx.h"
 #include "dotqmail.h"
+#include "html.h"
 #include "limits.h"
 #include "util.h"
 #include "printh.h"
@@ -104,6 +105,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
 {
  int moreusers=0;
  char alias_user[MAX_BUFF];
+ char alias_copy[MAX_BUFF];
  char alias_name[MAX_FILE_NAME];
  char *alias_domain;
  char *alias_name_from_command;
@@ -200,8 +202,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
      then qmailadmin could use the single set of valias_ functions above.
    */
   if ( (mydir = opendir(".")) == NULL ) {
-    printf ("<tr><td colspan=\"4\">");
-    printf ("%s %d</td></tr>", html_text[143], 1);
+    printf (HTML_ALIAS_ERROR, html_text[143], "1");
     return;
   }
 
@@ -219,9 +220,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
       }
 
       if ( (fs=fopen(mydirent->d_name,"r"))==NULL) {
-        printf ("<tr><td colspan=4>");
-        printf ("%s %s", html_text[144], mydirent->d_name);
-        printf ("</td></tr>\n");
+        printf (HTML_ALIAS_ERROR, html_text[144], mydirent->d_name);
         continue;
       }
 
@@ -305,26 +304,26 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
      * This is a big assumption, and may cause problems at some point.
      */
     
-    printf ("<tr>\n");
+    printf ("%s", HTML_ALIAS_ROW_START);
     qmail_button (this_alias, "deldotqmail", user, dom, mytime, "trash.png");
     if (*curalias->alias_command == '#')
-      printf ("<td> </td>");   /* don't allow modify on blackhole */
+      printf ("%s", HTML_EMPTY_TD);   /* don't allow modify on blackhole */
     else
       qmail_button (this_alias, "moddotqmail", user, dom, mytime, "modify.png");
-    printh ("<td align=left>%H</td>\n", this_alias);
-    printf ("<td align=left>");
+    printh (HTML_ALIAS_NAME, this_alias);
+    printf (HTML_ALIAS_DEST_START);
     
     stop=0;
     if (*curalias->alias_command == '#') {
       /* this is a blackhole account */
-      printf ("<I>%s</I>", html_text[303]);
+      printf (HTML_ALIAS_BLACKHOLE, html_text[303]);
       stop = 1;
     }
     
     while (!stop) {
-      strcpy (alias_user, curalias->alias_command);
-      /* get the domain alone from alias_user */
-      for(alias_domain = alias_user;
+      strcpy (alias_copy, curalias->alias_command);
+      /* get the domain alone from alias_copy */
+      for(alias_domain = alias_copy;
         *alias_domain != '\0' && *alias_domain != '@' && *alias_domain != ' ';
         alias_domain++);
         
@@ -333,11 +332,17 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
         /* strip domain name from address */
         *alias_domain = '\0';
   
-        if (!check_local_user(alias_user)) {
+        if (!check_local_user(alias_copy)) {
           /* make it red so it jumps out -- this is no longer a valid forward */
-          snprintf(alias_user, sizeof(alias_user), "<font color=\"red\">%s</font>", 
+          snprinth (alias_user, sizeof(alias_user), HTML_ALIAS_INVALID, 
             curalias->alias_command);
+        } else {
+          snprinth (alias_user, sizeof(alias_user), HTML_ALIAS_LOCAL, 
+            alias_copy);
         }
+      } else {
+        snprinth (alias_user, sizeof(alias_user), HTML_ALIAS_REMOTE, 
+          curalias->alias_command);
       }
       
       /* find next entry, so we know if we should print a , or not */
@@ -359,42 +364,42 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
     while ((curalias != NULL) && (strcmp (this_alias, curalias->alias_name) == 0)) {
       curalias = get_alias_entry();
     }
-    printf ("</td>\n</tr>\n");
+    printf ("%s%s", HTML_ALIAS_DEST_END, HTML_ALIAS_ROW_END);
   }
 
   if (AdminType == DOMAIN_ADMIN) {
 
     print_user_index ("showforwards", 4, user, dom, mytime);
     
-    printf ("<tr><td align=\"right\" colspan=\"4\">");
-    printf ("[&nbsp;");
+    printf ("%s", HTML_ALIAS_FOOTER_START);
+    printf ("%s", HTML_MENU_START);
 	/* When searching for a user on systems using .qmail files, we make things
 	 * easy by starting the page with the first matching address.  As a result,
 	 * the previous page will be 'page' and not 'page-1'.  Refresh is accomplished
 	 * by repeating the search.
 	 */
     if (*SearchUser && ((startnumber % MAXALIASESPERPAGE) != 1)) {
-      printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
-        page, html_text[135]);
-      printf ("&nbsp;|&nbsp;");
-      printh ("<a href=\"%s&searchuser=%C\">%s</a>", cgiurl("showforwards"),
-        SearchUser, html_text[136]);
+      // previous page
+      printh (HTML_ALIAS_SHOWPAGE, cgiurl("showforwards"), page, html_text[135]);
+      printf ("%s", HTML_MENU_SEP);
+      // refresh
+      printh (HTML_ALIAS_DOSEARCH, cgiurl("showforwards"), SearchUser, html_text[136]);
     } else {
       if (page > 1) {
-        printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
-          page - 1, html_text[135]);
-        printf ("&nbsp;|&nbsp;");
+        // previous page
+        printh (HTML_ALIAS_SHOWPAGE, cgiurl("showforwards"), page - 1, html_text[135]);
+        printf ("%s", HTML_MENU_SEP);
       }
-      printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
-        page, html_text[136]);
+      // refresh
+      printh (HTML_ALIAS_SHOWPAGE, cgiurl("showforwards"), page, html_text[136]);
     }
     if (moreusers) {
-      printf ("&nbsp;|&nbsp;");
-      printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl("showforwards"),
-        page + 1, html_text[137]);    
+      printf ("%s", HTML_MENU_SEP);
+      // next page
+      printh (HTML_ALIAS_SHOWPAGE, cgiurl("showforwards"), page + 1, html_text[137]);
     }
-    printf ("&nbsp;]");
-    printf ("</td></tr>");                                    
+    printf ("%s", HTML_MENU_END);
+    printf ("%s", HTML_ALIAS_FOOTER_END);                                    
   }
 }
 
@@ -409,6 +414,7 @@ void show_dotqmail_file(char *user)
  char *alias_domain;
  char *alias_name_from_command;
  char *alias_line;
+ int firstrow;
  int j;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -416,10 +422,7 @@ void show_dotqmail_file(char *user)
     vclose();
     exit(0);
   }
-                
-  printf ("<tr>");
-  printh ("<td align=\"center\" valign=\"top\"><b>%H</b></td>", user);
-    
+  
   alias_line = valias_select (user, Domain);
   while (alias_line != NULL) {
     alias_name_from_command = dotqmail_alias_command(alias_line);
@@ -432,6 +435,7 @@ void show_dotqmail_file(char *user)
   }
   
   curalias = firstalias;
+  firstrow = 1;
   while (curalias != NULL) {
     alias_line = curalias->alias_command;
     alias_name_from_command = dotqmail_alias_command (alias_line);
@@ -447,36 +451,28 @@ void show_dotqmail_file(char *user)
        for(j=0; TmpBuf3[j]!=0 && TmpBuf3[j]!='@';j++);
        TmpBuf3[j]=0;
        if (check_local_user(TmpBuf3)) {
-          strcpy (alias_user, TmpBuf3);
+          snprinth (alias_user, sizeof(alias_user), HTML_ALIAS_LOCAL, TmpBuf3);
        } else {
           /* make it red so it jumps out -- this is no longer a valid forward */
-          snprintf (alias_user, sizeof(alias_user), "<font color=\"red\">%s</font>", 
+          snprinth (alias_user, sizeof(alias_user), HTML_ALIAS_INVALID, 
                   alias_name_from_command);
        }
+    } else {
+      snprinth (alias_user, sizeof(alias_user), HTML_ALIAS_REMOTE, alias_name_from_command);
     }
-    printf ("<td align=\"center\" valign=\"top\">%s</td>\n", alias_user);
-    printf ("<td align=\"center\" valign=\"top\">\n");
-    printf ("<form method=\"post\" name=\"moddotqmail\" action=\"%s/com/moddotqmailnow\">\n", CGIPATH);
-    printh ("<input type=\"hidden\" name=\"user\" value=\"%H\">\n", Username);
-    printh ("<input type=\"hidden\" name=\"dom\" value=\"%H\">\n", Domain);
-    printf ("<input type=\"hidden\" name=\"time\" value=\"%u\">\n", (unsigned int) Mytime);
-    printh ("<input type=\"hidden\" name=\"modu\" value=\"%H\">\n", user);
-    printh ("<input type=\"hidden\" name=\"linedata\" value=\"%H\">\n", alias_line);
-    printf ("<input type=\"hidden\" name=\"action\" value=\"delentry\">\n");
-    printf ("<input type=\"image\" border=\"0\" src=\"%s/delete.png\">\n", IMAGEURL);
-    printf ("</form>\n");
+    printf ("%s", HTML_ALIAS_MOD_ROW_START);
+    if (firstrow) {
+      firstrow = 0;
+      printh (HTML_ALIAS_MOD_NAME, user);
+    } else {
+      printh (HTML_ALIAS_MOD_NAME, "");
+    }
+    printf (HTML_ALIAS_MOD_DEST, alias_user);
+    printh (HTML_ALIAS_MOD_DELETE, cgiurl("moddotqmailnow"), user, alias_line);
 
-
-    printf ("</td>\n");
-    printf ("</tr>\n");
-    printf ("<tr>\n");
-    printf ("<td align=\"left\">&nbsp;</td>\n");
+    printf ("%s", HTML_ALIAS_MOD_ROW_END);
     curalias = get_alias_entry();
   }
-  /* finish up the last line (all empty) */
-  printf ("<td align=\"left\">&nbsp;</td>");
-  printf ("<td align=\"left\">&nbsp;</td>");
-  printf ("</tr>");
 }
 
 int onevalidonly(char *user) {
@@ -515,38 +511,21 @@ void moddotqmailnow()
   if (strcmp(Action,"delentry")==0) {
     if (onevalidonly(ActionUser) ) {
       snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[149]);
-      moddotqmail();
-      vclose();
-      exit(0);
-    }
-        
-    if (dotqmail_del_line(ActionUser,LineData) ) {
+    } else if (dotqmail_del_line(ActionUser,LineData) ) {
       snprintf (StatusMessage, sizeof(StatusMessage), "%s %d\n", html_text[150], 1);
-      moddotqmail();
-      vclose();
-      exit(0);
-    }
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[151] );
-    moddotqmail();
-    vclose();
-    exit(0);
-    
-  } else if (strcmp(Action,"add")==0) {
-    if( adddotqmail_shared(ActionUser, Newu, 0)) {
-      moddotqmail();
-      vclose();
-      exit(0);
     } else {
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[151] );
+    }
+  } else if (strcmp(Action,"add")==0) {
+    if(! adddotqmail_shared(ActionUser, Newu, 0)) {
       snprinth (StatusMessage, sizeof(StatusMessage), "%s %H\n", html_text[152], Newu);
-      moddotqmail();
-      vclose();
-      exit(0);
     }
   } else {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[155]);
-    vclose();
-    exit(0);
   }
+  moddotqmail();
+  vclose();
+  exit(0);
 }
 
 void adddotqmail()

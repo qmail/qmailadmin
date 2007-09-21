@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.17 2006-12-30 01:28:22 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.18 2007-09-21 23:27:40 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify

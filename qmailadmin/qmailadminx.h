@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadminx.h,v 1.2.2.4 2006-12-30 01:31:49 tomcollins Exp $
+ * $Id: qmailadminx.h,v 1.2.2.5 2007-09-21 23:27:39 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify

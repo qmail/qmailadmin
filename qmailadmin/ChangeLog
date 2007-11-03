@@ -13,6 +13,7 @@ patch or information related to the entry.
 	- Use email address instead of maildir for catchall.
 	- Move HTML out of alias.c and into html.h as move toward more
 	  flexible HTML templates.
+	- When deleting a subscriber, convert '=' to '@' if no '@'. [1651370]
 
 1.2.11 - released 29-Dec-06
 

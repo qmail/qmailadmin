@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.11 2007-08-17 23:46:36 rwidmer Exp $
+ * $Id: mailinglist.c,v 1.5.2.12 2007-11-03 17:39:34 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -847,6 +847,7 @@ void dellistgroup(char *template)
 void dellistgroupnow(int mod)
 {
  int pid;
+ char *p;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
@@ -855,6 +856,12 @@ void dellistgroupnow(int mod)
   }
 
   lowerit(Newu);
+
+  // for dealing with AOL spam complaints, if address doesn't contain @,
+  // but does contain '=', change the '=' to '@'.
+  if (! strchr (Newu, '@')) {
+    if ((p = strchr (Newu, '='))) *p = '@';
+  }
 
   pid=fork();
   if (pid==0) {

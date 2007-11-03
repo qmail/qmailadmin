@@ -19,6 +19,7 @@ patch or information related to the entry.
 	  flexible HTML templates.
 	- When deleting a subscriber, convert '=' to '@' if no '@'. [1651370]
 	- Slight change to Jorgen Moth's patch.
+	- mailinglist.c: make sure name of list to delete is valid.
 
 1.2.11 - released 29-Dec-06
 

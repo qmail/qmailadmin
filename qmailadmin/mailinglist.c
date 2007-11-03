@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.13 2007-11-03 17:49:36 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.14 2007-11-03 18:02:25 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -320,6 +320,12 @@ void delmailinglistnow()
 
   if ( AdminType!=DOMAIN_ADMIN ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[142]);
+    vclose();
+    exit(0);
+  }
+
+  if (fixup_local_name (ActionUser)) {
+    // invalid address given, abort
     vclose();
     exit(0);
   }

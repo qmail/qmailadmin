@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.12 2007-11-03 17:39:34 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.13 2007-11-03 17:49:36 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,12 @@
 #include <dirent.h>
 #include <errno.h>
 
+#include <vpopmail_config.h>
+/* undef some macros that get redefined in config.h below */
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
 #include <vpopmail.h>
 
 #include "cgi.h"
@@ -324,6 +330,11 @@ void delmailinglistnow()
     return;
   }
  
+#ifdef ONCHANGE_SCRIPT
+  snprintf ( onchange_buf , MAX_BUFF , "%s@%s" , ActionUser , Domain ) ;
+  call_onchange ( "delmailinglist" ) ;
+#endif
+
   /* make dotqmail name */
   strcpy(dotqmail_name, ActionUser);
   for(dotnum=0;dotqmail_name[dotnum]!='\0';dotnum++) {
@@ -629,6 +640,11 @@ void addmailinglistnow()
   }
 
   ezmlm_make(1);
+
+#ifdef ONCHANGE_SCRIPT
+  snprintf ( onchange_buf , MAX_BUFF , "%s@%s" , ActionUser , Domain ) ;
+  call_onchange ( "addmailinglist" ) ;
+#endif
 
   snprinth (StatusMessage, sizeof(StatusMessage), "%s %H@%H\n", html_text[187],
           ActionUser, Domain);

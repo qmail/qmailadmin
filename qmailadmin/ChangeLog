@@ -3,6 +3,10 @@ patch or information related to the entry.
 
 1.2.12 - unreleased
 
+	John Simpson
+	- mailinglist.c: call vpopmail's onchange onchange handler when
+	  adding or removing a mailing list.
+
 	Jorgen Moth
 	- user.c: Make sure number_of_mailinglists > 0 before malloc() in 
 	  addusernow(). [1647157]

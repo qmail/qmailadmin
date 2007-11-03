@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.19 2007-11-03 17:29:23 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.20 2007-11-03 17:44:12 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -398,35 +398,36 @@ void addusernow()
 
   GetValue(TmpCGI, c_num, "number_of_mailinglist=", MAX_BUFF);
   num = atoi(c_num);
-  if((num > 0) && !(mailingListNames = malloc(sizeof(char *) * num))) {
-    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[201]);
-    vclose();
-    exit(0);
-
-  } else {
-    for(cnt = 0; cnt < num; cnt++) {
-      if(!(mailingListNames[cnt] = malloc(MAX_BUFF))) {
-        snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[201]);
-        vclose();
-        exit(0);
-      }
-    }
-
-    for(cnt = 0; cnt < num; cnt++) {
-      sprintf(tmp, "subscribe%d=", cnt);
-      error = GetValue(TmpCGI, mailingListNames[cnt], tmp, MAX_BUFF);
-      if( error != -1 ) {
-        pid=fork();
-
-        if (pid==0) {
-          sprintf(TmpBuf1, "%s/ezmlm-sub", EZMLMDIR);
-          sprintf(TmpBuf2, "%s/%s", RealDir, mailingListNames[cnt]);
-          execl(TmpBuf1, "ezmlm-sub", TmpBuf2, email, NULL);
-          exit(127);
-        } else {
-          wait(&pid);
+  if (num > 0) {
+    if (!(mailingListNames = malloc(sizeof(char *) * num))) {
+      snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[201]);
+      vclose();
+      exit(0);
+    } else {
+      for(cnt = 0; cnt < num; cnt++) {
+        if(!(mailingListNames[cnt] = malloc(MAX_BUFF))) {
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[201]);
+          vclose();
+          exit(0);
         }
-      } 
+      }
+
+      for(cnt = 0; cnt < num; cnt++) {
+        sprintf(tmp, "subscribe%d=", cnt);
+        error = GetValue(TmpCGI, mailingListNames[cnt], tmp, MAX_BUFF);
+        if( error != -1 ) {
+          pid=fork();
+
+          if (pid==0) {
+            sprintf(TmpBuf1, "%s/ezmlm-sub", EZMLMDIR);
+            sprintf(TmpBuf2, "%s/%s", RealDir, mailingListNames[cnt]);
+            execl(TmpBuf1, "ezmlm-sub", TmpBuf2, email, NULL);
+            exit(127);
+          } else {
+            wait(&pid);
+          }
+        } 
+      }
     }
   }
 

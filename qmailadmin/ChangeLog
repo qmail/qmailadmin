@@ -14,6 +14,7 @@ patch or information related to the entry.
 	- Move HTML out of alias.c and into html.h as move toward more
 	  flexible HTML templates.
 	- When deleting a subscriber, convert '=' to '@' if no '@'. [1651370]
+	- Slight change to Jorgen Moth's patch.
 
 1.2.11 - released 29-Dec-06
 

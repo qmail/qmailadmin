@@ -3,6 +3,10 @@ patch or information related to the entry.
 
 1.2.12 - unreleased
 
+	Jorgen Moth
+	- user.c: Make sure number_of_mailinglists > 0 before malloc() in 
+	  addusernow(). [1647157]
+
 	Tom Collins
 	- Use function to generate cgi URLs.
 	- Remove unused AliasType variable.

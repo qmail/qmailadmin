@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.18 2007-09-21 23:27:40 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.19 2007-11-03 17:29:23 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -398,7 +398,7 @@ void addusernow()
 
   GetValue(TmpCGI, c_num, "number_of_mailinglist=", MAX_BUFF);
   num = atoi(c_num);
-  if(!(mailingListNames = malloc(sizeof(char *) * num))) {
+  if((num > 0) && !(mailingListNames = malloc(sizeof(char *) * num))) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[201]);
     vclose();
     exit(0);

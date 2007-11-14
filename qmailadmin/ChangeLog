@@ -1,7 +1,7 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.12 - unreleased
+1.2.12 - released 13-Nov-07
 
 	John Simpson
 	- mailinglist.c: call vpopmail's onchange onchange handler when

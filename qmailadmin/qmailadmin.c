@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.13 2007-09-21 23:27:39 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.14 2008-01-08 04:42:54 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -109,6 +109,24 @@ gid_t Gid;
 char RealDir[156];
 char Lang[40];
 
+void qmailadmin_suid (gid_t Gid, uid_t Uid)
+{
+  if ( geteuid() == 0 ) {
+    if ( setgid(Gid) != 0 ) {
+      printf ("%s", html_text[318]);
+      perror("setgid");
+      vclose();
+      exit (EXIT_FAILURE);
+    }
+    if ( setuid(Uid) != 0 ) {
+      printf ("%s", html_text[319]);
+      perror("setuid");
+      vclose();
+      exit (EXIT_FAILURE);
+    }
+  }
+}
+
 int main(argc,argv)
  int argc;
  char *argv[];
@@ -148,10 +166,7 @@ int main(argc,argv)
 
     /* get the real uid and gid and change to that user */
     vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
-    if ( geteuid() == 0 ) {
-      if ( setgid(Gid) != 0 ) perror("setgid");
-      if ( setuid(Uid) != 0 ) perror("setuid");
-    }
+    qmailadmin_suid (Gid, Uid);
 
     if ( chdir(RealDir) < 0 ) {
       fprintf(stderr, "<h2>%s %s</h2>\n", html_text[171], RealDir );
@@ -183,10 +198,7 @@ int main(argc,argv)
     } else if (*Username && *Password) {
       /* attempt to authenticate user */
       vget_assign (Domain, RealDir, sizeof(RealDir), &Uid, &Gid);
-      if ( geteuid() == 0 ) {
-        if ( setgid(Gid) != 0 ) perror("setgid");
-        if ( setuid(Uid) != 0 ) perror("setuid");
-      }
+      qmailadmin_suid (Gid, Uid);
 
       strcpy (User, Username);
       if ((dom = strchr (User, '@')) != NULL) {
@@ -238,10 +250,7 @@ int main(argc,argv)
        }
 
        vget_assign(Domain,RealDir,sizeof(RealDir),&Uid,&Gid);
-       if ( geteuid() == 0 ) {
-         if ( setgid(Gid) != 0 ) perror("setgid");
-         if ( setuid(Uid) != 0 ) perror("setuid");
-       }
+       qmailadmin_suid (Gid, Uid);
 
        /* Authenticate a user and domain admin */
        if ( strlen(Domain) > 0 ) {

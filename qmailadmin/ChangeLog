@@ -3,6 +3,10 @@ patch or information related to the entry.
 
 1.1.13 - unreleased
 
+	Tom Collins
+	- qmailadmin.c: check return value of setuid() and setgid() and 
+	  exit if either fail (security issue reported by Miguel Lourenco).
+
 1.2.12 - released 13-Nov-07
 
 	John Simpson

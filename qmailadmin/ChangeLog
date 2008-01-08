@@ -7,6 +7,9 @@ patch or information related to the entry.
 	- qmailadmin.c: check return value of setuid() and setgid() and 
 	  exit if either fail (security issue reported by Miguel Lourenco).
 
+	Chaz Owensby
+	- Report disk usage to non-admin user on their Modify User page.
+
 1.2.12 - released 13-Nov-07
 
 	John Simpson

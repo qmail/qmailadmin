@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.15 2007-09-21 23:27:39 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.16 2008-01-08 04:45:01 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -420,6 +420,21 @@ int send_template_now(char *filename)
           /* show POP/IMAP users */
           case 'p':
             show_user_lines(Username, Domain, Mytime, RealDir);
+            break;
+
+          /* show quota usage */
+          case 'Q':
+            vpw = vauth_getpw(ActionUser, Domain);
+            if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
+              long diskquota = 0;
+              int maxmsg = 0;
+              char path[256];
+
+              quota_to_megabytes(qconvert, vpw->pw_shell);
+              snprintf(path, sizeof(path), "%s/" MAILDIR, vpw->pw_dir);
+              readuserquota(path, &diskquota, &maxmsg);
+              printf ("%-2.2lf /", ((double)diskquota)/1048576.0);  /* Convert to MB */
+            }
             break;
 
           /* display user's quota (mod user page) */

@@ -283,3 +283,5 @@
 315 User deleted.  Unable to set forward to '%s'.
 316 Change Password
 317 You cannot delete the postmaster account.
+318 setgid() failed, unable to continue
+319 setuid() failed, unable to continue

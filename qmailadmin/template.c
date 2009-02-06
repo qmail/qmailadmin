@@ -1,5 +1,5 @@
 /*
- * $Id: template.c,v 1.7.2.16 2008-01-08 04:45:01 tomcollins Exp $
+ * $Id: template.c,v 1.7.2.17 2009-02-06 05:30:05 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -272,7 +272,7 @@ int send_template_now(char *filename)
           /* show returnhttp (from TmpCGI) */
           case 'H':
             GetValue (TmpCGI, value, "returnhttp=", sizeof(value));
-            printh ("%H", value);
+            printh ("%C", value);
             break;
 
           /* show the counts */
@@ -456,7 +456,7 @@ int send_template_now(char *filename)
             GetValue (TmpCGI, value, "returntext=", sizeof(value));
             GetValue (TmpCGI, value2, "returnhttp=", sizeof(value2));
             if (*value != '\0') {
-              printh ("<A HREF=\"%s\">%H</A>", value2, value);
+              printh ("<A HREF=\"%C\">%H</A>", value2, value);
             }
             break;
 
@@ -620,7 +620,7 @@ int send_template_now(char *filename)
           case 'x':
             strcpy (value, get_session_val("returntext="));
             if(strlen(value) > 0) {
-               printh("<a href=\"%s\">%H", get_session_val("returnhttp="), value);
+               printh("<a href=\"%C\">%H", get_session_val("returnhttp="), value);
             } else {
                printh("<a href=\"%s\">%s", cgiurl("logout"), html_text[218]);
             }
@@ -629,12 +629,12 @@ int send_template_now(char *filename)
 
           /* returnhttp */
           case 'y':
-            printf("%s", get_session_val("returnhttp=")); 
+            printh("%C", get_session_val("returnhttp=")); 
             break; 
 
           /* returntext */
           case 'Y':
-            printf("%s", get_session_val("returntext=")); 
+            printh("%H", get_session_val("returntext=")); 
             break;
          
           /* send the image URL directory */

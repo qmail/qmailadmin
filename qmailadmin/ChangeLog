@@ -6,6 +6,8 @@ patch or information related to the entry.
 	Tom Collins
 	- qmailadmin.c: check return value of setuid() and setgid() and 
 	  exit if either fail (security issue reported by Miguel Lourenco).
+	- template.c: fix for potential XSS (cross-site scripting) hole
+	  in the login page (reported by Michael Middleton).
 
 	Chaz Owensby
 	- Report disk usage to non-admin user on their Modify User page.

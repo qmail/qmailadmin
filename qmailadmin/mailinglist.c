@@ -1,5 +1,5 @@
 /* 
- * $Id: mailinglist.c,v 1.5.2.14 2007-11-03 18:02:25 tomcollins Exp $
+ * $Id: mailinglist.c,v 1.5.2.15 2009-03-09 01:35:01 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -427,7 +427,7 @@ void ezmlm_make (int newlist)
   char *arguments[MAX_BUFF];
   int argc;
   int i=0;
-  char tmp[64];
+  char tmp[MAX_BUFF];
   char *tmpstr;
   char loop_ch[64];
   int  loop;

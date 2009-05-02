@@ -13,6 +13,8 @@ patch or information related to the entry.
 	  William Fuller).
 	- auth.c: Fix compiler warning.  Variable ip_value only used if 
 	  IPAUTH is defined.
+	- util.c: minor performance improvement (use strchr instead of
+	  strstr) in open_lang().
 
 	Chaz Owensby
 	- Report disk usage to non-admin user on their Modify User page.

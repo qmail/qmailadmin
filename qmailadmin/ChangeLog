@@ -19,6 +19,7 @@ patch or information related to the entry.
 	  IPAUTH is defined.
 	- util.c: minor performance improvement (use strchr instead of
 	  strstr) in open_lang().
+	- command.c: disabled catchall commands unless enabled
 
 	Chaz Owensby
 	- Report disk usage to non-admin user on their Modify User page.

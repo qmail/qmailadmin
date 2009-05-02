@@ -1,5 +1,5 @@
 /* 
- * $Id: command.c,v 1.2.2.9 2007-01-01 23:17:06 tomcollins Exp $
+ * $Id: command.c,v 1.2.2.10 2009-05-02 19:20:30 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,6 +98,12 @@ void process_commands()
   } else if (strcmp(TmpBuf2, "addusernow") == 0 ) {
     addusernow();
 
+#ifdef CATCHALL_ENABLED
+  } else if (strcmp(TmpBuf2, "setdefault") == 0 ) {
+    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
+    GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
+    setdefaultaccount();
+
   } else if (strcmp(TmpBuf2, "bounceall") == 0 ) {
     bounceall();
 
@@ -109,6 +115,7 @@ void process_commands()
 
   } else if (strcmp(TmpBuf2, "setremotecatchallnow") == 0 ) {
     setremotecatchallnow();
+#endif
 
   } else if (strcmp(TmpBuf2, "addlistmodnow") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
@@ -265,11 +272,6 @@ void process_commands()
   } else if (strcmp(TmpBuf2, "showlistusers") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
     show_list_group("show_subscribers.html");
-
-  } else if (strcmp(TmpBuf2, "setdefault") == 0 ) {
-    GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
-    GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
-    setdefaultaccount();
 
   } else if (strcmp(TmpBuf2, "delautorespond") == 0 ) {
     GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));

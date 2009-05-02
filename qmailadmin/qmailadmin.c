@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.14 2008-01-08 04:42:54 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.15 2009-05-02 18:21:14 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -314,7 +314,20 @@ void load_lang (char *lang)
   char *id;
   char *p;
 
-  open_lang (lang);
+  if (open_lang( lang))
+  {
+    // Rare error likely caused by improper installation, should probably be 
+    // handled by regular error system, but this is a quick band-aid.
+    printf("Content-Type: text/html\r\n\r\n");
+    printf("<html> <head>\r\n");
+    printf("<title>Failed to open lang file:%s</title>\r\n",lang);
+    printf("</head>\r\n<body>\r\n");
+    printf("<h1>qmailadmin error</h1>\r\n");
+    printf("<p>Failed to open lang file: %s. Please check your lang directory.\r\n", lang);
+    printf("</body></html>\r\n");
+    exit(-1);
+  }
+
   fseek (lang_fs, 0, SEEK_END);
   lang_size = ftell (lang_fs);
   lang_entries = malloc (lang_size);

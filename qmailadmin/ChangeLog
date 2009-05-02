@@ -23,6 +23,10 @@ patch or information related to the entry.
 	Dvorkin Dmitry
 	- Updated Russian translation (now in utf8).
 
+	Ismail YENIGUL
+	- qmailadmin.c: check return value of open_lang() in load_lang()
+	  and exit on failure.
+
 1.2.12 - released 13-Nov-07
 
 	John Simpson

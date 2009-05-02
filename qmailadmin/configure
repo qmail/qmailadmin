@@ -871,6 +871,8 @@ Optional Features:
   --disable-user-index   Don't display user index on show users page.
   --enable-modify-quota  Allow domain admin (postmaster) to modify user quotas.
   --enable-domain-autofill  Autofill the domain on login page based on the hostname that accesses qmailadmin.
+  --disable-catchall  Disable the use of catchall accounts.
+  --disable-trivial-password  Disable the use of trivial password.
   --enable-spamcmd-needs-email  Append the user's email to the end of the spam command.
   --enable-modify-spam  Allow users to enable/disable spam checking.
   --enable-spam-command=CMD     Remember to use '|preline' at the beginning, |preline /usr/local/bin/maildrop /etc/mailfilter.
@@ -4886,6 +4888,54 @@ _ACEOF
       ;;
 esac
 
+
+CATCHALL_ENABLED=yes
+# Check whether --enable-catchall or --disable-catchall was given.
+if test "${enable_catchall+set}" = set; then
+  enableval="$enable_catchall"
+  CATCHALL_ENABLED="$enableval"
+fi;
+
+case $CATCHALL_ENABLED in
+1*|y*|Y*)
+      CATCHALL_ENABLED=yes
+
+cat >>confdefs.h <<_ACEOF
+#define CATCHALL_ENABLED 1
+_ACEOF
+
+      echo "checking whether to enable catchall accounts... yes"
+      ;;
+*)
+      CATCHALL_ENABLED=no
+      echo "checking whether to enable catchall accounts... no"
+      ;;
+esac
+
+
+TRIVIAL_PASSWORD_ENABLED=yes
+# Check whether --enable-trivial-password or --disable-trivial-password was given.
+if test "${enable_trivial_password+set}" = set; then
+  enableval="$enable_trivial_password"
+  TRIVIAL_PASSWORD_ENABLED="$enableval"
+fi;
+
+case $TRIVIAL_PASSWORD_ENABLED in
+1*|y*|Y*)
+      TRIVIAL_PASSWORD_ENABLED=yes
+
+cat >>confdefs.h <<_ACEOF
+#define TRIVIAL_PASSWORD_ENABLED 1
+_ACEOF
+
+      echo "checking whether to enable trivial password... yes"
+      ;;
+*)
+      TRIVIAL_PASSWORD_ENABLED=no
+      echo "checking whether to enable trivial password... no"
+      ;;
+esac
+
 # Check whether --enable-spamcmd-needs-email or --disable-spamcmd-needs-email was given.
 if test "${enable_spamcmd_needs_email+set}" = set; then
   enableval="$enable_spamcmd_needs_email"
@@ -6407,6 +6457,8 @@ echo "   mysql for ezmlm = "$mysql""
 echo "              help = "$enable_help""
 echo "      modify quota = "$MODIFY_QUOTA""
 echo "   domain autofill = "$DOMAIN_AUTOFILL""
+echo " catchall accounts = "$CATCHALL_ENABLED""
+echo " trivial passwords = "$TRIVIAL_PASSWORD_ENABLED""
 echo " modify spam check = "$MODIFY_SPAM""
 if test "$MODIFY_SPAM" = "yes"
 then

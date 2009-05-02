@@ -1,5 +1,5 @@
 /* 
- * $Id: user.c,v 1.11.2.20 2007-11-03 17:44:12 tomcollins Exp $
+ * $Id: user.c,v 1.11.2.21 2009-05-02 19:13:29 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,6 +81,7 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
  int colspan = 7;
  int allowdelete;
  char qconvert[11];
+ int bars;
 
   if (MaxPopAccounts == 0) return 0;
 
@@ -223,17 +224,18 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
           if (bounced==0 && strncmp(pw->pw_name,TmpBuf3,sizeof(TmpBuf3)) == 0) {
             printf ("<img src=\"%s/radio-on.png\" border=\"0\"></a>", 
               IMAGEURL);
+#ifdef CATCHALL_ENABLED
           } else if (AdminType==DOMAIN_ADMIN) {
             printh ("<a href=\"%s&deluser=%C&page=%s\">",
               cgiurl("setdefault"), pw->pw_name, Pagenumber);
             printf ("<img src=\"%s/radio-off.png\" border=\"0\"></a>",
               IMAGEURL);
+#endif
           } else {
             printf ("<img src=\"%s/disabled.png\" border=\"0\">",
               IMAGEURL);
           }
           printf ("</td>");
-
           printf ("</tr>\n");
         }        
         pw = vauth_getall(dom,0,0);
@@ -246,29 +248,33 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
 
       printf ("<tr bgcolor=%s>", get_color_text("000"));
       printf ("<td colspan=\"%i\" align=\"right\">", colspan);
-#ifdef USER_INDEX
       printf ("<font size=\"2\"><b>");
       printf ("[&nbsp;");
+      bars = 0;
+#ifdef USER_INDEX
       /* only display "previous page" if pagenumber > 1 */
       if (atoi(Pagenumber) > 1) {
         printh ("<a href=\"%s&page=%d\">%s</a>", cgiurl ("showusers"),
           atoi(Pagenumber)-1 ? atoi(Pagenumber)-1 : atoi(Pagenumber), 
           html_text[135]);
-        printf ("&nbsp;|&nbsp;");
+        bars = 1;
       }
 
       if (moreusers && atoi(Pagenumber) < totalpages) {
+        if (bars) printf ("&nbsp;|&nbsp;");
         printh ("<a href=\"%s&page=%d\">%s</a>",
           cgiurl("showusers"), atoi(Pagenumber)+1, html_text[137]);
-        printf ("&nbsp;|&nbsp;");
+        bars = 1;
       }
-/*        printf ("&nbsp;|&nbsp;");*/
 #endif
+#ifdef CATCHALL_ENABLED
+      if (bars) printf ("&nbsp;|&nbsp;");
       printh ("<a href=\"%s\">%s</a>", cgiurl ("deleteall"), html_text[235]);
       printf ("&nbsp;|&nbsp;");
       printh ("<a href=\"%s\">%s</a>", cgiurl ("bounceall"), html_text[134]);
       printf ("&nbsp;|&nbsp;");
       printh ("<a href=\"%s\">%s</a>", cgiurl("setremotecatchall"), html_text[206]);
+#endif
       printf ("&nbsp;]");
       printf ("</b></font>");
       printf ("</td></tr>\n");
@@ -379,6 +385,15 @@ void addusernow()
     vclose();
     exit(0);
   }
+
+#ifndef TRIVIAL_PASSWORD_ENABLED
+  if ( strstr(Newu,Password1)!=NULL) {
+    snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[320]);
+    adduser();
+    vclose();
+    exit(0);
+  }
+#endif
 
 #ifndef ENABLE_LEARN_PASSWORDS
   if ( strlen(Password1) <= 0 ) {
@@ -773,6 +788,14 @@ void modusergo()
       vclose();
       exit(0);
     }
+#ifndef TRIVIAL_PASSWORD_ENABLED    
+     if ( strstr(ActionUser,Password1)!=NULL) {
+       snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[320]);
+       moduser();
+       vclose();
+       exit(0);
+     }
+#endif
     ret_code = vpasswd( ActionUser, Domain, Password1, USE_POP);
     if ( ret_code != VA_SUCCESS ) {
       snprintf (StatusMessage, sizeof(StatusMessage), "%s (%s)", html_text[140], 

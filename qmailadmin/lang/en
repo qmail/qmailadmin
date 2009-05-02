@@ -285,3 +285,4 @@
 317 You cannot delete the postmaster account.
 318 setgid() failed, unable to continue
 319 setuid() failed, unable to continue
+320 Invalid password: it can be easily guessed from the username

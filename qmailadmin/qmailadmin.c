@@ -1,5 +1,5 @@
 /* 
- * $Id: qmailadmin.c,v 1.6.2.15 2009-05-02 18:21:14 tomcollins Exp $
+ * $Id: qmailadmin.c,v 1.6.2.16 2009-05-02 19:13:29 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -223,6 +223,10 @@ int main(argc,argv)
           snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[234]);
         } else if (vpasswd (User, Domain, Password1, USE_POP) != VA_SUCCESS) {
           snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[140]);
+#ifndef TRIVIAL_PASSWORD_ENABLED
+         } else if ( strstr(User,Password1)!=NULL) {
+          snprintf (StatusMessage, sizeof(StatusMessage), "%s\n", html_text[320]);
+#endif
         } else {
           /* success */
           snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[139]);

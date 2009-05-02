@@ -350,6 +350,40 @@ case $DOMAIN_AUTOFILL in
       ;;
 esac
 
+
+CATCHALL_ENABLED=yes
+AC_ARG_ENABLE(catchall, [  --disable-catchall  Disable the use of catchall accounts.],
+   CATCHALL_ENABLED="$enableval",)
+
+case $CATCHALL_ENABLED in
+1*|y*|Y*)
+      CATCHALL_ENABLED=yes
+      AC_DEFINE_UNQUOTED(CATCHALL_ENABLED,1,"")
+      echo "checking whether to enable catchall accounts... yes"
+      ;;
+*)
+      CATCHALL_ENABLED=no
+      echo "checking whether to enable catchall accounts... no"
+      ;;
+esac
+
+
+TRIVIAL_PASSWORD_ENABLED=yes
+AC_ARG_ENABLE(trivial-password, [  --disable-trivial-password  Disable the use of trivial password.],
+   TRIVIAL_PASSWORD_ENABLED="$enableval",)
+
+case $TRIVIAL_PASSWORD_ENABLED in
+1*|y*|Y*)
+      TRIVIAL_PASSWORD_ENABLED=yes
+      AC_DEFINE_UNQUOTED(TRIVIAL_PASSWORD_ENABLED,1,"")
+      echo "checking whether to enable trivial password... yes"
+      ;;
+*)
+      TRIVIAL_PASSWORD_ENABLED=no
+      echo "checking whether to enable trivial password... no"
+      ;;
+esac
+
 AC_ARG_ENABLE(spamcmd-needs-email, [  --enable-spamcmd-needs-email  Append the user's email to the end of the spam command.],
     SPAM_NEED_EMAIL="$enableval",)
 
@@ -444,6 +478,8 @@ echo "   mysql for ezmlm = "$mysql""
 echo "              help = "$enable_help""
 echo "      modify quota = "$MODIFY_QUOTA""
 echo "   domain autofill = "$DOMAIN_AUTOFILL""
+echo " catchall accounts = "$CATCHALL_ENABLED""
+echo " trivial passwords = "$TRIVIAL_PASSWORD_ENABLED""
 echo " modify spam check = "$MODIFY_SPAM""
 if test "$MODIFY_SPAM" = "yes"
 then

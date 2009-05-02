@@ -4,6 +4,9 @@
 #undef AUTORESPOND_PATH
 
 /* "" */
+#undef CATCHALL_ENABLED
+
+/* "" */
 #undef CGIPATH
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
@@ -155,6 +158,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* "" */
+#undef TRIVIAL_PASSWORD_ENABLED
 
 /* "" */
 #undef USER_INDEX

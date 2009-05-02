@@ -1,5 +1,5 @@
 /* 
- * $Id: auth.c,v 1.3.2.6 2006-02-09 05:09:53 tomcollins Exp $
+ * $Id: auth.c,v 1.3.2.7 2009-05-02 17:51:40 tomcollins Exp $
  * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,9 @@ void auth_system(ip_addr, pw)
  FILE *fs;
  time_t time1; 
  time_t time2;
+#ifdef IPAUTH
  char ip_value[MAX_BUFF];
+#endif
  
   if( chdir(RealDir) < 0 ){
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", html_text[171], RealDir);
@@ -97,7 +99,9 @@ void auth_user_domain(ip_addr,pw)
  FILE *fs;
  time_t time1; 
  time_t time2;
+#ifdef IPAUTH
  char ip_value[MAX_BUFF];
+#endif
 
   if ( chdir(RealDir) < 0 ) {
     snprintf (StatusMessage, sizeof(StatusMessage), "%s %s\n", html_text[171], RealDir );

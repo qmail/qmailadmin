@@ -11,6 +11,8 @@ patch or information related to the entry.
 	- mailinglist.c: Increase size of tmp buffer used to delete 
 	  orphan .qmail files when removing a mailing list (reported by 
 	  William Fuller).
+	- auth.c: Fix compiler warning.  Variable ip_value only used if 
+	  IPAUTH is defined.
 
 	Chaz Owensby
 	- Report disk usage to non-admin user on their Modify User page.

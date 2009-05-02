@@ -1,7 +1,7 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
-1.2.13 - unreleased
+1.2.13 - released 2-May-09
 
 	Tom Collins
 	- qmailadmin.c: check return value of setuid() and setgid() and 

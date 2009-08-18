@@ -4,6 +4,10 @@ patch or information related to the entry.
 1.4.0
    Matt Brookings
    - Created new branch
+   - Re-wrote configure and Makefile
+   - Fixed some re-definition errors
+   - Fixed some format string vulnerabilities
+   - Added My Mailboxes code
 
 1.2.13 - released 2-May-09
 

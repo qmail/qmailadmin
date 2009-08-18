@@ -1,6 +1,6 @@
 /* 
  * $Id: qmailadmin.c,v 1.6.2.16 2009-05-02 19:13:29 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +131,7 @@ int main(argc,argv)
  int argc;
  char *argv[];
 {
+   int ret;
  const char *ip_addr=getenv("REMOTE_ADDR");
  const char *x_forward=getenv("HTTP_X_FORWARDED_FOR");
  char *pi;
@@ -140,6 +141,12 @@ int main(argc,argv)
  struct vqpasswd *pw;
 
   init_globals();
+
+  ret = vauth_load_module(NULL);
+  if (!ret) {
+	 printf("cannot load authentication module\n");
+	 exit(EXIT_FAILURE);
+   }
 
   if (x_forward) ip_addr = x_forward;
   if (!ip_addr) ip_addr = "127.0.0.1";

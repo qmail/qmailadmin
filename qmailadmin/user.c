@@ -1,6 +1,6 @@
 /* 
  * $Id: user.c,v 1.11.2.21 2009-05-02 19:13:29 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -519,7 +519,7 @@ int call_hooks(char *hook_type, char *p1, char *p2, char *p3, char *p4)
   sprintf(hooks_path, "%s/.qmailadmin-hooks", RealDir);
   if((fs = fopen(hooks_path, "r")) == NULL) {
     /* then try ~vpopmail/etc */
-    sprintf(hooks_path, "%s/etc/.qmailadmin-hooks", VPOPMAILDIR);
+    sprintf(hooks_path, "%s/etc/.qmailadmin-hooks", VPOPMAIL_DIR_ETC);
     if((fs = fopen(hooks_path, "r")) == NULL) {
       return (0);
     }
@@ -624,7 +624,7 @@ void set_qmaildefault(char *opt)
   if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
     printf ("%s %s<br>\n", html_text[144], ".qmail-default");
   } else {
-    fprintf(fs,"| %s/bin/vdelivermail '' %s\n", VPOPMAILDIR, opt);
+    fprintf(fs,"| %s/bin/vdelivermail '' %s\n", VPOPMAIL_DIR_BIN, opt);
     fclose(fs);
   }
   show_users(Username, Domain, Mytime);

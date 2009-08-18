@@ -1,5 +1,6 @@
 /* 
  * $Id: printh.c,v 1.1.2.2 2004-11-14 18:05:55 tomcollins Exp $
+ * Copyright (C) 2009 Inter7 Internet Technologies, Inc.
  * Copyright (C) 2004 Tom Logic LLC 
  *
  * This program is free software; you can redistribute it and/or modify

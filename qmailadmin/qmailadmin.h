@@ -1,6 +1,6 @@
 /* 
  * $Id: qmailadmin.h,v 1.1.1.1.2.6 2006-02-05 17:07:27 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,11 @@
 
 #define SHOW_VERSION_LINK 1
 
-#define MAX_FILE_NAME 100
+#define QMAILADMIN_MAX_FILE_NAME 100
 
-#ifdef MAX_BUFF
-#undef MAX_BUFF
+#ifndef MAX_BUFF
+   #define MAX_BUFF 500
 #endif
-#define MAX_BUFF 500
 #define MAX_BIG_BUFF 5000
 
 #define MAX_LANG_STR 350

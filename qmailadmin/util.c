@@ -1,6 +1,6 @@
 /* 
  * $Id: util.c,v 1.4.2.10 2009-05-02 18:22:25 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,19 +43,19 @@
 extern FILE *lang_fs;
 extern FILE *color_table;
 
-#define SORT_TABLE_ENTRIES 100000
+#define QA_SORT_TABLE_ENTRIES 100000
 
 /* pointer to array of pointers */
 unsigned char **sort_list;
 
 unsigned char *sort_block[200]; /* memory blocks for sort data */
 int memleft, memindex, sort_entry;
-char *sort_ptr;
+unsigned char *sort_ptr;
 
 int sort_init ()
 {
   sort_entry = memindex = memleft = 0;
-  sort_list = malloc(SORT_TABLE_ENTRIES * sizeof(char *));
+  sort_list = malloc(QA_SORT_TABLE_ENTRIES * sizeof(char *));
   if (!sort_list) { return -1; }
   return 0;
 }
@@ -65,7 +65,7 @@ int sort_add_entry (char *entry, char end)
 {
   int len;
 
-  if (sort_entry == SORT_TABLE_ENTRIES) {
+  if (sort_entry == QA_SORT_TABLE_ENTRIES) {
     return -2;   /* table is full */
   }
   if (memleft < 256)
@@ -88,7 +88,7 @@ int sort_add_entry (char *entry, char end)
 char *sort_get_entry(int index)
 {
   if ((index < 0) || (index >= sort_entry)) { return NULL; }
-  return sort_list[index];
+  return (char *)sort_list[index];
 }
 void sort_cleanup()
 {

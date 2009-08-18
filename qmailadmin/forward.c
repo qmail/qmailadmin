@@ -1,6 +1,6 @@
 /* 
  * $Id: forward.c,v 1.2.2.5 2005-01-23 17:35:11 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@ int show_forwards(char *user, char *dom, time_t mytime)
 void count_forwards()
 {
  char *alias_line;
- char alias_name[MAX_FILE_NAME];
- char this_alias[MAX_FILE_NAME];
+ char alias_name[QMAILADMIN_MAX_FILE_NAME];
+ char this_alias[QMAILADMIN_MAX_FILE_NAME];
  char *p1, *p2;
  int isforward;
 

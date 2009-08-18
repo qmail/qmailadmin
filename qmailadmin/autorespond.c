@@ -1,6 +1,6 @@
 /* 
  * $Id: autorespond.c,v 1.3.2.7 2007-09-21 23:27:38 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ void show_autoresponders(user,dom,mytime)
 void show_autorespond_line(char *user, char *dom, time_t mytime, char *dir)
 {
  char *addr;
- char alias_name[MAX_FILE_NAME];
+ char alias_name[QMAILADMIN_MAX_FILE_NAME];
  char *alias_line;
  int i;
 
@@ -322,7 +322,7 @@ void modautorespondnow()
 
 void count_autoresponders()
 {
- char alias_name[MAX_FILE_NAME];
+ char alias_name[QMAILADMIN_MAX_FILE_NAME];
  char *alias_line;
 
   CurAutoResponders = 0;

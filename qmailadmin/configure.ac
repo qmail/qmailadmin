@@ -1,83 +1,189 @@
-dnl Process this file with autoconf to produce a configure script.
+#
+# $Id$
+# Copyright (c) 1999-2009 Inter7 Internet Technologies, Inc.
+#
 
-AC_INIT(qmailadmin.c)
-AM_INIT_AUTOMAKE($QA_PACKAGE,$QA_VERSION, [no-define])
-AM_CONFIG_HEADER(config.h)
+AC_INIT(qmailadmin, 1.4.0)
 AC_CANONICAL_HOST
+AC_CONFIG_HEADER(config.h)
 
-QA_PACKAGE="qmailadmin"
-QA_VERSION="1.2.13"
+if test -z "$CFLAGS"
+then
+   AC_SUBST(CFLAGS, "")
+fi
 
-AC_DEFINE_UNQUOTED(QA_PACKAGE,"$QA_PACKAGE","")
-AC_DEFINE_UNQUOTED(QA_VERSION,"$QA_VERSION","")
+if test -z "$LDFLAGS"
+then
+   AC_SUBST(LDFLAGS, "")
+fi
+
+AC_DEFINE_UNQUOTED(QA_PACKAGE,"$PACKAGE_NAME")
+AC_DEFINE_UNQUOTED(QA_VERSION,"$PACKAGE_VERSION")
 AC_SUBST(QA_PACKAGE)
 AC_SUBST(QA_VERSION)
 
-dnl Checks for programs.
+#
+# Build packages and programs
+#
+
 AC_PROG_CC
-AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
-
 AC_ISC_POSIX
 
-dnl Checks for libraries.
-AC_CHECK_LIB(crypt,crypt)
-AC_CHECK_LIB(shadow,crypt)
-#AC_CHECK_LIB(m,floor)
-#AC_CHECK_LIB(nsl, gethostbyaddr)
-#AC_CHECK_LIB(socket, getsockname)
+#
+# Libraries
+#
 
-# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_LIB(crypt, crypt)
+AC_CHECK_LIB(shadow, crypt)
+AC_CHECK_LIB(dl, dlopen)
+
+#
+# Headers
+#
+
+AC_HEADER_STDC
+AC_CHECK_HEADERS([fcntl.h ctype.h dirent.h errno.h float.h pwd.h stdarg.h stdio.h stdlib.h string.h sys/param.h sys/stat.h sys/types.h sys/wait.h time.h unistd.h vlimits.h])
+
+#
+# Compiler requirements
+#
+
 AC_C_CONST
-#AC_HEADER_STDBOOL
+AC_C_INLINE
+
+#
+# Definitions
+#
+
+AC_C_CONST
 AC_TYPE_UID_T
 
-# Checks for library functions.
-AC_FUNC_CLOSEDIR_VOID
-#AC_FUNC_FORK
-#AC_FUNC_LSTAT
-#AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
-#AC_FUNC_MALLOC
-#AC_FUNC_REALLOC
-#AC_FUNC_STAT
-AC_CHECK_FUNCS([dup2 memset mkdir strcasecmp strchr strdup strncasecmp strrchr strstr])
+#
+# Functions
+#
 
-if test "$GCC" = yes ; then
-  CFLAGS="$CFLAGS -Wall"
-fi
+AC_CHECK_FUNCS([dup2 memset mkdir strcasecmp strchr strdup strncasecmp strrchr strstr closedir malloc stat])
 
-CGIBINTARGETS=qmailadmin
-AC_SUBST(CGIBINTARGETS)
+#
+# vpopmail vconfig location
+#
 
-vpopmaildir=""
-for f in ~vpopmail
+vconfigpaths="/home/vpopmail/bin/vconfig /usr/local/bin/vconfig /usr/bin/vconfig /usr/sbin/vconfig /sbin/vconfig /bin/vconfig /usr/local/sbin/vconfig ~vpopmail/bin/vconfig"
+
+AC_ARG_WITH(vconfig, [  --with-vconfig=PATH     Path to vpopmail vconfig binary ], [ vconfigpaths="$withval $vconfigpaths" ])
+AC_MSG_CHECKING(for vpopmail binary vconfig)
+
+unset vconfig
+
+for f in $vconfigpaths
 do
-    if test -d $f
-    then
-        vpopmaildir=$f
-    fi
+   if test -x $f
+   then
+	  vconfig=$f
+   fi
 done
 
-AC_ARG_ENABLE(vpopmaildir, [  --enable-vpopmaildir=DIR  Home directory of vpopmail.],
-    vpopmaildir="$enableval",
-    [
-        if test "$vpopmaildir" = ""
-        then
-            AC_MSG_ERROR([Unable to find your vpopmaildir, specify --enable-vpopmaildir.])
-        fi
-    ] )
-AC_SUBST(vpopmaildir)
+if test -z "$vconfig"
+then
+   AC_MSG_RESULT(not found)
+   AC_MSG_ERROR([Unable to find vconfig binary.  Please use --with-vconfig to set path to vconfig binary. 
+                  If you do not have a vconfig binary, please update to the 5.5 branch of vpopmail])
+fi
 
-auth_incs=`cat $vpopmaildir/etc/inc_deps`
+AC_MSG_RESULT($vconfig)
+
+#
+# Check vpopmail configurations
+#
+
+AC_MSG_CHECKING(vpopmail configuration)
+
+#
+# Check version
+#
+
+allowed_versions="5.5.0"
+
+vpopmail_version=`$vconfig v`
+if test -z "$vpopmail_version"
+then
+   AC_MSG_RESULT(unable to determine vpopmail version)
+   AC_MSG_ERROR(Could not determine your installed version of vpopmail)
+fi
+
+unset running_version 
+
+for v in "$allowed_versions"
+do
+   if test "$vpopmail_version" == $v
+   then
+	  running_version=$v
+	  break
+   fi
+done
+
+if test -z "$running_version"
+then
+   AC_MSG_RESULT(not running required version)
+   AC_MSG_ERROR([The version of vpopmail you're using, "$vpopmail_version", is not compatible with this release of qmailadmin.
+				  Acceptable versions: "$allowed_versions"
+				  Please or downgrade vpopmail accordingly.])
+fi
+
+#
+# Include and Library depedencies
+#
+
+etcdir=`$vconfig c`
+auth_incs=`cat $etcdir/inc_deps`
+auth_libs=`cat $etcdir/lib_deps`
 AC_SUBST(auth_incs)
-auth_libs=`cat $vpopmaildir/etc/lib_deps`
 AC_SUBST(auth_libs)
 
+#
+# vpopmail user and group
+#
+
+vpopuser=`$vconfig U`
+
+AC_ARG_ENABLE(vpopuser, [  --enable-vpopuser=USER        User vpopmail was installed as [vpopmail].],
+    vpopuser="$enableval",
+    [
+        if test "$vpopuser" = ""
+        then
+            AC_MSG_ERROR([Unable to find your vpopuser user, specify --enable-vpopuser.])
+        fi
+    ] )
+AC_DEFINE_UNQUOTED(VPOPUSER,"$vpopuser","")
+AC_SUBST(vpopuser)
+   
+vpopgroup=`$vconfig G`
+AC_ARG_ENABLE(vpopgroup, [  --enable-vpopgroup=GROUP      Group vpopmail was installed as [vchkpw].],
+    vpopgroup="$enableval",
+    [
+        if test "$vpopgroup" = ""
+        then
+            AC_MSG_ERROR([Unable to find your vpopgroup group, specify --enable-vpopgroup.])
+        fi
+    ] )
+AC_DEFINE_UNQUOTED(VPOPGROUP,"$vpopgroup","")
+AC_SUBST(vpopgroup)
+
+#
+# All vpopmail configurations gathered
+#
+
+AC_MSG_RESULT(ok)
+
+#
+# Webserver configurations
+#
+
 htmldir=""
-for f in /home/httpd/html /usr/local/apache/htdocs /usr/local/www/data /var/www/html
+for f in /home/httpd/html /usr/local/apache/htdocs /usr/local/www/data /var/www/html /var/www/htdocs /var/www
 do
     if test -d $f
     then
@@ -97,7 +203,7 @@ AC_SUBST(htmldir)
 
 cgibindir=""
 
-for f in /home/httpd /usr/local/apache /usr/local/www /var/lib/httpd /var/www /usr/local/www $htmldir
+for f in /home/httpd /usr/local/apache /usr/local/www /var/lib/httpd /var/www /usr/local/www /usr/lib $htmldir
 do
     if test -d $f/cgi-bin
     then
@@ -158,15 +264,11 @@ AC_ARG_ENABLE(htmllibdir, [  --enable-htmllibdir=DIR   qmailadmin HTML library d
 AC_SUBST(htmllibdir,$htmllibdir)
 AC_DEFINE_UNQUOTED(HTMLLIBDIR, "$htmllibdir","")
 
+#
+# qmail directory
+# 
 
-qmaildir=""
-for f in /var/qmail
-do
-    if test -d $f
-    then
-        qmaildir=$f
-    fi
-done
+qmaildir=`$vconfig q`
 
 AC_ARG_ENABLE(qmaildir, [  --enable-qmaildir=DIR     directory where qmail is installed.],
     qmaildir="$enableval",
@@ -178,6 +280,10 @@ AC_ARG_ENABLE(qmaildir, [  --enable-qmaildir=DIR     directory where qmail is in
     ] )
 AC_DEFINE_UNQUOTED(QMAILDIR,"$qmaildir","")
 
+#
+# ezmlm directory
+#
+
 ezmlmdir=""
 for f in /usr/local/bin/ezmlm /usr/bin /usr/sbin /usr/local/bin
 do
@@ -187,7 +293,7 @@ do
     fi
 done
 
-AC_ARG_ENABLE(ezmlmdir, [  --enable-ezmlmdir=PATH    Path to ezmlm binaries or =n to disable.],
+AC_ARG_ENABLE(ezmlmdir, [  --enable-ezmlmdir=PATH       Path to ezmlm binaries or =n to disable.],
     ezmlmdir="$enableval",
     [
         if test "$ezmlmdir" = ""
@@ -227,30 +333,6 @@ AC_ARG_ENABLE(autoresponder-bin, [], autorespond_path="$enableval", [])
         fi
     ] )
 AC_DEFINE_UNQUOTED(AUTORESPOND_PATH,"$autorespond_path","")
-
-vpopuser="vpopmail"
-AC_ARG_ENABLE(vpopuser, [  --enable-vpopuser=USER        User vpopmail was installed as [vpopmail].],
-    vpopuser="$enableval",
-    [
-        if test "$vpopuser" = ""
-        then
-            AC_MSG_ERROR([Unable to find your vpopuser user, specify --enable-vpopuser.])
-        fi
-    ] )
-AC_DEFINE_UNQUOTED(VPOPUSER,"$vpopuser","")
-AC_SUBST(vpopuser)
-   
-vpopgroup="vchkpw"
-AC_ARG_ENABLE(vpopgroup, [  --enable-vpopgroup=GROUP      Group vpopmail was installed as [vchkpw].],
-    vpopgroup="$enableval",
-    [
-        if test "$vpopgroup" = ""
-        then
-            AC_MSG_ERROR([Unable to find your vpopgroup group, specify --enable-vpopgroup.])
-        fi
-    ] )
-AC_DEFINE_UNQUOTED(VPOPGROUP,"$vpopgroup","")
-AC_SUBST(vpopgroup)
 
 mysql=yes
 AC_ARG_ENABLE(ezmlm-mysql, [  --disable-ezmlm-mysql         Disable MySQL options for mailing lists.],
@@ -461,7 +543,7 @@ esac
 AC_OUTPUT(Makefile)
 
 echo ""
-echo "            $QA_PACKAGE $QA_VERSION"
+echo "            $PACKAGE_NAME $PACKAGE_VERSION"
 echo "            Current settings"
 echo "---------------------------------------"
 echo "       cgi-bin dir = "$cgibindir""
@@ -470,7 +552,6 @@ echo "         image dir = "$imagedir""
 echo "         image URL = "$imageurl""
 echo "      template dir = "$htmllibdir""
 echo "         qmail dir = "$qmaildir""
-echo "      vpopmail dir = "$vpopmaildir""
 echo "   autorespond dir = "$autorespond_path""
 echo "         ezmlm dir = "$ezmlmdir""
 echo "         ezmlm idx = "$ezmlmidx""
@@ -481,6 +562,7 @@ echo "   domain autofill = "$DOMAIN_AUTOFILL""
 echo " catchall accounts = "$CATCHALL_ENABLED""
 echo " trivial passwords = "$TRIVIAL_PASSWORD_ENABLED""
 echo " modify spam check = "$MODIFY_SPAM""
+
 if test "$MODIFY_SPAM" = "yes"
 then
         echo "      spam command = "$spam_command""

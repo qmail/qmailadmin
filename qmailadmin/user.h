@@ -1,5 +1,6 @@
 /*
  * $Id: user.h,v 1.1.2.2 2004-11-27 17:18:06 tomcollins Exp $
+ * Copyright (C) 2009 Inter7 Internet Technologies, Inc.
  */
  
 void adduser();

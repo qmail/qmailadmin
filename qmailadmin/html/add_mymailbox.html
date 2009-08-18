@@ -1,0 +1,79 @@
+ </head>
+ <body bgcolor="#ffffff" onload="init();">
+
+<script language="Javascript" type="text/javascript">
+<!--
+function init()
+{
+document.logon.newu.focus();
+}
+//-->
+</script>
+
+  <center>
+   <h2>##S</h2>
+   <!-- Black frame 2 pixels wide -->
+   <table cellpadding="2" cellspacing="0" border="0" align="center" valign="top" width="600" bgcolor="#000000"><tr><td>
+    <!-- Frame content -->
+    <table cellpadding="0" cellspacing="0" border="0" align="center" valign="top" width="100%" bgcolor="#ffffff">
+     <!-- Form title -->
+     <tr>
+      <td bgcolor="#000000" align="center">
+       <font color="#ffffff" size="3">
+		  <b>##X329</b>
+       </font>
+      </td>
+     </tr>
+     <!-- End of form title -->
+     <!-- Form content -->
+     <tr>
+      <td>
+       <table cellpadding="5" cellspacing="1" border="0" width="100%">
+        <!-- Form fields -->
+        <tr>
+         <td>
+          <form method="post" name="logon" action="##C/com/addmymailboxnow?##&">
+           <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+             <td align=right><b>##X002:&nbsp;</b></td>
+             <td align="left"><input type="text" size="16" name="newu" maxlength="128">@##D</td>
+            </tr>
+            <tr>
+             <td align=right><b>##X057:&nbsp;</b></td>
+             <td align="left"><input type="password" size="16" name="password1" maxlength="128"></td>
+            </tr>
+            <tr>
+             <td align=right><b>##X091&nbsp;</b></td>
+             <td align="left"><input type="password" size="16" name="password2" maxlength="128"></td>
+            </tr>
+            <tr>
+             <td align=right><b>##X092:&nbsp;</b></td>
+             <td align="left"><input type="text" size="32" name="gecos" maxlength="128"></td>
+            </tr>
+           </table>
+		   <!-- nnc -->
+           <input type="submit" value="##X060">
+          </form>
+          <div align="right">
+           <hr>
+           <font size="2"><b>
+           [&nbsp;
+		   <a href="##C/com/showmymailboxes?##&">##X325</a>
+           &nbsp;|&nbsp;
+           <a href="##C/com/showmenu?##&">##X001</a>
+           &nbsp;|&nbsp;
+##x
+           &nbsp;]
+           </b></font>
+          </div>
+         </td>
+        </tr>
+        <!-- End of form fields -->
+       </table>
+      </td>
+     </tr>
+    </table>
+    <!-- End of frame content -->
+   </td></tr></table>
+   <!-- End of black frame -->
+  </center>

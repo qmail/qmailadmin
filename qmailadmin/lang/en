@@ -286,3 +286,18 @@
 318 setgid() failed, unable to continue
 319 setuid() failed, unable to continue
 320 Invalid password: it can be easily guessed from the username
+321 Account disabled
+322 Failed to disable user
+323 Failed to enable user
+324 Account enabled
+325 My Mailboxes
+326 Mailbox
+327 Modify<br>Mailbox
+328 Delete<br>Mailbox
+329 Create Mailbox
+330 You cannot create any more mailboxes
+331 You cannot create mailboxes
+332 User has group mailboxes
+333 This will delete all mail for this mailbox
+334 Delete mailbox
+

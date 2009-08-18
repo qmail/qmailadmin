@@ -1,6 +1,6 @@
 /* 
  * $Id: qmailadminx.h,v 1.2.2.5 2007-09-21 23:27:39 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

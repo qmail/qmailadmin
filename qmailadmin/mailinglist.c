@@ -1,6 +1,6 @@
 /* 
  * $Id: mailinglist.c,v 1.5.2.15 2009-03-09 01:35:01 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@
 #include "template.h"
 #include "util.h"
 
-char dotqmail_name[MAX_FILE_NAME];
+char dotqmail_name[QMAILADMIN_MAX_FILE_NAME];
 char replyto_addr[256];
 int replyto;
 int dotnum;
@@ -91,7 +91,7 @@ void show_mailing_list_line(char *user, char* dom, time_t mytime, char *dir)
   struct dirent *mydirent;
   FILE *fs;
   char *addr;
-  char testfn[MAX_FILE_NAME];
+  char testfn[QMAILADMIN_MAX_FILE_NAME];
   int i;
 
   if ( AdminType!=DOMAIN_ADMIN ) {

@@ -1,6 +1,6 @@
 /* 
  * $Id: command.c,v 1.2.2.10 2009-05-02 19:20:30 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 #include "show.h"
 #include "user.h"
 #include "util.h"
+#include "mymailboxes.h"
 
 void process_commands()
 {
@@ -81,6 +82,11 @@ void process_commands()
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
     show_aliases();
 
+  } else if (strcmp(TmpBuf2, "showmymailboxes") == 0) {
+   GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
+   GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
+   show_mymailboxes(Username, Domain, Mytime);
+
   } else if (strcmp(TmpBuf2, "showforwards") == 0) {
     GetValue(TmpCGI, Pagenumber, "page=", sizeof(Pagenumber));
     GetValue(TmpCGI, SearchUser, "searchuser=", sizeof(SearchUser));
@@ -94,6 +100,31 @@ void process_commands()
 
   } else if (strcmp(TmpBuf2, "adduser") == 0 ) {
     adduser();
+
+   } else if (strcmp(TmpBuf2, "addmymailbox") == 0 ) {
+	addmymailbox();
+
+  } else if (strcmp(TmpBuf2, "addmymailboxnow") == 0 ) {
+    addmymailboxnow();
+
+   } else if (strcmp(TmpBuf2, "modmymailbox") == 0 ) {
+	  GetValue(TmpCGI, ActionUser, "moduser=", sizeof(ActionUser));
+	  modmymailbox();
+
+   } else if (strcmp(TmpBuf2, "modmymailboxnow") == 0 ) {
+	  GetValue(TmpCGI, ActionUser, "modu=", sizeof(ActionUser));
+	  GetValue(TmpCGI, Password1, "password1=", sizeof(Password1));
+	  GetValue(TmpCGI, Password2, "password2=", sizeof(Password2));
+	  GetValue(TmpCGI, Gecos, "gecos=", sizeof(Gecos));
+	  modmymailboxgo();
+
+   } else if (strcmp(TmpBuf2, "delmymailbox") == 0 ) {
+	  GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
+	  delmymailbox();
+
+   } else if (strcmp(TmpBuf2, "delmymailboxnow") == 0 ) {
+	  GetValue(TmpCGI, ActionUser, "deluser=", sizeof(ActionUser));
+	  delmymailboxgo();
 
   } else if (strcmp(TmpBuf2, "addusernow") == 0 ) {
     addusernow();
@@ -306,7 +337,7 @@ void setdefaultaccount()
     if ( (fs = fopen(".qmail-default", "w")) == NULL ) {
       snprintf (StatusMessage, sizeof(StatusMessage), "%s", html_text[82]);
     } else {
-      fprintf(fs, "| %s/bin/vdelivermail '' %s@%s\n", VPOPMAILDIR, ActionUser, Domain);
+      fprintf(fs, "| %s/bin/vdelivermail '' %s@%s\n", VPOPMAIL_DIR_BIN, ActionUser, Domain);
       fclose(fs);
     }
   }

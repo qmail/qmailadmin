@@ -1,6 +1,6 @@
 /* 
  * $Id: alias.c,v 1.4.2.16 2007-09-21 23:16:45 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ int qa_sort(const void * a, const void * b)
 }
 
 struct aliasentry {
-  char alias_name[MAX_FILE_NAME];
+  char alias_name[QMAILADMIN_MAX_FILE_NAME];
   char alias_command[MAX_BUFF];
   struct aliasentry *next;
 };
@@ -106,12 +106,12 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
  int moreusers=0;
  char alias_user[MAX_BUFF];
  char alias_copy[MAX_BUFF];
- char alias_name[MAX_FILE_NAME];
+ char alias_name[QMAILADMIN_MAX_FILE_NAME];
  char *alias_domain;
  char *alias_name_from_command;
  int stop,k,startnumber;
  int page;
- char this_alias[MAX_FILE_NAME];
+ char this_alias[QMAILADMIN_MAX_FILE_NAME];
 #ifdef VALIAS
  char *alias_line;
 #else
@@ -224,7 +224,7 @@ void show_dotqmail_lines(char *user, char *dom, time_t mytime)
         continue;
       }
 
-      for(i=7,j=0;j<MAX_FILE_NAME-1&&mydirent->d_name[i]!=0;++i,++j) {
+      for(i=7,j=0;j<QMAILADMIN_MAX_FILE_NAME-1&&mydirent->d_name[i]!=0;++i,++j) {
         alias_name[j] = mydirent->d_name[i] == ':' ? '.' : mydirent->d_name[i];
       }
       alias_name[j] = 0;
@@ -786,14 +786,14 @@ int bkscandir(const char *dirname,
         }
         *namelist = (struct dirent**)mem;
       }
-      if ((dent = (struct dirent*)malloc(sizeof(struct dirent)+MAX_FILE_NAME)) == NULL) {
+      if ((dent = (struct dirent*)malloc(sizeof(struct dirent)+QMAILADMIN_MAX_FILE_NAME)) == NULL) {
         for (i = 0; i < entries; i++)
           free((*namelist)[i]);
         free(*namelist);
         closedir(dirp);
         return -1;
       }
-      memcpy(dent, dp, sizeof(*dp)+MAX_FILE_NAME);
+      memcpy(dent, dp, sizeof(*dp)+QMAILADMIN_MAX_FILE_NAME);
       (*namelist)[entries] = dent;
       entries++;
     }

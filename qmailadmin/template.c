@@ -1,6 +1,6 @@
 /*
  * $Id: template.c,v 1.7.2.17 2009-02-06 05:30:05 tomcollins Exp $
- * Copyright (C) 1999-2004 Inter7 Internet Technologies, Inc. 
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc. 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include <dirent.h>
 #include <vpopmail.h>
 #include <vpopmail_config.h>
+#include <group.h>
 /* undef some macros that get redefined in config.h below */
 #undef PACKAGE_NAME
 #undef PACKAGE_STRING
@@ -47,6 +48,7 @@
 #include "template.h"
 #include "user.h"
 #include "util.h"
+#include "mymailboxes.h"
 
 static char dchar[4];
 void check_mailbox_flags(char newchar);
@@ -68,6 +70,8 @@ int send_template(char *actualfile)
 
 int send_template_now(char *filename)
 {
+   int ret = 0, gown = 0;
+   char b[255] = { 0 };
  FILE *fs;
  int i;
  int j;
@@ -79,6 +83,7 @@ int send_template_now(char *filename)
  struct vqpasswd *vpw;
  char value[MAX_BUFF];
  char value2[MAX_BUFF];
+ group_t g;
 
   if (strstr(filename, "/")!= NULL||strstr(filename,"..")!=NULL) {
     printf("warning: invalid file name %s\n", filename );
@@ -135,6 +140,25 @@ int send_template_now(char *filename)
           case '~':
             printf ("%s", Lang);
             break;
+
+		 case '-':
+            /*
+			 *	Print My Mailboxes link
+			 */
+
+			group_init(&g);
+			ret = group_load(Username, Domain, &g);
+			if (ret) {
+			   memset(b, 0, sizeof(b));
+			   snprintf(b, sizeof(b), "%s@%s", Username, Domain);
+
+			   if (!(strcasecmp(g.owner, b))) {
+				  printh("<a href=\"%s/com/showmymailboxes?user=%C&time=%i&dom=%C&\">", CGIPATH,Username,Mytime,Domain);
+				  printf("<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>", html_text[325]);
+			   }
+			}
+
+			break;
 
           /* send the action user parameter */
           case 'A':
@@ -424,8 +448,11 @@ int send_template_now(char *filename)
 
           /* show quota usage */
           case 'Q':
+			printf("TODO");
+#if 0
             vpw = vauth_getpw(ActionUser, Domain);
             if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
+
               long diskquota = 0;
               int maxmsg = 0;
               char path[256];
@@ -434,7 +461,8 @@ int send_template_now(char *filename)
               snprintf(path, sizeof(path), "%s/" MAILDIR, vpw->pw_dir);
               readuserquota(path, &diskquota, &maxmsg);
               printf ("%-2.2lf /", ((double)diskquota)/1048576.0);  /* Convert to MB */
-            }
+			}
+#endif
             break;
 
           /* display user's quota (mod user page) */
@@ -447,7 +475,7 @@ int send_template_now(char *filename)
                if(AdminType == DOMAIN_ADMIN) 
                   printf("NOQUOTA");
                else
-                  printf(html_text[229]);
+                  printf("%s", html_text[229]);
             }
             break; 
 
@@ -499,10 +527,8 @@ int send_template_now(char *filename)
 
           /* show version number */
           case 'V':
-            printf("<a href=\"http://sourceforge.net/projects/qmailadmin/\">%s</a> %s<BR>", 
-              QA_PACKAGE, QA_VERSION);
-            printf("<a href=\"http://www.inter7.com/vpopmail/\">%s</a> %s<BR>", 
-              PACKAGE, VERSION);
+            printf("<a href=\"http://sourceforge.net/projects/qmailadmin/\">qmailadmin</a> %s<BR>", QA_VERSION);
+            printf("<a href=\"http://www.inter7.com/vpopmail/\">vpopmail</a> %s<BR>", VPOPMAIL_VERSION);
             break;
 
           /* display the main menu */
@@ -513,6 +539,22 @@ int send_template_now(char *filename)
             printf (
        "<font size=\"2\" color=\"#ff0000\"><b>%s</b></font><br>", 
               html_text[1]);
+
+			ret = group_init(&g);
+			if (ret) {
+			   ret = group_load(Username, Domain, &g);
+			   if (ret) {
+				  memset(b, 0, sizeof(b));
+				  snprintf(b, sizeof(b), "%s@%s", Username, Domain);
+
+				  if (!(strcasecmp(g.owner, b))) {
+					 gown = 1;
+					 printh("<a href=\"%s/com/showmymailboxes?user=%C&time=%i&dom=%C&\">", CGIPATH,Username,Mytime,Domain);
+					 printf("<font size=\"2\" color=\"#000000\"><b>%s</b></font></a><br>", html_text[325]);
+				  }
+			   }
+			}
+
             if (AdminType==DOMAIN_ADMIN){
 
               if (MaxPopAccounts != 0) {
@@ -559,7 +601,7 @@ int send_template_now(char *filename)
               if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
                 quota_to_megabytes(qconvert, vpw->pw_shell);
               } else {
-                sprintf(qconvert, html_text[229]); qnote = "";
+                sprintf(qconvert, "%s", html_text[229]); qnote = "";
               }
               printf ("<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
                 html_text[249], html_text[253], qconvert, qnote);
@@ -601,6 +643,18 @@ int send_template_now(char *filename)
                }
              }
              break;
+
+		  case 'w':
+			   group_init(&g);
+			   ret = group_load(Username, Domain, &g);
+			   if (ret)
+				  printf("%d/%d", g.n_members, g.max_members);
+			   group_reset(&g);
+			   break;
+
+		 case '@':
+			 show_mailbox_lines(Username, Domain, Mytime, RealDir);
+			 break;
 
           /* Password */
           case 'W':

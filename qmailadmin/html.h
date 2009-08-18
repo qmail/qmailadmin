@@ -1,6 +1,6 @@
 /*
  * $Id: html.h,v 1.1.2.1 2007-09-21 23:16:45 tomcollins Exp $
- * Copyright (C) 1999-2006 Inter7 Internet Technologies, Inc.
+ * Copyright (C) 1999-2009 Inter7 Internet Technologies, Inc.
  * Copyright (C) 2006 Tom Logic LLC
  *
  * This program is free software; you can redistribute it and/or modify

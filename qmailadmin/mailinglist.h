@@ -1,5 +1,6 @@
 /*
  * $Id: mailinglist.h,v 1.1.2.2 2004-11-22 16:04:11 tomcollins Exp $
+ * Copyright (C) 2009 Inter7 Internet Technologies, Inc.
  */
 
 #include <time.h>

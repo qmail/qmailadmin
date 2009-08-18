@@ -1,5 +1,6 @@
 /* 
  * $Id: util.h,v 1.1.2.4 2007-09-21 23:27:40 tomcollins Exp $
+ * Copyright (C) 2009 Inter7 Internet Technologies, Inc.
  */
 
 int check_local_user( char *user );

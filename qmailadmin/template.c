@@ -47,6 +47,7 @@
 #include "template.h"
 #include "user.h"
 #include "util.h"
+#include "storage.h"
 
 static char dchar[4];
 void check_mailbox_flags(char newchar);
@@ -426,8 +427,8 @@ int send_template_now(char *filename)
           case 'Q':
             vpw = vauth_getpw(ActionUser, Domain);
             if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
-              long diskquota = 0;
-              int maxmsg = 0;
+              storage_t diskquota = 0;
+              storage_t maxmsg = 0;
               char path[256];
 
               quota_to_megabytes(qconvert, vpw->pw_shell);
@@ -547,8 +548,8 @@ int send_template_now(char *filename)
                * then again, with recent changes, the non-admin shouldn't
                * even get to this page.
                */
-              long diskquota = 0;
-              int maxmsg = 0;
+              storage_t diskquota = 0;
+              storage_t maxmsg = 0;
 	      char path[256];
               vpw = vauth_getpw(Username, Domain);
 

@@ -130,6 +130,7 @@
 #undef NO_CACHE
 
 /* Define to the address where bug reports for this package should be sent. */
+#if 0
 #undef PACKAGE_BUGREPORT
 
 /* Define to the full name of this package. */
@@ -141,8 +142,12 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+#endif
 
 /* "" */
 #undef QA_PACKAGE

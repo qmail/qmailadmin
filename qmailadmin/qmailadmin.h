@@ -34,7 +34,9 @@
 
 #define SHOW_VERSION_LINK 1
 
-#define MAX_FILE_NAME 100
+#ifndef MAX_FILE_NAME
+   #define MAX_FILE_NAME 100
+#endif
 
 #ifdef MAX_BUFF
 #undef MAX_BUFF
@@ -63,4 +65,4 @@ void quickAction (char *username, int action);
 /* copied from maildirquota.c in vpopmail
  * it really needs to get into vpopmail.h somehow
  */
-int readuserquota(const char* dir, long *sizep, int *cntp);
+//int readuserquota(const char* dir, long *sizep, int *cntp);

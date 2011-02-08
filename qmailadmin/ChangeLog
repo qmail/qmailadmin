@@ -1,6 +1,13 @@
 Numbers in square brackets ([]) indicate tracker item on SourceForge with 
 patch or information related to the entry.
 
+1.2.14-1.2.16
+    Matt Brookings
+    - Removed mailbox image
+	- Updated quota code to work with vpopmail v5.4.33
+	- Fixed some compiler warnings
+	- Updated default compiler flags
+
 1.2.13 - released 2-May-09
 
 	Simone Lazzaris

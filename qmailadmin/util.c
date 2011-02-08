@@ -39,9 +39,14 @@
 #include "printh.h"
 #include "user.h"
 #include "util.h"
+#include "storage.h"
 
 extern FILE *lang_fs;
 extern FILE *color_table;
+
+#ifdef SORT_TABLE_ENTRIES
+   #undef SORT_TABLE_ENTRIES
+#endif
 
 #define SORT_TABLE_ENTRIES 100000
 
@@ -353,12 +358,12 @@ char *get_quota_used(char *dir) {
    return value: 0 for success, 1 for failure
 */
 int quota_to_bytes(char returnval[], char *quota) {
-    double tmp;
+    storage_t tmp;
 
     if (quota == NULL) { return 1; }
-    if ((tmp = atof(quota))) {
+    if ((tmp = strtoll(quota, NULL, 10))) {
         tmp *= 1048576;
-        sprintf(returnval, "%.0lf", tmp);
+        sprintf(returnval, "%.0lf", (double)tmp);
         return 0;
     } else {
 	strcpy (returnval, "");
@@ -370,22 +375,22 @@ int quota_to_bytes(char returnval[], char *quota) {
    return value: 0 for success, 1 for failure
 */
 int quota_to_megabytes(char *returnval, char *quota) {
-    double tmp;
+    storage_t tmp;
     int i;
 
     if (quota == NULL) { return 1; }
     i = strlen(quota);
     if ((quota[i-1] == 'M') || (quota[i-1] == 'm')) {
-        tmp = atol(quota);  /* already in megabytes */
+        tmp = strtoll(quota, NULL, 10);  /* already in megabytes */
     } else if ((quota[i-1] == 'K') || (quota[i-1] == 'k')) {
-	tmp = atol(quota) * 1024;  /* convert kilobytes to megabytes */
-    } else if ((tmp = atol(quota))) {
+	tmp = strtoll(quota, NULL, 10) * 1024;  /* convert kilobytes to megabytes */
+    } else if ((tmp = strtoll(quota, NULL, 10))) {
         tmp /= 1048576.0;
     } else {
 	strcpy (returnval, "");
 	return 1;
     }
-    sprintf(returnval, "%.2lf", tmp);
+    sprintf(returnval, "%.2lf", (double)tmp);
     return 0;
 }
 

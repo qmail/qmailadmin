@@ -170,8 +170,8 @@ int show_user_lines(char *user, char *dom, time_t mytime, char *dir)
               (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)))) {
         if (AdminType==DOMAIN_ADMIN || 
             (AdminType==USER_ADMIN && strcmp(pw->pw_name,Username)==0)) {
-          long diskquota = 0;
-          int maxmsg = 0;
+          storage_t diskquota = 0;
+          storage_t maxmsg = 0;
 
           /* display account name and user name */
           printf ("<tr bgcolor=%s>", get_color_text("000"));

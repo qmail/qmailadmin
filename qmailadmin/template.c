@@ -242,7 +242,19 @@ int send_template_now(char *filename)
               printf ("        </tr>\n");
               printf ("       </table>\n");
               printf ("       <textarea cols=80 rows=40 name=\"message\">");
+
+			  /*
+			     Skip custom headers
+			  */
+
+			  while(1) {
                 fgets(TmpBuf2, sizeof(TmpBuf2), fs);
+				if ((*TmpBuf2 == '\r') || (*TmpBuf2 == '\n'))
+				   break;
+			  }
+
+			  printf("%s", TmpBuf2);
+
               while (fgets(TmpBuf2, sizeof(TmpBuf2), fs)) {
                 printf ("%s", TmpBuf2);
               }

@@ -9,6 +9,8 @@ patch or information related to the entry.
 	- Updated default compiler flags
 	- Updated package version string
 	- Fixed some format string warnings
+	- Reserved language template file codes 400 through 450 for custom autoresponder headers
+	- Added code to support custom autoresponder headers per language
 
 1.2.13 - released 2-May-09
 

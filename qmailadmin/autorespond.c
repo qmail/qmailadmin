@@ -118,6 +118,7 @@ void addautorespond()
 
 void addautorespondnow()
 {
+   int i = 0;
  FILE *fs;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -171,7 +172,19 @@ void addautorespondnow()
   sprintf(TmpBuf, "%s/message", TmpBuf2);
   if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("150", TmpBuf);
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
-  fprintf(fs, "Subject: %s\n\n", Alias);
+  fprintf(fs, "Subject: %s\n", Alias);
+  for (i = 400; i < 450; i++) {
+	 if (html_text[i] == NULL)
+		break;
+
+	 if ((*(html_text[i]) == ' ') || (*(html_text[i]) == '\t') || 
+		   (*(html_text[i]) == '\r') || (*(html_text[i]) == '\n') || (!(*(html_text[i]))))
+		continue;
+
+     fprintf(fs, "%s\n", html_text[i]);
+  }
+
+  fprintf(fs, "MIME-Version: 1.0\n\n");
   fprintf(fs, "%s", Message);
   fclose(fs);
 
@@ -256,6 +269,7 @@ void modautorespond()
 /* addautorespondnow and modautorespondnow should be merged into a single function */
 void modautorespondnow()
 {
+   int i = 0;
  FILE *fs;
 
   if ( AdminType!=DOMAIN_ADMIN ) {
@@ -308,7 +322,18 @@ void modautorespondnow()
   sprintf(TmpBuf, "%s/message", TmpBuf2);
   if ( (fs = fopen(TmpBuf, "w")) == NULL ) ack("150", TmpBuf);
   fprintf(fs, "From: %s@%s\n", ActionUser,Domain);
-  fprintf(fs, "Subject: %s\n\n", Alias);
+  fprintf(fs, "Subject: %s\n", Alias);
+  for (i = 400; i < 450; i++) {
+	 if (html_text[i] == NULL)
+		break;
+
+	 if ((*(html_text[i]) == ' ') || (*(html_text[i]) == '\t') || (!(*(html_text[i]))))
+		continue;
+
+     if (*(html_text[i]))
+	    fprintf(fs, "%s\n", html_text[i]);
+  }
+  fprintf(fs, "MIME-Version: 1.0\n\n");
   fprintf(fs, "%s", Message);
   fclose(fs);
 

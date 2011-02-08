@@ -448,7 +448,7 @@ int send_template_now(char *filename)
                if(AdminType == DOMAIN_ADMIN) 
                   printf("NOQUOTA");
                else
-                  printf(html_text[229]);
+                  printf("%s", html_text[229]);
             }
             break; 
 
@@ -560,7 +560,7 @@ int send_template_now(char *filename)
               if (strncmp(vpw->pw_shell, "NOQUOTA", 2) != 0) {
                 quota_to_megabytes(qconvert, vpw->pw_shell);
               } else {
-                sprintf(qconvert, html_text[229]); qnote = "";
+                sprintf(qconvert, "%s", html_text[229]); qnote = "";
               }
               printf ("<font size=\"2\" color=\"#000000\"><b>%s:</b><br>%s %s %s",
                 html_text[249], html_text[253], qconvert, qnote);

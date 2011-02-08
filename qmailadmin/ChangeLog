@@ -7,6 +7,8 @@ patch or information related to the entry.
 	- Updated quota code to work with vpopmail v5.4.33
 	- Fixed some compiler warnings
 	- Updated default compiler flags
+	- Updated package version string
+	- Fixed some format string warnings
 
 1.2.13 - released 2-May-09
 

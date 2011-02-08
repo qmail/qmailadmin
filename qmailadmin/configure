@@ -2654,7 +2654,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 QA_PACKAGE="qmailadmin"
-QA_VERSION="1.2.13"
+QA_VERSION="1.2.16"
 
 
 cat >>confdefs.h <<_ACEOF
